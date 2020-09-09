@@ -1,5 +1,8 @@
 package iotpackage.data;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * @author ji
  * */
@@ -13,6 +16,12 @@ public class TS {
         this.id = id;
         this.context = context;
     }
+
+    public TS(int id){
+        this.id=id;
+        this.context=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(System.currentTimeMillis());
+    }
+
 
     public int getId() {
         return id;

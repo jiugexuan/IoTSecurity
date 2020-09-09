@@ -1,6 +1,7 @@
 package iotpackage.source;
 
-public class Source {
+
+public class Source  {
     /**
      *发送方账户名
      * **/
@@ -30,5 +31,6 @@ public class Source {
     public void setIp(String ip) {
         this.ip = ip;
     }
+
 }
 

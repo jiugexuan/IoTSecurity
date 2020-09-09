@@ -5,12 +5,22 @@ import iotpackage.destination.Destination;
 import iotpackage.source.Source;
 
 public class Authenticator {
-    /**验证服务器**/
+    /**验证服务器
+     * id
+     * **/
     Destination id;
-    /***验证对象**/
+    /***验证对象ad
+     * ad
+     * **/
     Source ad;
     /**时间戳**/
     TS ts;
+
+    public Authenticator(Destination id, Source ad, TS ts) {
+        this.id = id;
+        this.ad = ad;
+        this.ts = ts;
+    }
 
     public Destination getId() {
         return id;
@@ -33,12 +43,6 @@ public class Authenticator {
     }
 
     public void setTs(TS ts) {
-        this.ts = ts;
-    }
-
-    public Authenticator(Destination id, Source ad, TS ts) {
-        this.id = id;
-        this.ad = ad;
         this.ts = ts;
     }
 }
