@@ -13,6 +13,9 @@ import iotpackage.destination.Destination;
 import iotpackage.source.Source;
 
 import iotpackage.data.*;
+import org.apache.commons.codec.digest.Md5Crypt;
+import securityalgorithm.DESUtil;
+import securityalgorithm.MD5Util;
 
 import java.io.IOException;
 import java.security.PublicKey;
@@ -92,6 +95,53 @@ public class PackageConstructor {
     };
 
 
+    /***用户注册****/
+    /***C to AS
+     * @param process 进程代号
+     * @param operation 操作代号
+     * @param source 发送方
+     * @param destination 接受方
+     * @param code 操作码
+     * @param account 用户账户
+     * @param password 密码
+     *
+     * @param nickname 昵称
+     * @param securityQuestion 安全问题
+     * @param securityAnswer 安全问题的答案
+     * ****/
+        public String getPackageCtoASRegist(String process, String operation, Source source, Destination destination, String code, String account,String password,String nickname,String securityQuestion,String securityAnswer) throws JsonProcessingException {
+        ObjectNode rootNode = jsonNodeFactory.objectNode();
+        ObjectNode infoNode = jsonNodeFactory.objectNode();
+        ObjectNode signNode = jsonNodeFactory.objectNode();
+        infoNode.put("Process",process);
+        infoNode.put("Operation",operation);
+
+        //source节点添加
+        setSourceNode(infoNode,source);
+
+        //destination节点添加
+        setDestionationNode(infoNode,destination);
+
+            //Data字段
+            ObjectNode dataNode = jsonNodeFactory.objectNode();
+            dataNode.put("Code",code);
+            dataNode.put("Account",account);
+            //TODO password加密
+           // String passwordEn= DESUtil.getEncryptString(password,deskey);
+            dataNode.put("Password", MD5Util.md5(password));
+            dataNode.put("Nickname",nickname);
+            dataNode.put("SecurityQuestion",securityQuestion);
+            dataNode.put("SecurityAnswer",securityAnswer);
+
+            infoNode.set("Data",dataNode);
+            rootNode.set("Info",infoNode);
+
+            signNode.put("Context","");
+            signNode.put("PublicKey","");
+           // ObjectMapper objectMapper = new ObjectMapper();
+            return new ObjectMapper().writeValueAsString(rootNode);
+    };
+
     /***服务认证阶段***/
     /***C to AS
      * @param process
@@ -103,10 +153,9 @@ public class PackageConstructor {
      * @param idTGS TGS的IP地址
      * @param ts 为时间戳 ,如2020-6-15 10:00:00
      * ****/
-    public String  getPackageCtoASLogin(String process, String operation, Source source, Destination destination, String code, String idC, String idTGS, TS ts, String publickey) throws IOException {
+    public String  getPackageCtoASLogin(String process, String operation, Source source, Destination destination, String code, String idC, String idTGS, TS ts, String publickey) throws JsonProcessingException {
         ObjectNode rootNode = jsonNodeFactory.objectNode();
         ObjectNode infoNode = jsonNodeFactory.objectNode();
-
         ObjectNode signNode = jsonNodeFactory.objectNode();
 
         infoNode.put("Process",process);
@@ -134,8 +183,7 @@ public class PackageConstructor {
 
         String signContext= objectMapper.writeValueAsString(infoNode);
 
-        //TODO
-        //签名算法
+
        // String signResult=signContext;
         //
         signNode.put("Context","");
@@ -164,7 +212,7 @@ public class PackageConstructor {
      * @param idTGS TGS的IP地址
      * @param ts 为时间戳 ,如2020-6-15 10:00:00
      * ****/
-    public String  getPackageAStoCLogin(String process, String operation, Source source, Destination destination, String code, String idC, String idTGS, TS ts, String publickey) throws IOException {
+    public String  getPackageAStoCLogin(String process, String operation, Source source, Destination destination, String code, String idC, String idTGS, TS ts, String publickey) throws JsonProcessingException {
         ObjectNode rootNode = jsonNodeFactory.objectNode();
         ObjectNode infoNode = jsonNodeFactory.objectNode();
 
@@ -196,7 +244,7 @@ public class PackageConstructor {
 
         String signContext= objectMapper.writeValueAsString(infoNode);
 
-       
+
         //签名算法
         // String signResult=signContext;
         //

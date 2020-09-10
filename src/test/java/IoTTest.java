@@ -24,8 +24,11 @@ public class IoTTest {
         PackageParser packageParser=new PackageParser(test);
         System.out.println(packageParser.getProcess());
         System.out.println(packageParser.getOperation());
-
-
+        Source testSource=new Source();
+        packageParser.getSource(testSource);
+        Destination testDE=new Destination();
+        packageParser.getDestination(testDE);
+System.out.println("1");
     }
 
     @Test
@@ -40,8 +43,21 @@ public class IoTTest {
         System.out.println(packageConstructor.getPackageTikectToGson(tgs));
     }
     @Test
-   public void hello3(){
+   public void Register() throws IOException {
+        PackageConstructor packageConstructor=new PackageConstructor();
+        Source source=new Source("user1","127.0.0.1");
+        Destination destination=new Destination("AS","127.3.4.1");
+        //Date data=new Data();
+        String test=packageConstructor.getPackageCtoASRegist("Register","Request",source,destination,"0000","test1","23498587","dalejo","who is you father","the 0/1");
+        System.out.println(test);
 
+        PackageParser packageParser=new PackageParser(test);
+        System.out.println(packageParser.getCode());
+        System.out.println(packageParser.getAccount());
+        System.out.println(packageParser.getPassword());
+        System.out.println(packageParser.getNickName());
+        System.out.println(packageParser.getSecurityQuestion());
+        System.out.println(packageParser.getSecurityAnswer());
     }
 }
 

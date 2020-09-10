@@ -11,6 +11,10 @@ public class Source  {
      * **/
     String ip;
 
+    public Source() {
+
+    }
+
     public Source(String id, String ip) {
         this.id = id;
         this.ip = ip;

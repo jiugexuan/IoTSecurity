@@ -10,6 +10,10 @@ public class Destination {
      * **/
     String ip;
 
+    public Destination() {
+
+    }
+
     public Destination(String id, String ip) {
         this.id = id;
         this.ip = ip;
