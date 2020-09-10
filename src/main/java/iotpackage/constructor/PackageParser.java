@@ -2,6 +2,7 @@ package iotpackage.constructor;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import iotpackage.data.ciphertext.Ciphertext;
 import iotpackage.destination.Destination;
 import iotpackage.source.Source;
 
@@ -102,6 +103,13 @@ public class PackageParser {
     public String getSecurityAnswer(){
         return dataNode.get("SecurityAnswer").asText();
     };
+
+    /******登入*******/
+    /*****C to AS*****/
+    /*****AS to C*****/
+    public Ciphertext getCiphertext(){
+        return new Ciphertext(dataNode.get("Ciphertext").get("Context").asText(),dataNode.get("Ciphertext").get("Id").asText());
+    }
 
 
 }

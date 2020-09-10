@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import iotpackage.IoTKey;
+import iotpackage.data.ciphertext.Ciphertext;
 import iotpackage.data.ciphertext.Lifetime;
 import iotpackage.data.ticket.Ticket;
 import iotpackage.destination.Destination;
@@ -69,11 +70,21 @@ public class PackageConstructor {
     }
 
     //Lifetime节点添加
-    void setLifetime(ObjectNode parentNode, Lifetime lifetime){
-        ObjectNode TSNode=jsonNodeFactory.objectNode();
-        TSNode.put("Id",lifetime.getId());
-        TSNode.put("Context",lifetime.getContext());
-        parentNode.set("Lifetime",TSNode);
+    void setLifetimeNode(ObjectNode parentNode, Lifetime lifetime){
+        ObjectNode lifetimeNode=jsonNodeFactory.objectNode();
+        lifetimeNode.put("Id",lifetime.getId());
+        lifetimeNode.put("Context",lifetime.getContext());
+        parentNode.set("Lifetime",lifetimeNode);
+
+    }
+
+    //密文节点添加
+    void setCipherNode(ObjectNode parentNode,Ciphertext ciphertext){
+        ObjectNode ciphertextNode=jsonNodeFactory.objectNode();
+
+        ciphertextNode.put("Context",ciphertext.getContext());
+        ciphertextNode.put("Id",ciphertext.getId());
+        parentNode.set("Ciphertext",ciphertextNode);
 
     }
 
@@ -88,7 +99,7 @@ public class PackageConstructor {
         setSourceNode(rootNode,ticket.getId());
         setDestionationNode(rootNode,ticket.getAd());
         setTSNode(rootNode,ticket.getTs());
-        setLifetime(rootNode,ticket.getLifetime());
+        setLifetimeNode(rootNode,ticket.getLifetime());
         //ObjectMapper objectMapper = new ObjectMapper();
 
         //String signContext= objectMapper.writeValueAsString(rootNode);
@@ -269,11 +280,11 @@ public class PackageConstructor {
      * @param source
      * @param destination
      * @param code
-     * @param idC 用户IP地址
-     * @param idTGS TGS的IP地址
-     * @param ts 为时间戳 ,如2020-6-15 10:00:00
      * ****/
-    public String  getPackageAStoCLogin(String process, String operation, Source source, Destination destination, String code, String idC, String idTGS, TS ts, String publickey) throws JsonProcessingException {
+    public String  getPackageAStoCLogin(String process, String operation, Source source,
+                                        Destination destination, String code, String idC,
+                                        String cipherKey,IoTKey CandTGS, String idTGS, TS ts, Lifetime lifetime,
+                                        Ticket tgs,String ticketKey,String publickey) throws JsonProcessingException {
         ObjectNode rootNode = jsonNodeFactory.objectNode();
         ObjectNode infoNode = jsonNodeFactory.objectNode();
 
@@ -296,15 +307,16 @@ public class PackageConstructor {
         //时间戳节点添加
         setTSNode(dataNode,ts);
 
+        CipherConstructor cipherConstructor=new CipherConstructor(cipherKey);
+        IoTKey userpasswordmd;
+        setCipherNode(dataNode,new Ciphertext(cipherConstructor.constructCipherOfAStoC(CandTGS,idTGS,ts,lifetime,tgs,ticketKey),"AStoCLoginResponse"));
+
         infoNode.set("Data",dataNode);
         rootNode.set("Info",infoNode);
 
 
         //sign签名
         ObjectMapper objectMapper = new ObjectMapper();
-
-        //String signContext= objectMapper.writeValueAsString(infoNode);
-
 
         //签名算法
         if(publickey.length()==0){

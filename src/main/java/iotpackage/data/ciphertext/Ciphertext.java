@@ -26,4 +26,8 @@ public class Ciphertext {
         this.context = context;
         this.id = id;
     }
+
+    public void printCiphertext(){
+        System.out.println("the ciphertext\n"+"context:\n"+getContext()+"\nid:"+getId()+"\n");
+    }
 }
