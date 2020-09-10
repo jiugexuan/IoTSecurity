@@ -275,11 +275,20 @@ public class PackageConstructor {
     }
 
     /***AS to C
-     * @param process
-     * @param operation
-     * @param source
-     * @param destination
-     * @param code
+     * @param process 进程代号
+     * @param operation 操作代号
+     * @param source 发送方
+     * @param destination 接受方
+     * @param code 操作码
+     * @param idC 用户的ip地址
+     * @param cipherKey 加密密文的密钥 为用户的password的md5的值
+     * @param CandTGS 由AS生成的C和TGS交互的密钥，ticket tgs中有一份
+     * @param idTGS tgs的ip地址
+     * @param ts 时间戳
+     * @param lifetime 有效时间
+     * @param tgs tgs的票据
+     * @param ticketKey 加密ticket的票据的key
+     * @param
      * ****/
     public String  getPackageAStoCLogin(String process, String operation, Source source,
                                         Destination destination, String code, String idC,
