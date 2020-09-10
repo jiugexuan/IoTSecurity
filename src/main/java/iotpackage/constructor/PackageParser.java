@@ -72,6 +72,15 @@ public class PackageParser {
         return dataNode.get("Code").asText();
     };
 
+    public String getSignPublicKey(){
+        return signNode.get("PublicKey").asText();
+    };
+
+    public String getSignContext(){
+        return signNode.get("Context").asText();
+    };
+
+
     /******注册**********/
 
     public String getAccount(){

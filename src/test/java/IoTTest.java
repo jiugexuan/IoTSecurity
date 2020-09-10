@@ -19,7 +19,7 @@ public class IoTTest {
         Source source=new Source("user1","127.0.0.1");
         Destination destination=new Destination("AS","127.3.4.1");
         //Date data=new Data();
-       String test=packageConstructor.getPackageCtoASLogin("Verify","Request",source,destination,"0000","192.168.7.2","178.69.3.1",new TS(1),"ABCJDLJO");
+       String test=packageConstructor.getPackageCtoASLogin("Verify","Request",source,destination,"0000","192.168.7.2","178.69.3.1",new TS(1),"");
        System.out.println(test);
         PackageParser packageParser=new PackageParser(test);
         System.out.println(packageParser.getProcess());
@@ -28,7 +28,7 @@ public class IoTTest {
         packageParser.getSource(testSource);
         Destination testDE=new Destination();
         packageParser.getDestination(testDE);
-System.out.println("1");
+        System.out.println("1");
     }
 
     @Test
@@ -48,7 +48,7 @@ System.out.println("1");
         Source source=new Source("user1","127.0.0.1");
         Destination destination=new Destination("AS","127.3.4.1");
         //Date data=new Data();
-        String test=packageConstructor.getPackageCtoASRegist("Verify","Request",source,destination,"0000","test1","23498587","dalejo","who is you father","the 0/1");
+        String test=packageConstructor.getPackageCtoASRegist("Verify","Request",source,destination,"0000","test1","23498587","dalejo","who is you father","the 0/1","");
         System.out.println(test);
 
         PackageParser packageParser=new PackageParser(test);
@@ -87,6 +87,8 @@ System.out.println("1");
         packageParser.getDestination(resultDestionation);
         resultDestionation.printDetination();
         System.out.println(packageParser.getCode());
+        System.out.println(packageParser.getSignContext());
+        System.out.println(packageParser.getSignPublicKey());
     }
 }
 

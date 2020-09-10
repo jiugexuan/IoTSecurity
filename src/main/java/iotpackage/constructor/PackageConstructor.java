@@ -16,6 +16,7 @@ import iotpackage.data.*;
 import org.apache.commons.codec.digest.Md5Crypt;
 import securityalgorithm.DESUtil;
 import securityalgorithm.MD5Util;
+import securityalgorithm.RSAUtil;
 
 import java.io.IOException;
 import java.security.PublicKey;
@@ -96,10 +97,14 @@ public class PackageConstructor {
 
 
     /***服务器响应代码****/
-    /*service to C
-     *
-     *
-     */
+    /***service to C
+     * @param process 进程代号
+     * @param operation 操作代号
+     * @param source 发送方
+     * @param destination 接受方
+     * @param code 操作码
+     * @param publickey 验证公钥
+     * */
     public String getPackageServiceResponse(String process, String operation, Source source, Destination destination, String code,String publickey) throws JsonProcessingException {
         ObjectNode rootNode = jsonNodeFactory.objectNode();
         ObjectNode infoNode = jsonNodeFactory.objectNode();
@@ -121,9 +126,18 @@ public class PackageConstructor {
         infoNode.set("Data",dataNode);
         rootNode.set("Info",infoNode);
 
-        //TODO 签名算法
-        signNode.put("Context","");
+
+        if(publickey.length()==0){
+            signNode.put("Context","");
+
+        }else{
+            //签名是加密
+            String signContext= RSAUtil.privateEncrypt(MD5Util.md5(new ObjectMapper().writeValueAsString(infoNode)) ,publickey);
+            signNode.put("Context",signContext);
+        }
+
         signNode.put("PublicKey",publickey);
+        rootNode.set("Sign",signNode);
         // ObjectMapper objectMapper = new ObjectMapper();
         return new ObjectMapper().writeValueAsString(rootNode);
     }
@@ -142,7 +156,7 @@ public class PackageConstructor {
      * @param securityQuestion 安全问题
      * @param securityAnswer 安全问题的答案
      * ****/
-        public String getPackageCtoASRegist(String process, String operation, Source source, Destination destination, String code, String account,String password,String nickname,String securityQuestion,String securityAnswer) throws JsonProcessingException {
+        public String getPackageCtoASRegist(String process, String operation, Source source, Destination destination, String code, String account,String password,String nickname,String securityQuestion,String securityAnswer,String publickey) throws JsonProcessingException {
         ObjectNode rootNode = jsonNodeFactory.objectNode();
         ObjectNode infoNode = jsonNodeFactory.objectNode();
         ObjectNode signNode = jsonNodeFactory.objectNode();
@@ -169,8 +183,17 @@ public class PackageConstructor {
             infoNode.set("Data",dataNode);
             rootNode.set("Info",infoNode);
 
-            signNode.put("Context","");
-            signNode.put("PublicKey","");
+            if(publickey.length()==0){
+                signNode.put("Context","");
+
+            }else{
+                //签名是加密
+                String signContext= RSAUtil.privateEncrypt(MD5Util.md5(new ObjectMapper().writeValueAsString(infoNode)) ,publickey);
+                signNode.put("Context",signContext);
+            }
+
+            signNode.put("PublicKey",publickey);
+            rootNode.set("Sign",signNode);
            // ObjectMapper objectMapper = new ObjectMapper();
             return new ObjectMapper().writeValueAsString(rootNode);
     };
@@ -212,14 +235,19 @@ public class PackageConstructor {
         rootNode.set("Info",infoNode);
 
         //sign签名
-        ObjectMapper objectMapper = new ObjectMapper();
+        if(publickey.length()==0){
+            signNode.put("Context","");
 
-        String signContext= objectMapper.writeValueAsString(infoNode);
+        }else{
+            //签名是加密
+            String signContext= RSAUtil.privateEncrypt(MD5Util.md5(new ObjectMapper().writeValueAsString(infoNode)) ,publickey);
+            signNode.put("Context",signContext);
+        }
 
 
        // String signResult=signContext;
         //
-        signNode.put("Context","");
+
         signNode.put("PublicKey",publickey);
 
         rootNode.set("Sign",signNode);
@@ -228,7 +256,7 @@ public class PackageConstructor {
 
 
 
-        return objectMapper.writeValueAsString(rootNode);
+        return new ObjectMapper().writeValueAsString(rootNode);
       //  String result = "";
         /*JsonGenerator generator =
         ObjectMapper objectMapper = new ObjectMapper();
@@ -275,13 +303,18 @@ public class PackageConstructor {
         //sign签名
         ObjectMapper objectMapper = new ObjectMapper();
 
-        String signContext= objectMapper.writeValueAsString(infoNode);
+        //String signContext= objectMapper.writeValueAsString(infoNode);
 
 
         //签名算法
-        // String signResult=signContext;
-        //
-        signNode.put("Context","");
+        if(publickey.length()==0){
+            signNode.put("Context","");
+
+        }else{
+            //签名是加密
+            String signContext= RSAUtil.privateEncrypt(MD5Util.md5(new ObjectMapper().writeValueAsString(infoNode)) ,publickey);
+            signNode.put("Context",signContext);
+        }
         signNode.put("PublicKey",publickey);
 
         rootNode.set("Sign",signNode);
