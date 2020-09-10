@@ -34,4 +34,8 @@ public class Destination {
     public void setIp(String ip) {
         this.ip = ip;
     }
+
+    public void printDetination(){
+        System.out.println("the destiontion\n"+"id:"+getId()+"\nip:"+getIp()+"\n");
+    }
 }

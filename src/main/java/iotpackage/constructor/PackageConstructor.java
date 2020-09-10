@@ -95,6 +95,39 @@ public class PackageConstructor {
     };
 
 
+    /***服务器响应代码****/
+    /*service to C
+     *
+     *
+     */
+    public String getPackageServiceResponse(String process, String operation, Source source, Destination destination, String code,String publickey) throws JsonProcessingException {
+        ObjectNode rootNode = jsonNodeFactory.objectNode();
+        ObjectNode infoNode = jsonNodeFactory.objectNode();
+        ObjectNode signNode = jsonNodeFactory.objectNode();
+        infoNode.put("Process",process);
+        infoNode.put("Operation",operation);
+
+        //source节点添加
+        setSourceNode(infoNode,source);
+
+        //destination节点添加
+        setDestionationNode(infoNode,destination);
+
+        //Data字段
+        ObjectNode dataNode = jsonNodeFactory.objectNode();
+        dataNode.put("Code",code);
+
+
+        infoNode.set("Data",dataNode);
+        rootNode.set("Info",infoNode);
+
+        //TODO 签名算法
+        signNode.put("Context","");
+        signNode.put("PublicKey",publickey);
+        // ObjectMapper objectMapper = new ObjectMapper();
+        return new ObjectMapper().writeValueAsString(rootNode);
+    }
+
     /***用户注册****/
     /***C to AS
      * @param process 进程代号

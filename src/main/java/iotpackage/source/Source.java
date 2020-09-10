@@ -36,5 +36,9 @@ public class Source  {
         this.ip = ip;
     }
 
+    public void printSource(){
+        System.out.println("the source\n"+"id:"+getId()+"\nip:"+getIp()+"\n");
+    }
+
 }
 
