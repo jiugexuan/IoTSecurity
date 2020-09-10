@@ -1,6 +1,6 @@
 package iotpackage.data.ticket;
 
-import iotpackage.Key;
+import iotpackage.IoTKey;
 import iotpackage.data.TS;
 import iotpackage.data.ciphertext.Lifetime;
 import iotpackage.destination.Destination;
@@ -10,14 +10,14 @@ public class Ticket {
     /**
      * 指明密钥关系
      * **/
-    Key key;
+    IoTKey key;
     /****/
     Source id;
     Destination ad;
     TS ts;
     Lifetime lifetime;
 
-    public Ticket(Key key, Source id, Destination ad, TS ts, Lifetime lifetime) {
+    public Ticket(IoTKey key, Source id, Destination ad, TS ts, Lifetime lifetime) {
         this.key = key;
         this.id = id;
         this.ad = ad;
@@ -25,11 +25,11 @@ public class Ticket {
         this.lifetime = lifetime;
     }
 
-    public Key getKey() {
+    public IoTKey getKey() {
         return key;
     }
 
-    public void setKey(Key key) {
+    public void setKey(IoTKey key) {
         this.key = key;
     }
 

@@ -1,6 +1,11 @@
+import com.fasterxml.jackson.core.JsonProcessingException;
+import iotpackage.IoTKey;
 import iotpackage.constructor.PackageConstructor;
 
+import iotpackage.constructor.PackageParser;
 import iotpackage.data.TS;
+import iotpackage.data.ciphertext.Lifetime;
+import iotpackage.data.ticket.Ticket;
 import iotpackage.destination.Destination;
 import iotpackage.source.Source;
 import org.junit.Test;
@@ -14,8 +19,13 @@ public class IoTTest {
         Source source=new Source("user1","127.0.0.1");
         Destination destination=new Destination("AS","127.3.4.1");
         //Date data=new Data();
-       String test=packageConstructor.packageCtoAS("Verify","Request",source,destination,"0000","192.168.7.2","178.69.3.1",new TS(1),"ABCJDLJO");
+       String test=packageConstructor.getPackageCtoASLogin("Verify","Request",source,destination,"0000","192.168.7.2","178.69.3.1",new TS(1),"ABCJDLJO");
        System.out.println(test);
+        PackageParser packageParser=new PackageParser(test);
+        System.out.println(packageParser.getProcess());
+        System.out.println(packageParser.getOperation());
+
+
     }
 
     @Test
@@ -24,8 +34,10 @@ public class IoTTest {
         System.out.println(ts.getContext());
     }
     @Test
-    public void hello2(){
-
+    public void testTGS() throws JsonProcessingException {
+        Ticket tgs=new Ticket(new IoTKey("AccountAndTGS","2"),new Source("1","2"),new Destination("2","1"),new TS(1),new Lifetime("TGS","540000"));
+        PackageConstructor packageConstructor=new PackageConstructor();
+        System.out.println(packageConstructor.getPackageTikectToGson(tgs));
     }
     @Test
    public void hello3(){
