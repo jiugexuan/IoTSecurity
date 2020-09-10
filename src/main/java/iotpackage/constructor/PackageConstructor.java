@@ -196,7 +196,7 @@ public class PackageConstructor {
 
         String signContext= objectMapper.writeValueAsString(infoNode);
 
-        //TODO
+       
         //签名算法
         // String signResult=signContext;
         //
