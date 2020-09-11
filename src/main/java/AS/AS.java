@@ -85,7 +85,7 @@ public class AS implements Runnable {
             }
 
         } else {
-            System.out.println("AS Idc:"+packageParser.getIdC());
+            System.out.println("AS IdC:"+packageParser.getIdC());
 
             try {
                 String code = DBExcute.logIn(packageParser.getIdC());

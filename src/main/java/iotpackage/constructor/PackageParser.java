@@ -131,7 +131,7 @@ public class PackageParser {
         return new Ciphertext(dataNode.get("Ciphertext").get("Context").asText(),dataNode.get("Ciphertext").get("Id").asText());
     }
     public String getIdC(){
-        return dataNode.get("Idc").asText();
+        return dataNode.get("IdC").asText();
     }
     /***注意jsonc串**/
     @Deprecated

@@ -273,7 +273,7 @@ public class PackageConstructor {
         //Data字段
         ObjectNode dataNode = jsonNodeFactory.objectNode();
         dataNode.put("Code",code);
-        dataNode.put("Idc",idC);
+        dataNode.put("IdC",idC);
         dataNode.put("IdTGS",idTGS);
         //时间戳节点添加
         setTSNode(dataNode,ts);
@@ -354,7 +354,7 @@ public class PackageConstructor {
         //Data字段
         ObjectNode dataNode = jsonNodeFactory.objectNode();
         dataNode.put("Code",code);
-        dataNode.put("Idc",idC);
+        dataNode.put("IdC",idC);
         dataNode.put("IdTGS",idTGS);
         //时间戳节点添加
         setTSNode(dataNode,ts);
@@ -434,7 +434,7 @@ public class PackageConstructor {
         //Data字段
         ObjectNode dataNode = jsonNodeFactory.objectNode();
         dataNode.put("Code",code);
-        dataNode.put("Idc",idC);
+        dataNode.put("IdC",idC);
         dataNode.put("IdTGS",idTGS);
         //时间戳节点添加
         setTSNode(dataNode,ts);
