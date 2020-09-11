@@ -151,11 +151,19 @@ public class PackageParser {
         //return new Ciphertext(dataNode.get("Ciphertext").get("Context").asText(),dataNode.get("Ciphertext").get("Id").asText());
     }
 
+    public String getTicketInSafety(String json,String ticketID) throws IOException {
+        JsonNode jsonNode=objectMapper.readTree(json);
+        //  String plaintext=jsonNode.get("Ticket").asText();
+        JsonNode ticketNode=jsonNode.get("Ticket");
+        ticketID=ticketNode.get("Id").asText();
+        return ticketNode.get("Context").asText();
+    }
+
     public Ticket getTicket(String json,String ticketKey,String ticketID) throws IOException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
         JsonNode jsonNode=objectMapper.readTree(json);
         //  String plaintext=jsonNode.get("Ticket").asText();
         JsonNode ticketNode=jsonNode.get("Ticket");
-        String plaintext= DESUtil.getDecryptString(ticketNode.get("Context").asText(),ticketKey) ;
+        String plaintext= DESUtil.getDecryptString(ticketNode.get("Context").asText(),ticketKey);
         ticketID=ticketNode.get("Id").asText();
         System.out.println(plaintext);
         jsonNode=objectMapper.readTree(plaintext);

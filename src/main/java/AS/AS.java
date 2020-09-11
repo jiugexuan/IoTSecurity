@@ -99,12 +99,7 @@ public class AS implements Runnable {
                     Lifetime lifetime = new Lifetime("TGS","54000");
                     IoTKey ioTKey = new IoTKey("CandAS",code);
                     Ticket ticketTgs = new Ticket(ioTKey,source,destination,ts,lifetime);
-//                    CipherConstructor cipherConstructor = new CipherConstructor();
-//                    try {
-//                        String AStoC = cipherConstructor.constructCipherOfAStoC(ioTKey,"123.1.1.1",ts,lifetime,ticketTgs,"tickkey AS TGS")
-//                    } catch (JsonProcessingException e) {
-//                        e.printStackTrace();
-//                    }
+
                     String AStoC = null;
                     PackageConstructor packageConstructor = new PackageConstructor();
                     try {

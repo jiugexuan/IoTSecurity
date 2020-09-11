@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import iotpackage.constructor.PackageConstructor;
 import iotpackage.constructor.PackageParser;
 import iotpackage.data.TS;
+import iotpackage.data.autheticator.Authenticator;
 import iotpackage.data.ciphertext.Ciphertext;
 import iotpackage.data.ticket.Ticket;
 import iotpackage.destination.Destination;
@@ -56,7 +57,7 @@ public class LogIn extends JFrame {
 
         JButton jButton1 = new JButton();
         jButton1.setText("登录");
-        jButton1.setBounds(30,130,220,30);
+        jButton1.setBounds(30,130,150,30);
         add(jButton1);
         jButton1.addActionListener(new ActionListener() {
             @Override
@@ -109,18 +110,10 @@ public class LogIn extends JFrame {
 
                         Ciphertext ciphertext = packageParser.getCiphertext();
 
-
-                        //MD5Util.md5(userKey);
+                        String cipText = "";
 
                         try {
-                            String cipText = DESUtil.getDecryptString(ciphertext.getContext(),MD5Util.md5(userKey) );
-                            System.out.print("\n"+cipText);
-                            //TODO
-                           // Ticket ticket=packageParser.getTicket(cipText,"",new String());
-                            //ticket.printfTicket();
-
-
-
+                            cipText = DESUtil.getDecryptString(ciphertext.getContext(),MD5Util.md5(userKey) );
                         } catch (IOException | NoSuchPaddingException | InvalidKeyException | NoSuchAlgorithmException | IllegalBlockSizeException ioException) {
                             ioException.printStackTrace();
                         } catch (BadPaddingException badPaddingException) {
@@ -128,8 +121,36 @@ public class LogIn extends JFrame {
                             //badPaddingException.printStackTrace();
                             JOptionPane.showMessageDialog(null, "密码错误");
                             jTextField2.setText("");
+                            return;
+                        }
+                            System.out.println("\n"+cipText);
+                        try {
+                            System.out.println(packageParser.getTicketInSafety(cipText,new String()));
+                        } catch (IOException ioException) {
+                            ioException.printStackTrace();
+                        }
+                        String tgsContent = null;
+                        try {
+                            tgsContent = packageParser.getTicketInSafety(cipText,new String());
+                        } catch (IOException ioException) {
+                            ioException.printStackTrace();
                         }
 
+                        String CtoTGS = null;
+                            try {
+                                CtoTGS = packageConstructor.getPackageCtoTGS("Verify","Request",source,destination,"0000","127.0.0.1:9120",tgsContent,"TGS", new Authenticator(new Destination("coueg","127.569.321"), new Source("accoutTO","192.168.1.7"),new TS(3)), "1234578","7","" );
+                            } catch (JsonProcessingException jsonProcessingException) {
+                                jsonProcessingException.printStackTrace();
+                            }
+                            System.out.print("\n 客户端发送："+ CtoTGS);
+
+                            ConnManger cmTGS = new ConnManger("TGS");
+                            SocketConn connTGS = cmTGS.getConn();
+                            connTGS.send(CtoTGS.getBytes());
+
+                            byte[] receiveTGStoC= new byte[2048];
+                            connTGS.receive(receiveTGStoC);
+                            String recTGS = new String(receiveBuffer);
 
                     }
                 }
@@ -139,7 +160,7 @@ public class LogIn extends JFrame {
 
         JButton jButton2 = new JButton();
         jButton2.setText("注册");
-        jButton2.setBounds(260,130,80,30);
+        jButton2.setBounds(200,130,150,30);
         add(jButton2);
         jButton2.addActionListener(new ActionListener() {
             @Override
