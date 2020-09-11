@@ -144,7 +144,7 @@ public class PackageParser {
     public String getIdC(){
         return dataNode.get("IdC").asText();
     }
-    /***注意jsonc串**/
+    /***注意json串**/
     @Deprecated
     public Ticket getTicket(String json,String ticketKey) throws IOException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
         JsonNode jsonNode=objectMapper.readTree(json);
