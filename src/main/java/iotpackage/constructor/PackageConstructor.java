@@ -101,8 +101,8 @@ public class PackageConstructor {
     // Authenticator 加密状态
     void setAuthenticatorNode(ObjectNode parentNode,String authenticatorContext,String authenticatorID){
         ObjectNode authenticatorNode=jsonNodeFactory.objectNode();
-        authenticatorNode.put("Id",authenticatorContext);
-        authenticatorNode.put("Context",authenticatorID);
+        authenticatorNode.put("Id",authenticatorID);
+        authenticatorNode.put("Context", authenticatorContext);
 
         parentNode.set("Authenticator", authenticatorNode);
     };
