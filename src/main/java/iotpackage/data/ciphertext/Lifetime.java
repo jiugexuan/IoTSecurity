@@ -14,6 +14,14 @@ public class Lifetime {
      * **/
     String context;
 
+    public void printfLifetime(){
+        System.out.println(">--------------");
+        System.out.println("the lifetime:");
+        System.out.println(">>id:"+getId());
+        System.out.println(">>context:"+getContext());
+        System.out.println(">--------------");
+    }
+
     public Lifetime(String id, String context) {
         this.id = id;
         this.context = context;

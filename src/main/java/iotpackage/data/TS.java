@@ -23,6 +23,17 @@ public class TS {
     }
 
 
+    public void printTS(){
+        System.out.println(">--------------");
+        System.out.println("the ts:");
+        System.out.println(">>id:"+getId());
+        System.out.println(">>context:"+getContext());
+        System.out.println(">--------------");
+
+    }
+
+
+
     public int getId() {
         return id;
     }

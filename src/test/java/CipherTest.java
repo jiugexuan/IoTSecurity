@@ -4,6 +4,7 @@ import iotpackage.constructor.CipherConstructor;
 import iotpackage.constructor.PackageConstructor;
 import iotpackage.constructor.PackageParser;
 import iotpackage.data.TS;
+import iotpackage.data.autheticator.Authenticator;
 import iotpackage.data.ciphertext.Ciphertext;
 import iotpackage.data.ciphertext.Lifetime;
 import iotpackage.data.ticket.Ticket;
@@ -83,19 +84,33 @@ public class CipherTest {
 //                Ticket tgs,String ticketKey,String publickey) throws JsonProcessingException {
         String test=packageConstructor.getPackageAStoCLogin("Verify","Response",source,destination,"0000",
                 destination.getIp(),passwordmd5,new IoTKey("CandTGS","jaoejeao"),"192.367.2",new TS(2),
-                new Lifetime("j","540000"),tgs,ticketKey,pulickey);
+                new Lifetime("j","540000"),tgs,"heloo",ticketKey,pulickey);
         System.out.println(test);
 
         PackageParser packageParser=new PackageParser(test);
 
+        //
         Ciphertext ciphertext=packageParser.getCiphertext();
         ciphertext.printCiphertext();
-        System.out.println(DESUtil.getDecryptString(ciphertext.getContext(),passwordmd5));
+
+        String plaintext=DESUtil.getDecryptString(ciphertext.getContext(),passwordmd5);
+
+        System.out.println(plaintext);
+
+        String ticketID= "";
+        Ticket ticket=packageParser.getTicket(plaintext,ticketKey,ticketID);
+        System.out.println();
+        ticket.printfTicket();
        // System.out.println();
         //解析包
 
         //String test=cipherConstructor.constructCipherOfAStoC(key,"192.168.37",new TS(2),new Lifetime("2","54000"),tgs,ticketKey);
     //    System.out.println(test);
       //  System.out.println(DESUtil.getDecryptString(test,cipherKey));
+    }
+
+    @Test
+    public void authenticator(){
+      //  System.out.println(new CipherConstructor().getPackageAuthenticatorToGson());
     }
 }

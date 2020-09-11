@@ -59,7 +59,7 @@ public class IoTTest {
         resultSource.printSource();
         Destination resultDestionation=new Destination();
         packageParser.getDestination(resultDestionation);
-        resultDestionation.printDetination();
+        resultDestionation.printDestination();
         System.out.println(packageParser.getCode());
         System.out.println(packageParser.getAccount());
         System.out.println(packageParser.getPassword());
@@ -85,7 +85,7 @@ public class IoTTest {
         resultSource.printSource();
         Destination resultDestionation=new Destination();
         packageParser.getDestination(resultDestionation);
-        resultDestionation.printDetination();
+        resultDestionation.printDestination();
         System.out.println(packageParser.getCode());
         System.out.println(packageParser.getSignContext());
         System.out.println(packageParser.getSignPublicKey());

@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import iotpackage.IoTKey;
 import iotpackage.data.TS;
+import iotpackage.data.autheticator.Authenticator;
 import iotpackage.data.ciphertext.Lifetime;
 import iotpackage.data.ticket.Ticket;
 import iotpackage.destination.Destination;
@@ -68,7 +69,14 @@ public class CipherConstructor {
         parentNode.set("Lifetime",TSNode);
 
     }
+    //Ticket节点添加
+    void setTicketNode(ObjectNode parentNode, Ticket tgs,String ticketID,String ticketKey) throws JsonProcessingException {
+        ObjectNode TSNode=jsonNodeFactory.objectNode();
+        TSNode.put("Id",ticketID);
+        TSNode.put("Context",getCipherOfTicket(tgs,ticketKey));
+        parentNode.set("Ticket",TSNode);
 
+    }
 
     public String getPackageTikectToGson(Ticket ticket) throws JsonProcessingException {
         ObjectNode rootNode = jsonNodeFactory.objectNode();
@@ -78,9 +86,16 @@ public class CipherConstructor {
         setDestionationNode(rootNode,ticket.getAd());
         setTSNode(rootNode,ticket.getTs());
         setLifetimeNode(rootNode,ticket.getLifetime());
-        //ObjectMapper objectMapper = new ObjectMapper();
+        return new ObjectMapper().writeValueAsString(rootNode);
+    };
 
-        //String signContext= objectMapper.writeValueAsString(rootNode);
+    public String getPackageAuthenticatorToGson(Authenticator authenticator) throws JsonProcessingException {
+        ObjectNode rootNode = jsonNodeFactory.objectNode();
+        //rootNode.put("Id",tgs.getId())
+        setDestionationNode(rootNode,authenticator.getId());
+        setSourceNode(rootNode,authenticator.getAd());
+
+        setTSNode(rootNode,authenticator.getTs());
         return new ObjectMapper().writeValueAsString(rootNode);
     };
 
@@ -88,28 +103,50 @@ public class CipherConstructor {
         return DESUtil.getEncryptString(getPackageTikectToGson(ticket),ticketKey) ;
     }
 
+    public String getCipherOfAuthenticator(Authenticator authenticator,String authenticatorKey) throws JsonProcessingException {
+        return DESUtil.getEncryptString(getPackageAuthenticatorToGson(authenticator),authenticatorKey) ;
+    }
     /****AS->C*****/
+    @Deprecated
     public String constructCipherOfAStoC(IoTKey ioTKey, String idTGS, TS ts,
-                                         Lifetime lifetime, Ticket tgs,String ticketKey) throws JsonProcessingException {
+                                         Lifetime lifetime, Ticket tgs,
+                                         String ticketKey) throws JsonProcessingException {
 
         ObjectNode rootNode = jsonNodeFactory.objectNode();
         setKeyNode(rootNode,ioTKey);
         rootNode.put("IDTGS",idTGS);
         setTSNode(rootNode,ts);
         setLifetimeNode(rootNode,lifetime);
+       // rootNode.put("Ticket",getCipherOfTicket(tgs,ticketKey));
         rootNode.put("Ticket",getCipherOfTicket(tgs,ticketKey));
-
        // return new ObjectMapper().writeValueAsString(rootNode);
         return DESUtil.getEncryptString(new ObjectMapper().writeValueAsString(rootNode),cipherKey);
     }
 
-     public CipherConstructor() {
+    public String constructCipherOfAStoC(IoTKey ioTKey, String idTGS, TS ts,
+                                         Lifetime lifetime,
+                                         Ticket tgs,String ticketID, String ticketKey) throws JsonProcessingException {
+
+        ObjectNode rootNode = jsonNodeFactory.objectNode();
+        setKeyNode(rootNode,ioTKey);
+        rootNode.put("IDTGS",idTGS);
+        setTSNode(rootNode,ts);
+        setLifetimeNode(rootNode,lifetime);
+        // rootNode.put("Ticket",getCipherOfTicket(tgs,ticketKey));
+        setTicketNode(rootNode,tgs,ticketID,ticketKey);
+        // return new ObjectMapper().writeValueAsString(rootNode);
+        return DESUtil.getEncryptString(new ObjectMapper().writeValueAsString(rootNode),cipherKey);
+    }
+
+     public String constructCipherOfCtoTGS (){
+        return "";
 
     }
 
     public CipherConstructor(String cipherKey) {
         this.cipherKey=cipherKey;
     }
-
+    public CipherConstructor() {
+    }
 
 }

@@ -25,6 +25,22 @@ public class Ticket {
         this.lifetime = lifetime;
     }
 
+    public void printfTicket(){
+        System.out.println("--------------");
+        System.out.println("the ticket:");
+        System.out.println(">>Key:");
+        this.key.printIoTKey();
+        System.out.println(">>Source id:");
+        this.id.printSource();
+        System.out.println(">>Destination ad:");
+        this.ad.printDestination();
+        System.out.println(">>ts:");
+        this.ts.printTS();
+        System.out.println(">>Lifetime");
+        this.lifetime.printfLifetime();
+        System.out.println("--------------");
+    }
+
     public IoTKey getKey() {
         return key;
     }

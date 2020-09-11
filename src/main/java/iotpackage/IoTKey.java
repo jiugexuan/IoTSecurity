@@ -10,6 +10,8 @@ public class IoTKey {
      * */
     String context;
 
+
+
     public IoTKey(String id, String context) {
         this.id = id;
         this.context = context;
@@ -29,5 +31,12 @@ public class IoTKey {
 
     public void setContext(String context) {
         this.context = context;
+    }
+    public void printIoTKey(){
+        System.out.println(">--------------");
+        System.out.println("the IoTKey:");
+        System.out.println(">>id:"+getId());
+        System.out.println(">>context:"+getContext());
+        System.out.println(">--------------");
     }
 }

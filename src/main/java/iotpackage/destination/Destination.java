@@ -35,7 +35,12 @@ public class Destination {
         this.ip = ip;
     }
 
-    public void printDetination(){
-        System.out.println("the destiontion\n"+"id:"+getId()+"\nip:"+getIp()+"\n");
+
+    public void printDestination(){
+        System.out.println(">--------------");
+        System.out.println("the Destination:");
+        System.out.println(">>Id:"+getId());
+        System.out.println(">>IP:"+getIp());
+        System.out.println(">--------------");
     }
 }

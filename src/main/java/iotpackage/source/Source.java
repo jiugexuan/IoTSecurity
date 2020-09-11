@@ -37,7 +37,11 @@ public class Source  {
     }
 
     public void printSource(){
-        System.out.println("the source\n"+"id:"+getId()+"\nip:"+getIp()+"\n");
+        System.out.println(">--------------");
+        System.out.println("the Source:");
+        System.out.println(">>Id:"+getId());
+        System.out.println(">>IP:"+getIp());
+        System.out.println(">--------------");
     }
 
 }
