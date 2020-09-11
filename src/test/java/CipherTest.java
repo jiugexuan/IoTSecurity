@@ -14,7 +14,12 @@ import org.junit.Test;
 import securityalgorithm.DESUtil;
 import securityalgorithm.MD5Util;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 
 public class CipherTest {
 
@@ -26,8 +31,22 @@ public class CipherTest {
         System.out.println(jsontgs);
         String result=cipherConstructor.getCipherOfTicket(tgs,"aleijgajgl");
         System.out.println(result);
-        if(new String(DESUtil.getDecryptString(result,"aleijgajgl")).contentEquals(jsontgs) ){
-            System.out.println(true);
+        try {
+            if(new String(DESUtil.getDecryptString(result,"aleijgajgl")).contentEquals(jsontgs) ){
+                System.out.println(true);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
         }
 
     }
@@ -93,12 +112,38 @@ public class CipherTest {
         Ciphertext ciphertext=packageParser.getCiphertext();
         ciphertext.printCiphertext();
 
-        String plaintext=DESUtil.getDecryptString(ciphertext.getContext(),passwordmd5);
+        String plaintext= null;
+        try {
+            plaintext = DESUtil.getDecryptString(ciphertext.getContext(),passwordmd5);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        }
 
         System.out.println(plaintext);
 
         String ticketID= "";
-        Ticket ticket=packageParser.getTicket(plaintext,ticketKey,ticketID);
+        Ticket ticket= null;
+        try {
+            ticket = packageParser.getTicket(plaintext,ticketKey,ticketID);
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        }
         System.out.println();
         ticket.printfTicket();
        // System.out.println();

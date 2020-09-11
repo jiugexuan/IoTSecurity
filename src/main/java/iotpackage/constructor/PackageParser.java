@@ -11,7 +11,12 @@ import iotpackage.destination.Destination;
 import iotpackage.source.Source;
 import securityalgorithm.DESUtil;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 
 public class PackageParser {
     ObjectMapper objectMapper;
@@ -120,7 +125,7 @@ public class PackageParser {
     }
     /***注意jsonc串**/
     @Deprecated
-    public Ticket getTicket(String json,String ticketKey) throws IOException {
+    public Ticket getTicket(String json,String ticketKey) throws IOException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
         JsonNode jsonNode=objectMapper.readTree(json);
       //  String plaintext=jsonNode.get("Ticket").asText();
         String plaintext= DESUtil.getDecryptString(jsonNode.get("Ticket").asText(),ticketKey) ;
@@ -146,7 +151,7 @@ public class PackageParser {
         //return new Ciphertext(dataNode.get("Ciphertext").get("Context").asText(),dataNode.get("Ciphertext").get("Id").asText());
     }
 
-    public Ticket getTicket(String json,String ticketKey,String ticketID) throws IOException {
+    public Ticket getTicket(String json,String ticketKey,String ticketID) throws IOException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
         JsonNode jsonNode=objectMapper.readTree(json);
         //  String plaintext=jsonNode.get("Ticket").asText();
         JsonNode ticketNode=jsonNode.get("Ticket");

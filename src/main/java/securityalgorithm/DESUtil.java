@@ -1,10 +1,13 @@
 package securityalgorithm;
 
+import java.io.IOException;
+import java.security.InvalidKeyException;
 import java.security.Key;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import org.apache.commons.codec.binary.Base64;
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
+
+import javax.crypto.*;
 
 
 public class DESUtil {
@@ -50,40 +53,71 @@ public class DESUtil {
         }
     }
 
+//    /**
+//     * @param: str
+//     * @return: java.lang.String
+//     * @Description: 获取解密之后的信息
+//     */
+//    public static String getDecryptString(String str,String getkey) {
+//        seed=getkey;
+//        String KEY_STR = seed;
+//        //基于BASE64编码，接收byte[] 并转换成String
+//        Base64 base64 =new Base64();
+//        try {
+//            KeyGenerator generator = KeyGenerator.getInstance(ALGORITHM);
+//            //运用SHA1安全策略
+//            SecureRandom secureRandom = SecureRandom.getInstance("SHA1PRNG");
+//            //设置上密匙种子
+//            secureRandom.setSeed(KEY_STR.getBytes());
+//            //初始化基于SHA1的算法对象
+//            generator.init(secureRandom);
+//            //生成密匙对象
+//            key = generator.generateKey();
+//            //将字符串decode成byte[]
+//            byte[] bytes = base64.decode(str);
+//            //获取解密对象
+//            Cipher cipher = Cipher.getInstance(ALGORITHM);
+//            //初始化解密信息
+//            cipher.init(Cipher.DECRYPT_MODE, key);
+//            //解密
+//            byte[] doFinal = cipher.doFinal(bytes);
+//            //返回解密之后的信息
+//            return new String(doFinal, CHARSETNAME);
+//        } catch (Exception e) {
+//            // TODO: handle exception
+//            throw new RuntimeException(e);
+//        }
     /**
      * @param: str
      * @return: java.lang.String
      * @Description: 获取解密之后的信息
      */
-    public static String getDecryptString(String str,String getkey) {
+    public static String getDecryptString(String str,String getkey) throws IOException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
         seed=getkey;
         String KEY_STR = seed;
         //基于BASE64编码，接收byte[] 并转换成String
         Base64 base64 =new Base64();
-        try {
-            KeyGenerator generator = KeyGenerator.getInstance(ALGORITHM);
-            //运用SHA1安全策略
-            SecureRandom secureRandom = SecureRandom.getInstance("SHA1PRNG");
-            //设置上密匙种子
-            secureRandom.setSeed(KEY_STR.getBytes());
-            //初始化基于SHA1的算法对象
-            generator.init(secureRandom);
-            //生成密匙对象
-            key = generator.generateKey();
-            //将字符串decode成byte[]
-            byte[] bytes = base64.decode(str);
-            //获取解密对象
-            Cipher cipher = Cipher.getInstance(ALGORITHM);
-            //初始化解密信息
-            cipher.init(Cipher.DECRYPT_MODE, key);
-            //解密
-            byte[] doFinal = cipher.doFinal(bytes);
-            //返回解密之后的信息
-            return new String(doFinal, CHARSETNAME);
-        } catch (Exception e) {
-            // TODO: handle exception
-            throw new RuntimeException(e);
-        }
+        KeyGenerator generator = KeyGenerator.getInstance(ALGORITHM);
+        //运用SHA1安全策略
+        SecureRandom secureRandom = SecureRandom.getInstance("SHA1PRNG");
+        //设置上密匙种子
+        secureRandom.setSeed(KEY_STR.getBytes());
+        //初始化基于SHA1的算法对象
+        generator.init(secureRandom);
+        //生成密匙对象
+        key = generator.generateKey();
+        //将字符串decode成byte[]
+        byte[] bytes = base64.decode(str);
+        //获取解密对象
+        Cipher cipher = Cipher.getInstance(ALGORITHM);
+        //初始化解密信息
+        cipher.init(Cipher.DECRYPT_MODE, key);
+        //解密
+        byte[] doFinal = cipher.doFinal(bytes);
+        //返回解密之后的信息
+        return new String(doFinal, CHARSETNAME);
+
     }
+
 
 }
