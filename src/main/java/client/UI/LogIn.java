@@ -105,6 +105,7 @@ public class LogIn extends JFrame {
                             ioException.printStackTrace();
                         }
                         System.out.print("\n 提取出加密ciphertext:"+packageParser.getCiphertext().getContext());
+                        System.out.print("\n ciphertext: ");
 
                         Ciphertext ciphertext = packageParser.getCiphertext();
 
@@ -114,26 +115,19 @@ public class LogIn extends JFrame {
                         try {
                             String cipText = DESUtil.getDecryptString(ciphertext.getContext(),MD5Util.md5(userKey) );
                             System.out.print("\n"+cipText);
-                            Ticket ticket=packageParser.getTicket(cipText,MD5Util.md5(userKey),new String());
-                            ticket.printfTicket();
+                            //TODO
+                           // Ticket ticket=packageParser.getTicket(cipText,"",new String());
+                            //ticket.printfTicket();
 
 
 
-                        } catch (IOException ioException) {
+                        } catch (IOException | NoSuchPaddingException | InvalidKeyException | NoSuchAlgorithmException | IllegalBlockSizeException ioException) {
                             ioException.printStackTrace();
-                        } catch (NoSuchAlgorithmException noSuchAlgorithmException) {
-                            noSuchAlgorithmException.printStackTrace();
-                        } catch (NoSuchPaddingException noSuchPaddingException) {
-                            noSuchPaddingException.printStackTrace();
-                        } catch (InvalidKeyException invalidKeyException) {
-                            invalidKeyException.printStackTrace();
                         } catch (BadPaddingException badPaddingException) {
                             System.out.print("\n 密钥错误 \n");
                             //badPaddingException.printStackTrace();
                             JOptionPane.showMessageDialog(null, "密码错误");
                             jTextField2.setText("");
-                        } catch (IllegalBlockSizeException illegalBlockSizeException) {
-                            illegalBlockSizeException.printStackTrace();
                         }
 
 
