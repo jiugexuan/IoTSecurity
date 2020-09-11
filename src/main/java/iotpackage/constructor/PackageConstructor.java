@@ -15,6 +15,7 @@ import iotpackage.destination.Destination;
 import iotpackage.source.Source;
 
 import iotpackage.data.*;
+import securityalgorithm.DESUtil;
 import securityalgorithm.MD5Util;
 import securityalgorithm.RSAUtil;
 
@@ -22,9 +23,9 @@ import securityalgorithm.RSAUtil;
 public class PackageConstructor {
 
     //JsonNodeFactory 实例，可全局共享
-    private JsonNodeFactory jsonNodeFactory = JsonNodeFactory.instance;
+    private JsonNodeFactory jsonNodeFactory;
     //JsonFactory 实例，线程安全
-    private JsonFactory jsonFactory = new JsonFactory();
+    private JsonFactory jsonFactory ;
 
     public PackageConstructor() {
         this.jsonNodeFactory = JsonNodeFactory.instance;
@@ -86,6 +87,25 @@ public class PackageConstructor {
     }
 
     //Ticket节点添加
+    //Ticket 保密v
+    void setTicketNode(ObjectNode parentNode,String ticketContext,String ticketID){
+        ObjectNode ticketNode=jsonNodeFactory.objectNode();
+        ticketNode.put("Id",ticketID);
+        ticketNode.put("Context",ticketContext);
+
+        parentNode.set("Ticket",ticketNode);
+
+    }
+
+    //凭证节点添加
+    // Authenticator 加密状态
+    void setAuthenticatorNode(ObjectNode parentNode,String authenticatorContext,String authenticatorID){
+        ObjectNode authenticatorNode=jsonNodeFactory.objectNode();
+        authenticatorNode.put("Id",authenticatorContext);
+        authenticatorNode.put("Context",authenticatorID);
+
+        parentNode.set("Authenticator", authenticatorNode);
+    };
    /* void setTicketNode(ObjectNode parentNode,Ticket TGS,ticket){
         ObjectNode ciphertextNode=jsonNodeFactory.objectNode();
 
@@ -456,17 +476,22 @@ public class PackageConstructor {
      * @param destination 接受方
      * @param code 操作码
      * @param idV 用户的访问的V的IP
-     * @param tgs tgs的票据
+     * @param tgsContext tgs的票据
+     * @param tgsticketID ticket ID号
+     * @param authenticator 有效证明
+     * @param authenticatorID 有效证明id
      * @param authenticator  用户授权
      * @param publickey 签名公钥
      * ****/
-    public String  getPackageASoCLogin(String process, String operation,
+    public String  getPackageCtoTGS(String process, String operation,
                                        Source source, Destination destination,
                                        String code,
                                        String idV,
-                                       Ticket tgs,
-                                       String tgsKey,
+                                       String tgsContext,
+                                       String tgsticketID,
                                        Authenticator authenticator,
+                                       String authenticatorKey,
+                                       String authenticatorID,
                                        String publickey
                                        ) throws JsonProcessingException {
 
@@ -489,15 +514,16 @@ public class PackageConstructor {
         dataNode.put("Code",code);
         dataNode.put("IdV",idV);
         //setTicket
-
+        setTicketNode(dataNode,tgsContext,tgsticketID);
+        setAuthenticatorNode(dataNode,DESUtil.getEncryptString(
+                new CipherConstructor().getPackageAuthenticatorToGson(authenticator),authenticatorKey),
+                authenticatorID);
 
         infoNode.set("Data",dataNode);
         rootNode.set("Info",infoNode);
 
 
         //sign签名
-        ObjectMapper objectMapper = new ObjectMapper();
-
         //签名算法
         if(publickey.length()==0){
             signNode.put("Context","");
@@ -511,7 +537,7 @@ public class PackageConstructor {
 
 
         rootNode.set("Sign",signNode);
-        return "";
+        return new ObjectMapper().writeValueAsString(rootNode);
     }
 
 }
