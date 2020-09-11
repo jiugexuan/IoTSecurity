@@ -540,6 +540,81 @@ public class PackageConstructor {
         return new ObjectMapper().writeValueAsString(rootNode);
     }
 
+
+    /***AS to C
+     *
+     * @param process 进程代号
+     * @param operation 操作代号
+     * @param source 发送方
+     * @param destination 接受方
+     * @param code 操作码
+     * @param cipherKey 加密密文的V密钥 AS生成的
+     * @param CandV 由TGS生成的C和V交互的密钥，ticketV中有一份
+     * @param idV V的ip地址
+     * @param ts 时间戳 代号为4
+     * @param ticketV tgs的票据
+     * @param ticketID tgs的ID
+     * @param ticketKey 加密ticket的票据的key
+     * @param publickey 签名公钥
+     * ****/
+    public String  getPackageTGStoC(String process, String operation,
+                                        Source source, Destination destination,
+                                        String code,
+                                        String cipherKey,
+                                        IoTKey CandV, String idV, TS ts,
+                                        Ticket ticketV,
+                                        String ticketID,
+                                        String ticketKey,
+                                        String publickey) throws JsonProcessingException {
+        ObjectNode rootNode = jsonNodeFactory.objectNode();
+        ObjectNode infoNode = jsonNodeFactory.objectNode();
+
+        ObjectNode signNode = jsonNodeFactory.objectNode();
+
+        infoNode.put("Process",process);
+        infoNode.put("Operation",operation);
+
+        //source节点添加
+        setSourceNode(infoNode,source);
+
+        //destination节点添加
+        setDestionationNode(infoNode,destination);
+
+        //Data字段
+        ObjectNode dataNode = jsonNodeFactory.objectNode();
+        dataNode.put("Code",code);
+        //时间戳节点添加
+        setTSNode(dataNode,ts);
+
+        CipherConstructor cipherConstructor=new CipherConstructor(cipherKey);
+        setCipherNode(dataNode,new Ciphertext(cipherConstructor.constructCipherOfTGStoC(CandV,idV,ts,ticketV,ticketID,ticketKey),"TGStoC"));
+
+        infoNode.set("Data",dataNode);
+        rootNode.set("Info",infoNode);
+
+
+        //sign签名
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        //签名算法
+        if(publickey.length()==0){
+            signNode.put("Context","");
+
+        }else{
+            //签名是加密
+            String signContext= RSAUtil.privateEncrypt(MD5Util.md5(new ObjectMapper().writeValueAsString(infoNode)) ,publickey);
+            signNode.put("Context",signContext);
+        }
+        signNode.put("PublicKey",publickey);
+
+        rootNode.set("Sign",signNode);
+
+        // rootNode.put("1","2");
+
+
+
+        return objectMapper.writeValueAsString(rootNode);
+    }
 }
 
 

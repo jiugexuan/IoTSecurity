@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import iotpackage.IoTKey;
 import iotpackage.data.TS;
+import iotpackage.data.autheticator.Authenticator;
 import iotpackage.data.ciphertext.Ciphertext;
 import iotpackage.data.ciphertext.Lifetime;
 import iotpackage.data.ticket.Ticket;
@@ -44,6 +45,8 @@ public class PackageParser {
         this.destinationNode=infoNode.get("Destination");
         this.dataNode=infoNode.get("Data");
     }
+
+
 
     public String getInfoJson() throws JsonProcessingException {
         return new ObjectMapper().writeValueAsString(infoNode);
@@ -130,6 +133,14 @@ public class PackageParser {
     public Ciphertext getCiphertext(){
         return new Ciphertext(dataNode.get("Ciphertext").get("Context").asText(),dataNode.get("Ciphertext").get("Id").asText());
     }
+
+    //获得密文结果
+    public String getCipherPlaintext(String cipherKey,String cipherID) throws NoSuchPaddingException, NoSuchAlgorithmException, IOException, BadPaddingException, IllegalBlockSizeException, InvalidKeyException {
+        Ciphertext ciphertext=getCiphertext();
+        cipherID=ciphertext.getId();
+        return DESUtil.getDecryptString(ciphertext.getContext(),cipherKey);
+    }
+
     public String getIdC(){
         return dataNode.get("IdC").asText();
     }
@@ -161,6 +172,7 @@ public class PackageParser {
         //return new Ciphertext(dataNode.get("Ciphertext").get("Context").asText(),dataNode.get("Ciphertext").get("Id").asText());
     }
 
+    //ticket获取
     public String getTicketInSafety(String json,String ticketID) throws IOException {
         JsonNode jsonNode=objectMapper.readTree(json);
         //  String plaintext=jsonNode.get("Ticket").asText();
@@ -172,10 +184,7 @@ public class PackageParser {
     public Ticket getTicket(String json,String ticketKey,String ticketID) throws IOException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
         JsonNode jsonNode=objectMapper.readTree(json);
         JsonNode ticketNode=jsonNode.get("Ticket");
-        String plaintext = null;
-        System.out.println("TODO\n");
-        String testString=ticketNode.get("Context").asText();
-        System.out.println("TODO\n");
+        String plaintext = null;;
         plaintext = DESUtil.getDecryptString(ticketNode.get("Context").asText(),ticketKey);
         ticketID=ticketNode.get("Id").asText();
         System.out.println(plaintext);
@@ -199,5 +208,34 @@ public class PackageParser {
         //return new Ciphertext(dataNode.get("Ciphertext").get("Context").asText(),dataNode.get("Ciphertext").get("Id").asText());
     }
 
+    //Authenticator获取
+    public String getAuthenticatorInSafety(String json,String authenticatorID) throws IOException {
+        JsonNode jsonNode=objectMapper.readTree(json);
+        //  String plaintext=jsonNode.get("Ticket").asText();
+        JsonNode authenticatorNode=jsonNode.get("Authenticator");
+        authenticatorID=authenticatorNode.get("Id").asText();
+        return authenticatorNode.get("Context").asText();
+    }
+
+    public Authenticator getAuthenticator(String json,String authenticatorKey,String authenticatorID) throws IOException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
+        JsonNode jsonNode=objectMapper.readTree(json);
+        JsonNode ticketNode=jsonNode.get("Authenticator");
+        String plaintext = null;
+        plaintext = DESUtil.getDecryptString(ticketNode.get("Context").asText(),authenticatorKey);
+        authenticatorID=ticketNode.get("Id").asText();
+        System.out.println(plaintext);
+        jsonNode=objectMapper.readTree(plaintext);
+        JsonNode destinationNode=jsonNode.get("Destination");
+        JsonNode sourceNode=jsonNode.get("Source");
+        JsonNode tsNode=jsonNode.get("TS");
+
+
+        return new Authenticator(
+                new Destination(destinationNode.get("Id").asText(),destinationNode.get("IP").asText()),
+                new Source(sourceNode.get("Id").asText(),sourceNode.get("IP").asText()),
+                new TS(Integer.parseInt(tsNode.get("Id").asText()),tsNode.get("Context").asText())
+        );
+
+    }
 
 }

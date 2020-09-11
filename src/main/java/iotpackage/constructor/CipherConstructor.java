@@ -114,7 +114,7 @@ public class CipherConstructor {
 
         ObjectNode rootNode = jsonNodeFactory.objectNode();
         setKeyNode(rootNode,ioTKey);
-        rootNode.put("IDTGS",idTGS);
+        rootNode.put("IdTGS",idTGS);
         setTSNode(rootNode,ts);
         setLifetimeNode(rootNode,lifetime);
        // rootNode.put("Ticket",getCipherOfTicket(tgs,ticketKey));
@@ -129,7 +129,7 @@ public class CipherConstructor {
 
         ObjectNode rootNode = jsonNodeFactory.objectNode();
         setKeyNode(rootNode,ioTKey);
-        rootNode.put("IDTGS",idTGS);
+        rootNode.put("IdTGS",idTGS);
         setTSNode(rootNode,ts);
         setLifetimeNode(rootNode,lifetime);
         // rootNode.put("Ticket",getCipherOfTicket(tgs,ticketKey));
@@ -138,7 +138,34 @@ public class CipherConstructor {
         return DESUtil.getEncryptString(new ObjectMapper().writeValueAsString(rootNode),cipherKey);
     }
 
-     public String constructCipherOfCtoTGS (){
+
+    /** TGS to C
+     *
+     * @param ioTKey 由TGS生成，供client和server之间信息的安全交换
+     * @param IdV 确认该ticket是为server V签发的
+     * @param ts 该值为4
+     * @param ticketV V的ticket
+     * @param ticketID V的ticket的编号
+     * @param ticketKey 由TGS和V事先约定
+     * @return
+     * @throws JsonProcessingException
+     */
+    public String constructCipherOfTGStoC(IoTKey ioTKey, String IdV, TS ts,
+                                         Ticket ticketV,String ticketID, String ticketKey) throws JsonProcessingException {
+
+        ObjectNode rootNode = jsonNodeFactory.objectNode();
+        setKeyNode(rootNode,ioTKey);
+        rootNode.put("IdV",IdV);
+        setTSNode(rootNode,ts);
+        //setLifetimeNode(rootNode,lifetime);
+        // rootNode.put("Ticket",getCipherOfTicket(tgs,ticketKey));
+        setTicketNode(rootNode,ticketV,ticketID,ticketKey);
+        // return new ObjectMapper().writeValueAsString(rootNode);
+        return DESUtil.getEncryptString(new ObjectMapper().writeValueAsString(rootNode),cipherKey);
+    }
+
+
+    public String constructCipherOfCtoTGS (){
         return "";
 
     }
