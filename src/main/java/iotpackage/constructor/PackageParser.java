@@ -120,7 +120,7 @@ public class PackageParser {
     public Ciphertext getCiphertext(){
         return new Ciphertext(dataNode.get("Ciphertext").get("Context").asText(),dataNode.get("Ciphertext").get("Id").asText());
     }
-    public String IdC(){
+    public String getIdC(){
         return dataNode.get("IdC").asText();
     }
     /***注意jsonc串**/
