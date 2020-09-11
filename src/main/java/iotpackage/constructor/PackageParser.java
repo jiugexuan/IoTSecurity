@@ -1,5 +1,6 @@
 package iotpackage.constructor;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import iotpackage.IoTKey;
@@ -42,6 +43,15 @@ public class PackageParser {
         this.sourceNode=infoNode.get("Source");
         this.destinationNode=infoNode.get("Destination");
         this.dataNode=infoNode.get("Data");
+    }
+
+    public String getInfoJson() throws JsonProcessingException {
+        return new ObjectMapper().writeValueAsString(infoNode);
+    }
+
+
+    public String getDataJson() throws JsonProcessingException {
+        return new ObjectMapper().writeValueAsString(dataNode);
     }
 
     public String getProcess(){
@@ -161,9 +171,12 @@ public class PackageParser {
 
     public Ticket getTicket(String json,String ticketKey,String ticketID) throws IOException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
         JsonNode jsonNode=objectMapper.readTree(json);
-        //  String plaintext=jsonNode.get("Ticket").asText();
         JsonNode ticketNode=jsonNode.get("Ticket");
-        String plaintext= DESUtil.getDecryptString(ticketNode.get("Context").asText(),ticketKey);
+        String plaintext = null;
+        System.out.println("TODO\n");
+        String testString=ticketNode.get("Context").asText();
+        System.out.println("TODO\n");
+        plaintext = DESUtil.getDecryptString(ticketNode.get("Context").asText(),ticketKey);
         ticketID=ticketNode.get("Id").asText();
         System.out.println(plaintext);
         jsonNode=objectMapper.readTree(plaintext);
