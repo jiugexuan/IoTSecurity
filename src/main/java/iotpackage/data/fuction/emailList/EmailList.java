@@ -46,4 +46,10 @@ public class EmailList {
         return emailList.get(i);
     }
 
+    public void printEmailList(){
+        System.out.println(this.getClass().getSimpleName());
+        for(int i=0;i<this.getListNumber();i++){
+            this.getEmailAtIndex(i).printEmail();
+        }
+    }
 }
