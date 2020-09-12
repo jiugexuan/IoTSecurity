@@ -1,7 +1,6 @@
 package ServerSql;
 
 import java.sql.*;
-//import com.mysql.jdbc.Statement;
 
 public class SqlOperation {
     static Statement stmt = null;

@@ -156,7 +156,7 @@ public  static String creatSendTable(String sendname){
             content= resultSet.getString("content");
             ctime=resultSet.getString("ctime");
             tmpsend.setAccount(sendname);
-            email=new Email(id,tmpsend,rev,title,ctime,"txt",content);
+            email=new Email(tmpsend,rev,title,ctime,"txt",content);
             emailList.addEmail(email);
             System.out.println(sendname+'\t'+title+'\t'+content+'\t'+ctime);
         }
@@ -185,7 +185,7 @@ public  static String creatSendTable(String sendname){
             content= resultSet.getString("content");
             ctime=resultSet.getString("ctime");
             tmprev.setAccount(revname);
-            email=new Email(id,sender,tmprev,title,ctime,"txt",content);
+            email=new Email(sender,tmprev,title,ctime,"txt",content);
             emailList.addEmail(email);
             System.out.println(revname+'\t'+title+'\t'+content+'\t'+ctime);
         }
@@ -212,7 +212,7 @@ public  static String creatSendTable(String sendname){
           content = resultSet.getString("content");
           ctime = resultSet.getString("ctime");
           tmprev.setAccount(revname);
-          email = new Email(id, sender, tmprev, title, ctime, "txt", content);
+          email = new Email(sender, tmprev, title, ctime, "txt", content);
           System.out.println(revname + '\t' + title + '\t' + content + '\t' + ctime);
       }
       return email;
@@ -240,7 +240,7 @@ public  static String creatSendTable(String sendname){
             content = resultSet.getString("content");
             ctime = resultSet.getString("ctime");
             tmpsend.setAccount(revname);
-            email = new Email(id,tmpsend,receiver, title, ctime, "txt", content);
+            email = new Email(tmpsend,receiver, title, ctime, "txt", content);
             System.out.println(revname + '\t' + title + '\t' + content + '\t' + ctime);
         }
         return email;
