@@ -614,7 +614,39 @@ public class PackageConstructor {
     }
 
 
-    public String getPackageCtoVVerify(String process, String operation, Source source, Destination destination, String code, String ipID, Authenticator authenticator, String authenticatorKey, String ticketkey, Ticket ticket, String authenticatorID, String publickeyId) throws JsonProcessingException {
+    public String getPackageCtoVVerify(String process, String operation,
+                                       Source source, Destination destination,
+                                       String code,
+                                       String ticketV,String ticketID,
+                                       Authenticator authenticator,String authenticatorKey, String authenticatorID, String publickeyId) throws JsonProcessingException {
+        ObjectNode rootNode = this.jsonNodeFactory.objectNode();
+        ObjectNode infoNode = this.jsonNodeFactory.objectNode();
+        ObjectNode signNode = this.jsonNodeFactory.objectNode();
+        infoNode.put("Process", process);
+        infoNode.put("Operation", operation);
+        this.setSourceNode(infoNode, source);
+        this.setDestionationNode(infoNode, destination);
+        ObjectNode dataNode = this.jsonNodeFactory.objectNode();
+        dataNode.put("Code", code);
+        this.setTicketNode(dataNode,ticketV,ticketID);
+        this.setAuthenticatorNode(dataNode, DESUtil.getEncryptString((new CipherConstructor()).getPackageAuthenticatorToGson(authenticator), authenticatorKey), authenticatorID);
+        infoNode.set("Data", dataNode);
+        rootNode.set("Info", infoNode);
+
+        if (publickeyId.length() == 0) {
+            signNode.put("Context", "");
+        } else {
+            String signContext = RSAUtil.privateEncrypt(MD5Util.md5((new ObjectMapper()).writeValueAsString(infoNode)), publickeyId);
+            signNode.put("Context", signContext);
+        }
+
+        signNode.put("PublicKey", publickeyId);
+        rootNode.set("Sign", signNode);
+        //printJason(rootNode);
+        return (new ObjectMapper()).writeValueAsString(rootNode);
+    }
+
+    public String getPackageVtoCVerify(String process, String operation, Source source, Destination destination, String code, String ipID, Authenticator authenticator, String authenticatorKey, String ticketkey, Ticket ticket, String authenticatorID, String publickeyId) throws JsonProcessingException {
         ObjectNode rootNode = this.jsonNodeFactory.objectNode();
         ObjectNode infoNode = this.jsonNodeFactory.objectNode();
         ObjectNode signNode = this.jsonNodeFactory.objectNode();
