@@ -10,6 +10,7 @@ import iotpackage.IoTKey;
 import iotpackage.data.autheticator.Authenticator;
 import iotpackage.data.ciphertext.Ciphertext;
 import iotpackage.data.ciphertext.Lifetime;
+import iotpackage.data.fuction.Email;
 import iotpackage.data.ticket.Ticket;
 import iotpackage.destination.Destination;
 import iotpackage.source.Source;
@@ -609,12 +610,81 @@ public class PackageConstructor {
 
         rootNode.set("Sign",signNode);
 
-        // rootNode.put("1","2");
+        return objectMapper.writeValueAsString(rootNode);
+    }
 
 
+    /***
+     *
+     * @param process
+     * @param operation
+     * @param source
+     * @param destination
+     * @param code
+     * @param cipherKey
+     * @param email
+     * @param emailID
+     * @param emailKey
+     * @param publickey
+     * @return
+     * @throws JsonProcessingException
+     */
+    public String  getPackageCtoVEmailSend(String process, String operation,
+                                    Source source, Destination destination,
+                                    String code,
+                                    String cipherKey,
+                                    Email email,
+                                    String emailID,
+                                    String emailKey,
+                                    String publickey) throws JsonProcessingException {
+        ObjectNode rootNode = jsonNodeFactory.objectNode();
+        ObjectNode infoNode = jsonNodeFactory.objectNode();
+
+        ObjectNode signNode = jsonNodeFactory.objectNode();
+
+        infoNode.put("Process",process);
+        infoNode.put("Operation",operation);
+
+        //source节点添加
+        setSourceNode(infoNode,source);
+
+        //destination节点添加
+        setDestionationNode(infoNode,destination);
+
+        //Data字段
+        ObjectNode dataNode = jsonNodeFactory.objectNode();
+        dataNode.put("Code",code);
+        //时间戳节点添加
+
+        CipherConstructor cipherConstructor=new CipherConstructor(cipherKey);
+        setCipherNode(dataNode,new Ciphertext(cipherConstructor.constructCipherOfEmailSend(email,emailID,emailKey),"TGStoC EmailSend"));
+
+        infoNode.set("Data",dataNode);
+        rootNode.set("Info",infoNode);
+
+
+        //sign签名
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        //签名算法
+        if(publickey.length()==0){
+            signNode.put("Context","");
+
+        }else{
+            //签名是加密
+            String signContext= RSAUtil.privateEncrypt(MD5Util.md5(new ObjectMapper().writeValueAsString(infoNode)) ,publickey);
+            signNode.put("Context",signContext);
+        }
+        signNode.put("PublicKey",publickey);
+
+        rootNode.set("Sign",signNode);
 
         return objectMapper.writeValueAsString(rootNode);
     }
+
+
+
+
 }
 
 

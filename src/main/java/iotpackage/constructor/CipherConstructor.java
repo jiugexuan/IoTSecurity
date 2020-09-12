@@ -9,6 +9,8 @@ import iotpackage.IoTKey;
 import iotpackage.data.TS;
 import iotpackage.data.autheticator.Authenticator;
 import iotpackage.data.ciphertext.Lifetime;
+import iotpackage.data.fuction.Email;
+import iotpackage.data.fuction.User.User;
 import iotpackage.data.ticket.Ticket;
 import iotpackage.destination.Destination;
 import iotpackage.source.Source;
@@ -78,6 +80,22 @@ public class CipherConstructor {
 
     }
 
+    /***
+     * Email 节点生成
+     * @param parentNode
+     * @param email
+     * @param emailID
+     * @param emailKey
+     * @throws JsonProcessingException
+     */
+    void setEmailNode(ObjectNode parentNode, Email email,String emailID,String emailKey) throws JsonProcessingException {
+        ObjectNode TSNode=jsonNodeFactory.objectNode();
+        TSNode.put("Id",emailID);
+        TSNode.put("Context",getCipherOfEmail(email,emailKey));
+        parentNode.set(email.getClass().getSimpleName(),TSNode);
+
+    }
+
     public String getPackageTikectToGson(Ticket ticket) throws JsonProcessingException {
         ObjectNode rootNode = jsonNodeFactory.objectNode();
         //rootNode.put("Id",tgs.getId())
@@ -99,6 +117,26 @@ public class CipherConstructor {
         return new ObjectMapper().writeValueAsString(rootNode);
     };
 
+    //邮件
+    public void setUser(ObjectNode parentNode, User user){
+        ObjectNode userNode=jsonNodeFactory.objectNode();
+        userNode.put("Account",user.getAccount());
+        userNode.put("Nickname",user.getNickname());
+        parentNode.set(user.getClass().getSimpleName(),userNode);
+    };
+    public String getPackageEmailToGson(Email email) throws JsonProcessingException {
+        ObjectNode rootNode = jsonNodeFactory.objectNode();
+        setUser(rootNode,email.getSender());
+        setUser(rootNode,email.getReceiver());
+        rootNode.put("Title",email.getTitle());
+        rootNode.put("Time",email.getTime());
+        rootNode.put("Type",email.getType());
+        rootNode.put("Context",email.getContext());
+
+        //setTSNode(rootNode,authenticator.getTs());*/
+        return new ObjectMapper().writeValueAsString(rootNode);
+    };
+
     public String getCipherOfTicket(Ticket ticket,String ticketKey) throws JsonProcessingException {
         return DESUtil.getEncryptString(getPackageTikectToGson(ticket),ticketKey) ;
     }
@@ -106,6 +144,17 @@ public class CipherConstructor {
     public String getCipherOfAuthenticator(Authenticator authenticator,String authenticatorKey) throws JsonProcessingException {
         return DESUtil.getEncryptString(getPackageAuthenticatorToGson(authenticator),authenticatorKey) ;
     }
+
+
+
+    /***email 加密
+     * @param email Email文件
+     * @param emailKey 加密emailKey,为C和TGS共用的密钥
+     * */
+    public String getCipherOfEmail(Email email,String emailKey) throws JsonProcessingException {
+         return DESUtil.getEncryptString(getPackageEmailToGson(email),emailKey) ;
+    }
+
     /****AS->C*****/
     @Deprecated
     public String constructCipherOfAStoC(IoTKey ioTKey, String idTGS, TS ts,
@@ -165,9 +214,18 @@ public class CipherConstructor {
     }
 
 
-    public String constructCipherOfCtoTGS (){
-        return "";
-
+    /****
+     * C to V EmaiL发送
+     * @param email
+     * @param emailID
+     * @param emailKey
+     * @return
+     * @throws JsonProcessingException
+     */
+    public String constructCipherOfEmailSend(Email email, String emailID,String emailKey) throws JsonProcessingException {
+        ObjectNode rootNode = jsonNodeFactory.objectNode();
+        setEmailNode(rootNode,email,emailID,emailKey);
+        return DESUtil.getEncryptString(new ObjectMapper().writeValueAsString(rootNode),cipherKey);
     }
 
     public CipherConstructor(String cipherKey) {
@@ -176,4 +234,7 @@ public class CipherConstructor {
     public CipherConstructor() {
     }
 
+    public String getCipherKey() {
+        return cipherKey;
+    }
 }

@@ -8,6 +8,9 @@ import iotpackage.data.TS;
 import iotpackage.data.autheticator.Authenticator;
 import iotpackage.data.ciphertext.Ciphertext;
 import iotpackage.data.ciphertext.Lifetime;
+import iotpackage.data.fuction.Email;
+import iotpackage.data.fuction.User.Receiver;
+import iotpackage.data.fuction.User.Sender;
 import iotpackage.data.ticket.Ticket;
 import iotpackage.destination.Destination;
 import iotpackage.source.Source;
@@ -134,7 +137,18 @@ public class PackageParser {
         return new Ciphertext(dataNode.get("Ciphertext").get("Context").asText(),dataNode.get("Ciphertext").get("Id").asText());
     }
 
-    //获得密文结果
+    /***
+     * 获得密文结果
+     * @param cipherKey
+     * @param cipherID
+     * @return
+     * @throws NoSuchPaddingException
+     * @throws NoSuchAlgorithmException
+     * @throws IOException
+     * @throws BadPaddingException
+     * @throws IllegalBlockSizeException
+     * @throws InvalidKeyException
+     */
     public String getCipherPlaintext(String cipherKey,String cipherID) throws NoSuchPaddingException, NoSuchAlgorithmException, IOException, BadPaddingException, IllegalBlockSizeException, InvalidKeyException {
         Ciphertext ciphertext=getCiphertext();
         cipherID=ciphertext.getId();
@@ -238,4 +252,29 @@ public class PackageParser {
 
     }
 
+
+    public Email getEmail(String json, String emailKey, String emailID) throws IOException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
+        JsonNode jsonNode=objectMapper.readTree(json);
+        JsonNode ticketNode=jsonNode.get("Email");
+        String plaintext = null;
+        plaintext = DESUtil.getDecryptString(ticketNode.get("Context").asText(),emailKey);
+       // authenticat=ticketNode.get("Id").asText();
+        System.out.println(plaintext);
+        jsonNode=objectMapper.readTree(plaintext);
+        JsonNode senderNode=jsonNode.get("Sender");
+        JsonNode receiveNode=jsonNode.get("Receiver");
+        //JsonNode tsNode=jsonNode.get("TS");
+
+        return new Email(
+                new Sender(senderNode.get("Account").asText(),senderNode.get("Nickname").asText()),
+                new Receiver(receiveNode.get("Account").asText(),receiveNode.get("Nickname").asText()),
+                jsonNode.get("Title").asText(),
+                jsonNode.get("Time").asText(),
+                jsonNode.get("Type").asText(),
+                jsonNode.get("Context").asText()
+
+        );
+
+
+    }
 }
