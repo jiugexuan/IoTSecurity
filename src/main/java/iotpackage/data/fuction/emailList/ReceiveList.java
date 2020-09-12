@@ -11,4 +11,8 @@ public class ReceiveList extends EmailList {
     public ReceiveList(Vector<Email> emailsList){
         super(emailsList);
     }
+
+    public void printReciveList(){
+      printEmailList();
+    }
 }

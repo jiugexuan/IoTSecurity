@@ -20,6 +20,14 @@ import java.sql.SQLException;
 
 public class AS implements Runnable {
 
+    public String UserIP = "127.0.0.1";
+    public String ASIP = "127.0.0.1";
+    public String TGSIP = "127.0.0.1";
+    public String SERIP = "127.0.0.1";
+    public String Kctgs = "963852741";
+    public String KeyTGS = "741852963";
+    public String UserAccount = null;
+
     final static int MAX_SIZE = 4096;
     private Socket socket;
     public AS(Socket socket){
@@ -58,6 +66,7 @@ public class AS implements Runnable {
         byte[] bytes = new byte[4096];
         //接收到的报文
         //接收
+        //C -> AS
         receive(bytes);
         System.out.println("接受的数据为："+new String(bytes));
         //报文
@@ -76,6 +85,7 @@ public class AS implements Runnable {
             System.out.println("\n注册 AS收到账户 "+packageParser.getAccount());
             System.out.println("\n注册 AS收到密码"+packageParser.getPassword());
             System.out.println("\n注册 AS收到昵称"+packageParser.getNickName());
+            UserAccount = packageParser.getAccount();
 
 
             try {
@@ -96,22 +106,21 @@ public class AS implements Runnable {
                 if (code.equals("0102")) {
                     send(code.getBytes());
                 }else {
-                    Source source=new Source("AS","127.0.0.1");
-                    Destination destination=new Destination("user1","127.3.4.1");
-                    TS ts = new TS(1);
-                    Lifetime lifetime = new Lifetime("TGS","54000");
-                    IoTKey ioTKey = new IoTKey("CandAS","1234578");
+                    Source source=new Source("AS",ASIP);
+                    Destination destination=new Destination(UserAccount,UserIP);
+                    TS ts = new TS(2);
+                    Lifetime lifetime = new Lifetime("2","54000");
+                    IoTKey ioTKey = new IoTKey("KeyC TGS",Kctgs);
                     Ticket ticketTgs = new Ticket(ioTKey,source,destination,ts,lifetime);
                     String AStoC = null;
                     PackageConstructor packageConstructor = new PackageConstructor();
                     try {
-                        //ticketkey tickkey AS TGS
-                        //cipherkey 临时用的md5用户密码
-                        AStoC = packageConstructor.getPackageAStoCLogin("Verify","Response",source,destination,"0100","12.0.1.5.",code, ioTKey,"127.0.0.3",ts,lifetime,ticketTgs,"65","tickkey AS TGS","");
+                        //ticketkey keyTGS
+                        //cipherkey K c 就是用户md5
+                        AStoC = packageConstructor.getPackageAStoCLogin("Verify","Response",source,destination,"0100",UserIP,code, ioTKey,TGSIP,ts,lifetime,ticketTgs,"2",KeyTGS,"");
                     } catch (JsonProcessingException e) {
                         e.printStackTrace();
                     }
-
                     System.out.print("\n AS 发送报文到客户端："+AStoC);
                     send(AStoC.getBytes());
                 }

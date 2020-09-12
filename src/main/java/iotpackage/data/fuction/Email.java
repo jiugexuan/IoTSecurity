@@ -4,7 +4,6 @@ import iotpackage.data.fuction.User.Receiver;
 import iotpackage.data.fuction.User.Sender;
 
 public class Email {
-    String Id;
     /**邮件发送方**/
     Sender sender;
     /**邮件接受方**/
@@ -18,16 +17,7 @@ public class Email {
     /**邮件内容**/
     String context;
 
-    public String getId() {
-        return Id;
-    }
-
-    public void setId(String id) {
-        Id = id;
-    }
-
-    public Email(String Id, Sender sender, Receiver receiver, String title, String time, String type, String context) {
-        this.Id=Id;
+    public Email(Sender sender, Receiver receiver, String title, String time, String type, String context) {
         this.sender = sender;
         this.receiver = receiver;
         this.title = title;
@@ -87,7 +77,6 @@ public class Email {
     public void printEmail(){
         System.out.println("--------------");
         System.out.println("the Email:");
-        System.out.println(">>Id:"+getId());
         System.out.println(">>Sender:");
         getSender().printSender();
         System.out.println(">>Receiver:");

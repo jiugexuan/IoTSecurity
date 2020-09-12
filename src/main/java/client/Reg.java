@@ -1,6 +1,7 @@
-package client.UI;
+package client;
 
 import client.ConnManger;
+import client.LogIn;
 import client.SocketConn;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import iotpackage.constructor.PackageConstructor;
@@ -13,6 +14,8 @@ import java.awt.event.ActionListener;
 import java.util.Random;
 
 public class Reg extends JFrame {
+    public String UserIP = "127.0.0.1";
+    public String ASIP = "127.0.0.1";
 
     private void initGUI() {
         //创建Random类对象
@@ -105,10 +108,9 @@ public class Reg extends JFrame {
                     setVisible(false);// 本窗口隐藏,
                 } else {
                     PackageConstructor packageConstructor=new PackageConstructor();
-                    Source source=new Source("user1","127.0.0.1");
-                    Destination destination=new Destination("AS","127.0.0.1");
+                    Source source=new Source(usr,UserIP);
+                    Destination destination=new Destination("AS",ASIP);
                     String content = "";
-
                     try {
                         content = packageConstructor.getPackageCtoASRegist("Register","Request",source,destination,"0000", usr, userKey, nick, question, answer , "");
                     } catch (JsonProcessingException jsonProcessingException) {
