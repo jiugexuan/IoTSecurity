@@ -633,10 +633,10 @@ public class PackageConstructor {
         infoNode.set("Data", dataNode);
         rootNode.set("Info", infoNode);
 
-        if (publickeyId.length() == 0) {
+        if (publickey.length() == 0) {
             signNode.put("Context", "");
         } else {
-            String signContext = RSAUtil.privateEncrypt(MD5Util.md5((new ObjectMapper()).writeValueAsString(infoNode)), publickeyId);
+            String signContext = RSAUtil.privateEncrypt(MD5Util.md5((new ObjectMapper()).writeValueAsString(infoNode)), publickey);
             signNode.put("Context", signContext);
         }
 
@@ -658,18 +658,18 @@ public class PackageConstructor {
         this.setDestionationNode(infoNode, destination);
         ObjectNode dataNode = this.jsonNodeFactory.objectNode();
         dataNode.put("Code", code);
-        this.setTicketNode(dataNode, DESUtil.getEncryptString((new CipherConstructor()).getPackageTikectToGson(ticket), ticketkey), ipID);
-        this.setAuthenticatorNode(dataNode, DESUtil.getEncryptString((new CipherConstructor()).getPackageAuthenticatorToGson(authenticator), authenticatorKey), authenticatorID);
+     //  // this.setTicketNode(dataNode, DESUtil.getEncryptString((new CipherConstructor()).getPackageTikectToGson(ticket), ticketkey), ipID);
+       // this.setAuthenticatorNode(dataNode, DESUtil.getEncryptString((new CipherConstructor()).getPackageAuthenticatorToGson(authenticator), authenticatorKey), authenticatorID);
         infoNode.set("Data", dataNode);
         rootNode.set("Info", infoNode);
-        if (publickeyId.length() == 0) {
+        if (publickey.length() == 0) {
             signNode.put("Context", "");
         } else {
-            String signContext = RSAUtil.privateEncrypt(MD5Util.md5((new ObjectMapper()).writeValueAsString(infoNode)), publickeyId);
+            String signContext = RSAUtil.privateEncrypt(MD5Util.md5((new ObjectMapper()).writeValueAsString(infoNode)), publickey);
             signNode.put("Context", signContext);
         }
 
-        signNode.put("PublicKey", publickeyId);
+        signNode.put("PublicKey", publickey);
         rootNode.set("Sign", signNode);
         //printJason(rootNode);
         return (new ObjectMapper()).writeValueAsString(rootNode);
