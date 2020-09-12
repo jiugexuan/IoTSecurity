@@ -3,11 +3,13 @@ package client.UI;
 import client.ConnManger;
 import client.SocketConn;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import iotpackage.constructor.CipherConstructor;
 import iotpackage.constructor.PackageConstructor;
 import iotpackage.constructor.PackageParser;
 import iotpackage.data.TS;
 import iotpackage.data.autheticator.Authenticator;
 import iotpackage.data.ciphertext.Ciphertext;
+import iotpackage.data.ticket.Ticket;
 import iotpackage.destination.Destination;
 import iotpackage.source.Source;
 import securityalgorithm.DESUtil;
@@ -105,7 +107,7 @@ public class LogIn extends JFrame {
                         } catch (IOException ioException) {
                             ioException.printStackTrace();
                         }
-                        System.out.print("\n 提取出加密ciphertext:"+packageParser.getCiphertext().getContext());
+                        System.out.print("\n 提取出加密的ciphertext:"+packageParser.getCiphertext().getContext());
                         System.out.print("\n ciphertext: ");
 
                         Ciphertext ciphertext = packageParser.getCiphertext();
@@ -113,7 +115,7 @@ public class LogIn extends JFrame {
                         String cipText = "";
 
                         try {
-                            //md5密钥加密
+                            //是用md5密钥解密的
                             cipText = DESUtil.getDecryptString(ciphertext.getContext(),MD5Util.md5(userKey) );
                         } catch (IOException | NoSuchPaddingException | InvalidKeyException | NoSuchAlgorithmException | IllegalBlockSizeException ioException) {
                             ioException.printStackTrace();
@@ -130,6 +132,7 @@ public class LogIn extends JFrame {
                         } catch (IOException ioException) {
                             ioException.printStackTrace();
                         }
+
                         String tgsContent = null;
                         try {
                             tgsContent = packageParser.getTicketInSafety(cipText,new String());
@@ -138,6 +141,7 @@ public class LogIn extends JFrame {
                         }
 
                         String CtoTGS = null;
+
                             try {
                                 //authkey"1234578"
                                 CtoTGS = packageConstructor.getPackageCtoTGS("Verify","Request",source,destination,"0000","127.0.0.1:9120",tgsContent,"TGS", new Authenticator(new Destination("coueg","127.569.321"), new Source("accoutTO","192.168.1.7"),new TS(3)), "1234578","7","" );
@@ -153,6 +157,53 @@ public class LogIn extends JFrame {
                             byte[] receiveTGStoC= new byte[2048];
                             connTGS.receive(receiveTGStoC);
                             String recTGS = new String(receiveBuffer);
+                            System.out.print("\n从TGS收到报文："+recTGS);
+                            PackageParser packageParserTGS= null;
+                            Ticket ticketText = null;
+
+                            String ciphercontent = null;
+                            String DecryptCipher = null;
+
+                            try {
+                            packageParserTGS = new PackageParser(recTGS);
+                            ciphercontent = packageParserTGS.getCiphertext().getContext();
+                            System.out.println(ciphercontent);
+                            Ciphertext ciphertextTGS = packageParser.getCiphertext();
+                            ciphertextTGS.printCiphertext();
+
+                            DecryptCipher = DESUtil.getDecryptString(ciphertextTGS.getContext(),"5050d7f4d35edfb7e67a35763750347a");
+                            System.out.print("解密后"+DecryptCipher);
+
+                        } catch (IOException | IllegalBlockSizeException | InvalidKeyException | BadPaddingException | NoSuchAlgorithmException | NoSuchPaddingException ee) {
+                            ee.printStackTrace();
+                        }
+
+                            String ticketCtoV = null;
+                        try {
+                            ticketCtoV = packageParser.getTicketInSafety(DecryptCipher,"");
+
+                        } catch (IOException ioException) {
+                            ioException.printStackTrace();
+                        }
+
+                        String CtoSer = null;
+
+//                        try {
+//                            CtoSer = packageConstructor.getPackageCtoVVerify("Verify","Request",source,destination,"0000","127.0.0.1:9120",new Authenticator(destination,source,ts),"TGS", "1234578",ticketCtoV,"","" );
+//                        } catch (JsonProcessingException jsonProcessingException) {
+//                            jsonProcessingException.printStackTrace();
+//                        }
+                        System.out.print("\n 客户端发送："+ CtoTGS);
+
+                        ConnManger cmSer = new ConnManger("SERVER");
+                        SocketConn connSer = cmSer.getConn();
+                        connTGS.send(CtoSer.getBytes());
+
+                        byte[] receiveSertoC= new byte[2048];
+                        connTGS.receive(receiveTGStoC);
+                        String recSer = new String(receiveBuffer);
+                        System.out.print("\n从TGS收到报文："+recTGS);
+
 
                     }
                 }

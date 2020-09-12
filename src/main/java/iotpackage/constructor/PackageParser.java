@@ -230,7 +230,6 @@ public class PackageParser {
         authenticatorID=authenticatorNode.get("Id").asText();
         return authenticatorNode.get("Context").asText();
     }
-
     public Authenticator getAuthenticator(String json,String authenticatorKey,String authenticatorID) throws IOException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
         JsonNode jsonNode=objectMapper.readTree(json);
         JsonNode ticketNode=jsonNode.get("Authenticator");

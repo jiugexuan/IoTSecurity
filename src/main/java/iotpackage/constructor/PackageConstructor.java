@@ -550,7 +550,7 @@ public class PackageConstructor {
      * @param destination 接受方
      * @param code 操作码
      * @param cipherKey 加密密文的V密钥 AS生成的
-     * @param CandV 由TGS生成的C和V交互的密钥，ticketV中有一份
+     * @param CandV 由TGS生成的C和V交互的密钥，ticketV有一份
      * @param idV V的ip地址
      * @param ts 时间戳 代号为4
      * @param ticketV tgs的票据
@@ -611,6 +611,34 @@ public class PackageConstructor {
         rootNode.set("Sign",signNode);
 
         return objectMapper.writeValueAsString(rootNode);
+    }
+
+
+    public String getPackageCtoVVerify(String process, String operation, Source source, Destination destination, String code, String ipID, Authenticator authenticator, String authenticatorKey, String ticketkey, Ticket ticket, String authenticatorID, String publickeyId) throws JsonProcessingException {
+        ObjectNode rootNode = this.jsonNodeFactory.objectNode();
+        ObjectNode infoNode = this.jsonNodeFactory.objectNode();
+        ObjectNode signNode = this.jsonNodeFactory.objectNode();
+        infoNode.put("Process", process);
+        infoNode.put("Operation", operation);
+        this.setSourceNode(infoNode, source);
+        this.setDestionationNode(infoNode, destination);
+        ObjectNode dataNode = this.jsonNodeFactory.objectNode();
+        dataNode.put("Code", code);
+        this.setTicketNode(dataNode, DESUtil.getEncryptString((new CipherConstructor()).getPackageTikectToGson(ticket), ticketkey), ipID);
+        this.setAuthenticatorNode(dataNode, DESUtil.getEncryptString((new CipherConstructor()).getPackageAuthenticatorToGson(authenticator), authenticatorKey), authenticatorID);
+        infoNode.set("Data", dataNode);
+        rootNode.set("Info", infoNode);
+        if (publickeyId.length() == 0) {
+            signNode.put("Context", "");
+        } else {
+            String signContext = RSAUtil.privateEncrypt(MD5Util.md5((new ObjectMapper()).writeValueAsString(infoNode)), publickeyId);
+            signNode.put("Context", signContext);
+        }
+
+        signNode.put("PublicKey", publickeyId);
+        rootNode.set("Sign", signNode);
+        //printJason(rootNode);
+        return (new ObjectMapper()).writeValueAsString(rootNode);
     }
 
 

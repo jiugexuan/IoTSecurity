@@ -100,15 +100,13 @@ public class AS implements Runnable {
                     Destination destination=new Destination("user1","127.3.4.1");
                     TS ts = new TS(1);
                     Lifetime lifetime = new Lifetime("TGS","54000");
-                    //md5用户密码 code
                     IoTKey ioTKey = new IoTKey("CandAS","1234578");
                     Ticket ticketTgs = new Ticket(ioTKey,source,destination,ts,lifetime);
-
                     String AStoC = null;
                     PackageConstructor packageConstructor = new PackageConstructor();
                     try {
-
                         //ticketkey tickkey AS TGS
+                        //cipherkey 临时用的md5用户密码
                         AStoC = packageConstructor.getPackageAStoCLogin("Verify","Response",source,destination,"0100","12.0.1.5.",code, ioTKey,"127.0.0.3",ts,lifetime,ticketTgs,"65","tickkey AS TGS","");
                     } catch (JsonProcessingException e) {
                         e.printStackTrace();
