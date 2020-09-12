@@ -27,8 +27,8 @@ public class ServerThread implements Runnable {
     public String ASIP = "127.0.0.1";
     public String TGSIP = "127.0.0.1";
     public String SERIP = "127.0.0.1";
-    public String Kctgs = "963852741";
-    public String Kcv = "";
+    public String Kctgs = "";
+    public String Kcv = "9517538246";
     public String KeyV = "852456789";
     public String KeyTGS = "741852963";
 
@@ -75,8 +75,8 @@ public class ServerThread implements Runnable {
         return new BufferedReader(new InputStreamReader(socketIn));
     }
 
-    @Override
-    public void run() {
+    //
+    public void ServerClientVerify(){
         //接收到的报文
         byte[] bytes = new byte[4096];
         //接收
@@ -123,24 +123,31 @@ public class ServerThread implements Runnable {
         //authenticator 中的时间戳
         String Atime = authenticator.getTs().getContext();
 
-            //TGS -> C
-            String SERtoC = null;
-            PackageConstructor packageConstructor = new PackageConstructor();
-            IoTKey ioTKey =new IoTKey("key C V",Kcv);
-            Ticket ticketV = null;
-            ticketV = new Ticket(ioTKey,new Source("TGS",TGSIP),new Destination("user",UserIP),new TS(4),new Lifetime("4","54000"));
-            try {
-                SERtoC = packageConstructor.getPackageVtoCVerify("Verify","Response",new Source("SERVER",SERIP) ,new Destination("user",UserIP),"0100",Kcv,new TS(6),"");
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }
+        //TGS -> C
+        String SERtoC = null;
+        PackageConstructor packageConstructor = new PackageConstructor();
+        IoTKey ioTKey =new IoTKey("key C V",Kcv);
+        Ticket ticketV = null;
+        ticketV = new Ticket(ioTKey,new Source("TGS",TGSIP),new Destination("user",UserIP),new TS(4),new Lifetime("4","54000"));
+        try {
+            SERtoC = packageConstructor.getPackageVtoCVerify("Verify","Response",new Source("SERVER",SERIP) ,new Destination("user",UserIP),"0100",Kcv,new TS(6),"");
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
 
-            System.out.print("\n SER 发送报文到客户端："+SERtoC);
+        System.out.print("\n SER 发送报文到客户端："+SERtoC);
 
-            send(SERtoC.getBytes());
+        send(SERtoC.getBytes());
+
 
 
     }
+
+    @Override
+    public void run() {
+        ServerClientVerify();
+    }
+
 
 
 }

@@ -30,6 +30,7 @@ public class LogIn extends JFrame {
     public String SERIP = "127.0.0.1";
     public String Kctgs = "";
     public String Kcv = "";
+    public String userAccount = "";
 
 
     public void CtoAS (){
@@ -75,6 +76,7 @@ public class LogIn extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String usr = jTextField1.getText().toString();    //获取文本框内容
+                userAccount = usr;
                 char[] password= jTextField2.getPassword();
                 String userKey = String.valueOf(password);    //获取密码框内容
                 if (usr.equals("") || userKey.equals("")) {
@@ -173,6 +175,14 @@ public class LogIn extends JFrame {
                             JOptionPane.showMessageDialog(null, "登入错误，请重试");
                             return;
                         }
+                        try {
+                            Kcv = packageParser.getKey(cipText);
+                            System.out.print("\n Kcv密码："+Kcv);
+                        } catch (JsonProcessingException jsonProcessingException) {
+                            jsonProcessingException.printStackTrace();
+                            JOptionPane.showMessageDialog(null, "登入错误，请重试");
+                            return;
+                        }
 
                         String CtoTGS = null;
                             try {
@@ -209,14 +219,7 @@ public class LogIn extends JFrame {
                             DecryptCipher = DESUtil.getDecryptString(ciphercontent,Kctgs);
 
                             System.out.print("\n解密后"+DecryptCipher);
-                                try {
-                                    Kcv = packageParserTGS.getKey(cipText);
-                                    System.out.print(Kcv);
-                                } catch (JsonProcessingException jsonProcessingException) {
-                                    jsonProcessingException.printStackTrace();
-                                    JOptionPane.showMessageDialog(null, "登入错误，请重试");
-                                    return;
-                                }
+
 
                         } catch (IOException | IllegalBlockSizeException | InvalidKeyException | BadPaddingException | NoSuchAlgorithmException | NoSuchPaddingException ee) {
                             ee.printStackTrace();
@@ -229,15 +232,15 @@ public class LogIn extends JFrame {
                             String ticketCtoV = null;
                         try {
                             ticketCtoV = packageParser.getTicketInSafety(DecryptCipher,"");
-
                         } catch (IOException ioException) {
                             ioException.printStackTrace();
                         }
 
                         String CtoSer = null;
+                        System.out.print("\n Kcv密码："+Kcv);
 
                       try {
-                            CtoSer = packageConstructor.getPackageCtoVVerify("Verify","Request",source,new Destination("Server",SERIP),"0000",ticketCtoV,"ticketV",new Authenticator(destination,source,new TS(5)),Kctgs, "1234578","" );
+                            CtoSer = packageConstructor.getPackageCtoVVerify("Verify","Request",source,new Destination("Server",SERIP),"0000",ticketCtoV,"ticketV",new Authenticator(destination,source,new TS(5)),Kcv, "1234578","" );
                         } catch (JsonProcessingException jsonProcessingException) {
                             jsonProcessingException.printStackTrace();
                           JOptionPane.showMessageDialog(null, "登入错误，请重试");
@@ -270,7 +273,7 @@ public class LogIn extends JFrame {
                             System.out.print("\n解密后"+DecryptCipher);
                             System.out.print("\n解密后time5+1:"+time5);
                             if(time5 != null){
-                                new UI();
+                                new UI(userAccount);
                             }
 
                         } catch (IOException | IllegalBlockSizeException | InvalidKeyException | BadPaddingException | NoSuchAlgorithmException | NoSuchPaddingException e2) {

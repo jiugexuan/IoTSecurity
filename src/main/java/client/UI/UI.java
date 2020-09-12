@@ -5,7 +5,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class UI extends JFrame {
-    private void initGUI() {
+
+    private void initGUI(String user) {
         setLayout(null);
         setBounds(350, 100, 430, 280);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -53,12 +54,12 @@ public class UI extends JFrame {
         add(jLabel1);
 
         JLabel jLabel2 = new JLabel();
-        jLabel2.setText("用户昵称：XXX");
+        jLabel2.setText("飞翔的企鹅");
         jLabel2.setBounds(260, 30, 360, 30);
         add(jLabel2);
 
         JLabel jLabel3 = new JLabel();
-        jLabel3.setText("用户账户：XXX");
+        jLabel3.setText(user);
         jLabel3.setBounds(260, 60, 360, 30);
         add(jLabel3);
 
@@ -83,10 +84,10 @@ public class UI extends JFrame {
 
     }
 
-    public UI()
+    public UI(String user)
     {
         super();
-        initGUI();
+        initGUI(user);
     }
 
 	/*
