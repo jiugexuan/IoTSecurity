@@ -27,6 +27,14 @@ import java.util.Calendar;
 
 
 public class TGS implements Runnable {
+    public String UserIP = "127.0.0.1";
+    public String ASIP = "127.0.0.1";
+    public String TGSIP = "127.0.0.1";
+    public String SERIP = "127.0.0.1";
+    public String Kctgs = "";
+    public String Kcv = "9517538246";
+    public String KeyV = "852456789";
+    public String KeyTGS = "741852963";
 
     final static int MAX_SIZE = 4096;
     private Socket socket;
@@ -77,31 +85,31 @@ public class TGS implements Runnable {
             packageParser = new PackageParser(content);
             info = packageParser.getDataJson();
             System.out.println(info);
-            ticketText = packageParser.getTicket(info,"tickkey AS TGS","65");
+            ticketText = packageParser.getTicket(info,KeyTGS,"tickettgs");
 
         } catch (IOException | IllegalBlockSizeException | InvalidKeyException | BadPaddingException | NoSuchAlgorithmException | NoSuchPaddingException e) {
             e.printStackTrace();
         }
-
-
 
         System.out.print("\n TGS解密ticket：");
 
         ticketText.printfTicket();
 
         System.out.print("\n TGS解密ticket得到的密码：");
-
+        //kc tgs
         ticketText.getKey().printIoTKey();
 
         //ticket中的 AS生成的 密码
-        String Auth = ticketText.getKey().getContext();
+        Kctgs = ticketText.getKey().getContext();
+
+        System.out.print("\n TGS c 的密码："+Kctgs+"\n");
         //C 发来的报文 ticket中 时间戳
         String Ctime = ticketText.getTs().getContext();
         // 报文 ticket 中 lifetime
         String lifetime = ticketText.getLifetime().getContext();
 
         try {
-            authenticator = packageParser.getAuthenticator(info,Auth,"");
+            authenticator = packageParser.getAuthenticator(info,Kctgs,"authenticator C");
         } catch (IOException | IllegalBlockSizeException | InvalidKeyException | BadPaddingException | NoSuchAlgorithmException | NoSuchPaddingException e) {
             e.printStackTrace();
         }
@@ -133,21 +141,23 @@ public class TGS implements Runnable {
         long differ = AuthenticTime - TicketTime;
 
         if (differ > Long.parseLong(lifetime)){
-            send("请求超时".getBytes());
+            send("0105请求超时".getBytes());
         } else {
+
+            //TGS -> C
             String TGStoC = null;
             PackageConstructor packageConstructor = new PackageConstructor();
-            IoTKey ioTKey =new IoTKey("CandTGS","12345678");
-            Ticket ticketV = new Ticket(ioTKey,new Source("TGS","127.0.0.1"),new Destination("user","127.0.0.1"),new TS(4),new Lifetime("TGS","54000"));
-
+            IoTKey ioTKey =new IoTKey("key C V",Kcv);
+            Ticket ticketV = null;
+            ticketV = new Ticket(ioTKey,new Source("TGS",TGSIP),new Destination("user",UserIP),new TS(4),new Lifetime("4","54000"));
             try {
-
-                TGStoC = packageConstructor.getPackageTGStoC("Verify","Response",new Source("TGS","127.0.0.1") ,new Destination("user","127.0.0.1"),"0100",Auth,ioTKey,"127.0.0.3",new TS(4),ticketV,"V","tickkey TGS C","");
+                TGStoC = packageConstructor.getPackageTGStoC("Verify","Response",new Source("TGS",TGSIP) ,new Destination("user",UserIP),"0100",Kctgs,ioTKey,SERIP,new TS(4),ticketV,"V",KeyV,"");
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
 
             System.out.print("\n TGS 发送报文到客户端："+TGStoC);
+
             send(TGStoC.getBytes());
         }
 
