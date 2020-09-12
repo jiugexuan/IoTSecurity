@@ -298,29 +298,48 @@ public class PackageParser {
 
     //TODO 解析出错
     public EmailList getEmailList(String json,EmailList emailList) throws JsonProcessingException {
+        JsonNode arrNode =  new ObjectMapper().readTree(json).get(emailList.getClass().getSimpleName());
+
         //JsonNode jsonNode = objectMapper.readTree(json);
         //JsonNode ticketNode = jsonNode.get();
 
         // String str1 = "{\"resourceId\":\"dfead70e4ec5c11e43514000ced0cdcaf\",\"properties\":{\"process_id\":\"process4\",\"name\":\"\",\"documentation\":\"\",\"processformtemplate\":\"\"}}";
 
         // ；      unescapeJavaScript(json);
-        JsonNode arrNode =  new ObjectMapper().readTree(json).get(emailList.getClass().getSimpleName());
 
-        String tmp = StringEscapeUtils.unescapeJava(objectMapper.writeValueAsString(arrNode));
-        String tmp2 = StringEscapeUtils.unescapeJava(objectMapper.writeValueAsString(tmp));
-        JsonNode jsonNode=new ObjectMapper().readTree(tmp2);
-        Tools.jsonFormat(jsonNode.asText());
+       // String standardizationjson = StringEscapeUtils.unescapeJson(objectMapper.writeValueAsString(arrNode)) ;
+
+       // String tmp = StringEscapeUtils.unescapeJava(objectMapper.writeValueAsString(arrNode));
+        //String tmp2 = StringEscapeUtils.unescapeJava(objectMapper.writeValueAsString(tmp));
+      //  JsonNode jsonNode=new ObjectMapper().readTree(tmp2);
+        //Tools.jsonFormat(jsonNode.asText());
         // String tmp = StringEscapeUtils.unescapeJava(objectMapper.writeValueAsString(arrNode));
         // ObjectMapper objectMapper = new ObjectMapper();
         // ObjectMapper mapper = new ObjectMapper();
         //Vector<Email> lendReco = mapper.readValue(objectMapper.writeValueAsString(arrNode),new TypeReference<Vector<Email>>() { });
         //  EmailList list = objectMapper.readValue(json,EmailList.class);
-        //    JsonNode jsonNode=arrNode.get(0);
+            //JsonNode jsonNode=arrNode.get(0);
 //System.out.println(tmp);
-        for(int i=0;i<10;i++){
-            //jsonNode=arrNode.get(i);
-            System.out.println();
-            System.out.println(1);
+        JsonNode jsonNode;
+        for(int i=0;i<arrNode.size();i++){
+            jsonNode=arrNode.get(i);
+         //   String standardizationjson = StringEscapeUtils.unescapeJson(objectMapper.writeValueAsString(jsonNode)) ;
+            Tools.jsonFormat(new ObjectMapper().writeValueAsString(jsonNode));
+            //Email email=getEmailFromGsonWithoutID(standardizationjson);
+            JsonNode senderNode=jsonNode.get("Sender");
+            JsonNode receiveNode=jsonNode.get("Receiver");
+
+             Email email=new Email(
+                     jsonNode.get("Id").asText(),
+                     new Sender(senderNode.get("Account").asText(),senderNode.get("Nickname").asText()),
+                     new Receiver(receiveNode.get("Account").asText(),receiveNode.get("Nickname").asText()),
+                     jsonNode.get("Title").asText(),
+                     jsonNode.get("Time").asText(),
+                     jsonNode.get("Type").asText(),
+                     jsonNode.get("Context").asText()
+             );
+          // email.printEmail();
+            emailList.addEmail(email);
         }
 
         return emailList;
@@ -328,6 +347,21 @@ public class PackageParser {
 
     public Email getEmailFromGson(String json) throws JsonProcessingException {
         JsonNode jsonNode=objectMapper.readTree(json).get("Email");
+        JsonNode senderNode=jsonNode.get(Sender.class.getSimpleName());
+        JsonNode receiveNode=jsonNode.get(Receiver.class.getSimpleName());
+        return new Email(
+                jsonNode.get("Id").asText(),
+                new Sender(senderNode.get("Account").asText(),senderNode.get("Nickname").asText()),
+                new Receiver(receiveNode.get("Account").asText(),receiveNode.get("Nickname").asText()),
+                jsonNode.get("Title").asText(),
+                jsonNode.get("Time").asText(),
+                jsonNode.get("Type").asText(),
+                jsonNode.get("Context").asText()
+        );
+    }
+
+    public Email getEmailFromGsonWithoutID(String json) throws JsonProcessingException {
+        JsonNode jsonNode=objectMapper.readTree(json);
         JsonNode senderNode=jsonNode.get(Sender.class.getSimpleName());
         JsonNode receiveNode=jsonNode.get(Receiver.class.getSimpleName());
         return new Email(

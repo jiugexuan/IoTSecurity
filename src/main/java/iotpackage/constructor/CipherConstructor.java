@@ -1,6 +1,7 @@
 package iotpackage.constructor;
 
 import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -140,6 +141,18 @@ public class CipherConstructor {
         return parentNode;
     }
 
+    public ArrayNode getEmailListNode(EmailList emailList) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        ArrayNode array = mapper.createArrayNode();
+        //ObjectNode rootNode = jsonNodeFactory.objectNode();
+        for(int i=0;i<emailList.getListNumber();i++){
+            array.add(getEmailNode(emailList.getEmailAtIndex(i)));
+            //array.add((emailList.getEmailAtIndex(i)) );
+        }
+
+        return array;
+    }
+
     public String getPackageTikectToGson(Ticket ticket) throws JsonProcessingException {
         ObjectNode rootNode = jsonNodeFactory.objectNode();
         //rootNode.put("Id",tgs.getId())
@@ -189,8 +202,10 @@ public class CipherConstructor {
         for(int i=0;i<emailList.getListNumber();i++){
             array.add(getPackageEmailToGson(emailList.getEmailAtIndex(i)) );
         }
-
-        return new ObjectMapper().writeValueAsString(array);
+        ObjectMapper objectMapper=new ObjectMapper();
+        objectMapper.configure(JsonGenerator.Feature.QUOTE_FIELD_NAMES, false);
+       // return new ObjectMapper().writeValueAsString(array);
+        return objectMapper.writeValueAsString(array);
     }
 
     public String getCipherOfTicket(Ticket ticket,String ticketKey) throws JsonProcessingException {
@@ -343,13 +358,14 @@ public class CipherConstructor {
         return DESUtil.getEncryptString(new ObjectMapper().writeValueAsString(rootNode),cipherKey);
     }
 
-    //TODO
+    //FIXME
     public String constructCipherOfEmailList(EmailList sendList,EmailList receiveList) throws JsonProcessingException {
         ObjectNode rootNode = jsonNodeFactory.objectNode();
 
-
-        rootNode.put(sendList.getClass().getSimpleName(),getPackageEmailListToGson(sendList));
-        rootNode.put(receiveList.getClass().getSimpleName(),getPackageEmailListToGson(receiveList));
+        rootNode.set(sendList.getClass().getSimpleName(),getEmailListNode(sendList));
+        rootNode.set(receiveList.getClass().getSimpleName(),getEmailListNode(receiveList));
+       // rootNode.put(sendList.getClass().getSimpleName(),getPackageEmailListToGson(sendList));
+       // rootNode.put(receiveList.getClass().getSimpleName(),getPackageEmailListToGson(receiveList));
         return DESUtil.getEncryptString(new ObjectMapper().writeValueAsString(rootNode),cipherKey);
     }
 

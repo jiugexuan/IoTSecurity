@@ -234,8 +234,8 @@ public class EmailTest {
 
         System.out.println(List);
         ReceiveList receiveList1=new ReceiveList();
-//        new PackageParser(emailSendJson).getEmailList(List,receiveList1);
-        // receiveList1.printEmailList();
+       new PackageParser(emailSendJson).getEmailList(List,receiveList1);
+         receiveList1.printEmailList();
     }
 
     @Test
