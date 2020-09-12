@@ -14,7 +14,7 @@ import java.security.NoSuchAlgorithmException;
 public class Main {
     public static void main(String[] args) {
         try {
-            String test = DESUtil.getDecryptString("ilPDWude1iUdSXOK3VkVytqz6V0oZerxkkC7zcTgCT+OLBHT+AA+Q9khRy8JSTaMqjEERU69nvWv4tHerfiLl5GZ4Ed6VEvNoRJvOAfs2yww33VQ75kIbfur7K1vL4+26ijnYDLwAGWKQIXOuQEFgcfRKTTvb+hQ5tQCCr0Wq2L22pU+0FGPtE2bxzm55w9Nk57Y81TIvDr/ofpLW4l9U305vWZDI9KL8Nwt/HAJTyPRcFGh+JuSRGdryEdrpGtK9Lp9LezFnBSd5bOka35tPg3AYhLFUjPnrkpTRktK7/Pw3C38cAlPI17DJYztobR6bBcQS1o22bo=","tickkey AS TGS");
+            String test = DESUtil.getDecryptString("iXP4aua8VCZ9JVGfUlA4JH8dvRypOEr1CGLNxkAciAsZLMoCk0nH26nfvQ9zDfR32U6R83OTierZf6ykq8Px1T0jUjk47UMgiSW7f6StWe78LC/olzyzD1Nczs0LLR7fZU4rJiDXnnaE9+CNWww0ODH7/xE1JYEaIndfgiQZWXujk4YuMCQM8kmMqoiZpgZD","1234578");
             System.out.println(test);
         } catch (IOException e) {
             e.printStackTrace();

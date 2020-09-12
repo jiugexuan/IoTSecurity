@@ -22,7 +22,7 @@ public class Authenticator {
         this.ts = ts;
     }
 
-    public void Authenticator(){
+    public void printfAuthenticator(){
         System.out.println("--------------");
         System.out.println("the Autheticator:");
         System.out.println(">>Destination id:");

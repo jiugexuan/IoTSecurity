@@ -8,7 +8,6 @@ import iotpackage.constructor.PackageParser;
 import iotpackage.data.TS;
 import iotpackage.data.autheticator.Authenticator;
 import iotpackage.data.ciphertext.Ciphertext;
-import iotpackage.data.ticket.Ticket;
 import iotpackage.destination.Destination;
 import iotpackage.source.Source;
 import securityalgorithm.DESUtil;
@@ -25,6 +24,8 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
 public class LogIn extends JFrame {
+
+
 
     private void initGUI() {
 
@@ -62,21 +63,20 @@ public class LogIn extends JFrame {
         jButton1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String usr = jTextField1.getText().toString();    //获取文本框内容
+                String usr = "18671752026";//jTextField1.getText().toString();    //获取文本框内容
                 char[] password= jTextField2.getPassword();
-                String userKey = String.valueOf(password);    //获取密码框内容
+                String userKey = "18671752026";//String.valueOf(password);    //获取密码框内容
 
                 if (usr.equals("") || userKey.equals("")) {
                     JOptionPane.showMessageDialog(null, "登入信息不能为空!");
                 } else {
                     PackageConstructor packageConstructor=new PackageConstructor();
                     Source source=new Source("user1","127.0.0.1");
-                    Destination destination=new Destination("AS","127.3.4.1");
+                    Destination destination=new Destination("AS","127.0.0.1");
                     TS ts = new TS(1);
-
                     String content = null;
                     try {
-                        content = packageConstructor.getPackageCtoASLogin("Verify","Request",source,destination,"0000", usr, "127.3.4.8",ts,"");
+                        content = packageConstructor.getPackageCtoASLogin("Verify","Request",source,destination,"0000", usr, "127.0.0.1",ts,"");
                     } catch (JsonProcessingException jsonProcessingException) {
                         jsonProcessingException.printStackTrace();
                     }
@@ -113,6 +113,7 @@ public class LogIn extends JFrame {
                         String cipText = "";
 
                         try {
+                            //md5密钥加密
                             cipText = DESUtil.getDecryptString(ciphertext.getContext(),MD5Util.md5(userKey) );
                         } catch (IOException | NoSuchPaddingException | InvalidKeyException | NoSuchAlgorithmException | IllegalBlockSizeException ioException) {
                             ioException.printStackTrace();
@@ -138,6 +139,7 @@ public class LogIn extends JFrame {
 
                         String CtoTGS = null;
                             try {
+                                //authkey"1234578"
                                 CtoTGS = packageConstructor.getPackageCtoTGS("Verify","Request",source,destination,"0000","127.0.0.1:9120",tgsContent,"TGS", new Authenticator(new Destination("coueg","127.569.321"), new Source("accoutTO","192.168.1.7"),new TS(3)), "1234578","7","" );
                             } catch (JsonProcessingException jsonProcessingException) {
                                 jsonProcessingException.printStackTrace();

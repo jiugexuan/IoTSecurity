@@ -6,6 +6,7 @@ import iotpackage.constructor.CipherConstructor;
 import iotpackage.constructor.PackageConstructor;
 import iotpackage.constructor.PackageParser;
 import iotpackage.data.TS;
+import iotpackage.data.autheticator.Authenticator;
 import iotpackage.data.ciphertext.Ciphertext;
 import iotpackage.data.ciphertext.Lifetime;
 import iotpackage.data.ticket.Ticket;
@@ -67,11 +68,15 @@ public class TGS implements Runnable {
         System.out.println("\nTGS 接受的数据为："+content);
         PackageParser packageParser= null;
         Ticket ticketText = null;
+        Authenticator authenticator =null;
+        String info = null;
+
         try {
             packageParser = new PackageParser(content);
-            String info = packageParser.getDataJson();
+            info = packageParser.getDataJson();
             System.out.println(info);
             ticketText = packageParser.getTicket(info,"tickkey AS TGS","65");
+
 
         } catch (IOException | IllegalBlockSizeException | InvalidKeyException | BadPaddingException | NoSuchAlgorithmException | NoSuchPaddingException e) {
             e.printStackTrace();
@@ -80,8 +85,20 @@ public class TGS implements Runnable {
 
 
         System.out.print("\n TGS解密ticket：");
+
         ticketText.printfTicket();
 
+        ticketText.getKey().printIoTKey();
+
+        String Auth = ticketText.getKey().getContext();
+
+        try {
+            authenticator = packageParser.getAuthenticator(info,Auth,"");
+        } catch (IOException | IllegalBlockSizeException | InvalidKeyException | BadPaddingException | NoSuchAlgorithmException | NoSuchPaddingException e) {
+            e.printStackTrace();
+        }
+
+        authenticator.printfAuthenticator();
 
     }
 }

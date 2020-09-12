@@ -60,31 +60,34 @@ public class AS implements Runnable {
         //接收
         receive(bytes);
         System.out.println("接受的数据为："+new String(bytes));
+        //报文
         String content= new String(bytes);
         PackageParser packageParser= null;
 
         try {
+
             packageParser = new PackageParser(content);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+           //判断注册报文或是登入报文
         if (packageParser.getProcess().contains("Register")){
-
+            //注册
             System.out.println("\n注册 AS收到账户 "+packageParser.getAccount());
             System.out.println("\n注册 AS收到密码"+packageParser.getPassword());
             System.out.println("\n注册 AS收到昵称"+packageParser.getNickName());
 
 
             try {
+                //注册插入数据库
                 String code = DBExcute.register(packageParser.getAccount(), packageParser.getPassword(), packageParser.getNickName(),packageParser.getSecurityQuestion(),packageParser.getSecurityAnswer());
                 System.out.print(code);
                 send(code.getBytes());
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
-
         } else {
+            //登入
             System.out.println("AS IdC:"+packageParser.getIdC());
 
             try {
@@ -97,13 +100,16 @@ public class AS implements Runnable {
                     Destination destination=new Destination("user1","127.3.4.1");
                     TS ts = new TS(1);
                     Lifetime lifetime = new Lifetime("TGS","54000");
-                    IoTKey ioTKey = new IoTKey("CandAS",code);
+                    //md5用户密码 code
+                    IoTKey ioTKey = new IoTKey("CandAS","1234578");
                     Ticket ticketTgs = new Ticket(ioTKey,source,destination,ts,lifetime);
 
                     String AStoC = null;
                     PackageConstructor packageConstructor = new PackageConstructor();
                     try {
-                        AStoC = packageConstructor.getPackageAStoCLogin("Verify","Response",source,destination,"0100","12.0.1.5.",code,ioTKey,"127.0.0.3",ts,lifetime,ticketTgs,"65","tickkey AS TGS","");
+
+                        //ticketkey tickkey AS TGS
+                        AStoC = packageConstructor.getPackageAStoCLogin("Verify","Response",source,destination,"0100","12.0.1.5.",code, ioTKey,"127.0.0.3",ts,lifetime,ticketTgs,"65","tickkey AS TGS","");
                     } catch (JsonProcessingException e) {
                         e.printStackTrace();
                     }

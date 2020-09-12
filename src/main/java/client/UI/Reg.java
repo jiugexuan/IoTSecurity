@@ -1,23 +1,19 @@
 package client.UI;
 
-import client.Chat;
 import client.ConnManger;
 import client.SocketConn;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import iotpackage.constructor.PackageConstructor;
-import iotpackage.data.TS;
 import iotpackage.destination.Destination;
 import iotpackage.source.Source;
 
 import javax.swing.*;
-import javax.xml.crypto.Data;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.util.Date;
 import java.util.Random;
 
 public class Reg extends JFrame {
+
     private void initGUI() {
         //创建Random类对象
         Random random = new Random();
@@ -110,7 +106,7 @@ public class Reg extends JFrame {
                 } else {
                     PackageConstructor packageConstructor=new PackageConstructor();
                     Source source=new Source("user1","127.0.0.1");
-                    Destination destination=new Destination("AS","127.3.4.1");
+                    Destination destination=new Destination("AS","127.0.0.1");
                     String content = "";
 
                     try {

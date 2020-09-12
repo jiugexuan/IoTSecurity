@@ -8,6 +8,7 @@ import java.io.*;
 //这是一个可供多用户登陆的server
 public class ServerForMultiClient {
     private int port=6766;
+
     private ServerSocket serverSocket;
     private ExecutorService executorService;//线程池
     private final int POOL_SIZE=10;//单个CPU线程池大小
