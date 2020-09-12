@@ -718,7 +718,7 @@ public class PackageConstructor {
 
 
 
-    /*** C to V 和V to C都是这个，发送指定的邮件
+    /*** C to V 和V to C都是这个，发送加密的邮件
      *邮件发送
      * @param process
      * @param operation
@@ -727,8 +727,6 @@ public class PackageConstructor {
      * @param code
      * @param cipherKey
      * @param email
-     * @param emailID
-     * @param emailKey
      * @param publickey
      * @return
      * @throws JsonProcessingException
@@ -738,8 +736,6 @@ public class PackageConstructor {
                                     String code,
                                     String cipherKey,
                                     Email email,
-                                    String emailID,
-                                    String emailKey,
                                     String publickey) throws JsonProcessingException {
         ObjectNode rootNode = jsonNodeFactory.objectNode();
         ObjectNode infoNode = jsonNodeFactory.objectNode();
@@ -761,7 +757,7 @@ public class PackageConstructor {
         //时间戳节点添加
 
         CipherConstructor cipherConstructor=new CipherConstructor(cipherKey);
-        setCipherNode(dataNode,new Ciphertext(cipherConstructor.constructCipherOfEmailSend(email,emailID,emailKey),"TGS to C EmailSend"));
+        setCipherNode(dataNode,new Ciphertext(cipherConstructor.constructCipherOfEmailSend(email),"TGS to C EmailSend"));
 
         infoNode.set("Data",dataNode);
         rootNode.set("Info",infoNode);
@@ -786,7 +782,73 @@ public class PackageConstructor {
         return objectMapper.writeValueAsString(rootNode);
     }
 
+    /*** C to V 和V to C都是这个，发送指定的邮件
+     *邮件发送
+     * @param process
+     * @param operation
+     * @param source
+     * @param destination
+     * @param code
+     * @param cipherKey
+     * @param email
+     * @param emailID
+     * @param emailKey
+     * @param publickey
+     * @return
+     * @throws JsonProcessingException
+     */
+    public String  getPackageEmailSendInSafety(String process, String operation,
+                                               Source source, Destination destination,
+                                               String code,
+                                               String cipherKey,
+                                               Email email,
+                                               String emailID,
+                                               String emailKey,
+                                               String publickey) throws JsonProcessingException {
+        ObjectNode rootNode = jsonNodeFactory.objectNode();
+        ObjectNode infoNode = jsonNodeFactory.objectNode();
 
+        ObjectNode signNode = jsonNodeFactory.objectNode();
+
+        infoNode.put("Process",process);
+        infoNode.put("Operation",operation);
+
+        //source节点添加
+        setSourceNode(infoNode,source);
+
+        //destination节点添加
+        setDestionationNode(infoNode,destination);
+
+        //Data字段
+        ObjectNode dataNode = jsonNodeFactory.objectNode();
+        dataNode.put("Code",code);
+        //时间戳节点添加
+
+        CipherConstructor cipherConstructor=new CipherConstructor(cipherKey);
+        setCipherNode(dataNode,new Ciphertext(cipherConstructor.constructCipherOfEmailSendInSafety(email,emailID,emailKey),"TGS to C EmailSend in Safety"));
+
+        infoNode.set("Data",dataNode);
+        rootNode.set("Info",infoNode);
+
+
+        //sign签名
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        //签名算法
+        if(publickey.length()==0){
+            signNode.put("Context","");
+
+        }else{
+            //签名是加密
+            String signContext= RSAUtil.privateEncrypt(MD5Util.md5(new ObjectMapper().writeValueAsString(infoNode)) ,publickey);
+            signNode.put("Context",signContext);
+        }
+        signNode.put("PublicKey",publickey);
+
+        rootNode.set("Sign",signNode);
+
+        return objectMapper.writeValueAsString(rootNode);
+    }
     /***
      * 邮件列表请求
      * @param process

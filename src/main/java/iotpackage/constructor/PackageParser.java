@@ -1,8 +1,10 @@
 package iotpackage.constructor;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import iotpackage.IoTKey;
 import iotpackage.Tools;
 import iotpackage.data.TS;
@@ -24,6 +26,7 @@ import javax.crypto.NoSuchPaddingException;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Vector;
 
 public class PackageParser {
     ObjectMapper objectMapper;
@@ -254,7 +257,7 @@ public class PackageParser {
     }
 
 
-    public Email getEmail(String json, String emailKey, String emailID) throws IOException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
+    public Email getEmailThroughDecryt(String json, String emailKey, String emailID) throws IOException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
         JsonNode jsonNode=objectMapper.readTree(json);
         JsonNode ticketNode=jsonNode.get("Email");
         String plaintext = null;
@@ -280,15 +283,20 @@ public class PackageParser {
     }
 
     public EmailList getEmailList(String json,EmailList emailList) throws JsonProcessingException {
-        JsonNode jsonNode = objectMapper.readTree(json);
+        //JsonNode jsonNode = objectMapper.readTree(json);
         //JsonNode ticketNode = jsonNode.get();
-        JsonNode arrNode = new ObjectMapper().readTree(json).get(emailList.getClass().getSimpleName());
-
-        for (JsonNode emailNode : arrNode) {
-            Tools.jsonFormat(new ObjectMapper().writeValueAsString(emailNode));
-            //System.out.println(emailNode);
-
-        }
+        JsonNode arrNode =  new ObjectMapper().readTree(json).get(emailList.getClass().getSimpleName());
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper mapper = new ObjectMapper();
+        Vector<Email> lendReco = mapper.readValue(objectMapper.writeValueAsString(arrNode),new TypeReference<Vector<Email>>() { });
+      //  EmailList list = objectMapper.readValue(json,EmailList.class);
+    //    JsonNode jsonNode=arrNode.get(0);
+System.out.println(1);
+        /*for(int i=0;i<arrNode.size();i++){
+            jsonNode=arrNode.get(i);
+            System.out.println();
+            System.out.println(1);
+        }*/
         return emailList;
     }
 }

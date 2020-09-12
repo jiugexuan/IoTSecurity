@@ -83,9 +83,8 @@ public class CipherConstructor {
 
     }
 
-    @Deprecated
     /***
-     * Email 节点生成
+     * Email 节点生成强加密
      * @param parentNode
      * @param email
      * @param emailID
@@ -106,7 +105,7 @@ public class CipherConstructor {
      * @param email
      * @throws JsonProcessingException
      */
-    void setEmailNode(ObjectNode parentNode, Email email,String emailKey) throws JsonProcessingException {
+    void setEmailNode(ObjectNode parentNode, Email email) throws JsonProcessingException {
         ObjectNode EmailNode=jsonNodeFactory.objectNode();
        // TSNode.put("Id",emailID);
         EmailNode.put("Email",getPackageEmailToGson(email));
@@ -115,14 +114,31 @@ public class CipherConstructor {
 
     }
 
-    ObjectNode constructEmailNose(ObjectNode parentNode, Email email,String emailID,String emailKey) throws JsonProcessingException {
+    ObjectNode getEmailNode(ObjectNode parentNode,Email email) throws JsonProcessingException {
         ObjectNode TSNode=jsonNodeFactory.objectNode();
-        TSNode.put("Id",emailID);
-        TSNode.put("Context",getCipherOfEmail(email,emailKey));
-        parentNode.set(email.getClass().getSimpleName(),TSNode);
+       // ObjectNode rootNode = jsonNodeFactory.objectNode();
+        parentNode.put("Id",email.getId());
+        setUser(parentNode,email.getSender());
+        setUser(parentNode,email.getReceiver());
+        parentNode.put("Title",email.getTitle());
+        parentNode.put("Time",email.getTime());
+        parentNode.put("Type",email.getType());
+        parentNode.put("Context",email.getContext());
         return parentNode;
     }
 
+    ObjectNode getEmailNode(Email email) throws JsonProcessingException {
+        //ObjectNode TSNode=jsonNodeFactory.objectNode();
+        ObjectNode parentNode = jsonNodeFactory.objectNode();
+        parentNode.put("Id",email.getId());
+        setUser(parentNode,email.getSender());
+        setUser(parentNode,email.getReceiver());
+        parentNode.put("Title",email.getTitle());
+        parentNode.put("Time",email.getTime());
+        parentNode.put("Type",email.getType());
+        parentNode.put("Context",email.getContext());
+        return parentNode;
+    }
 
     public String getPackageTikectToGson(Ticket ticket) throws JsonProcessingException {
         ObjectNode rootNode = jsonNodeFactory.objectNode();
@@ -260,25 +276,53 @@ public class CipherConstructor {
         return DESUtil.getEncryptString(new ObjectMapper().writeValueAsString(rootNode),cipherKey);
     }
 
-    //TODO 邮件不需要再加密了
+    // 邮件不需要再加密了
     /****
-     * C to V EmaiL发送
+     * C to V EmaiL发送 加密加强邮件
      * @param email
      * @param emailID
      * @param emailKey
      * @return
      * @throws JsonProcessingException
      */
-    public String constructCipherOfEmailSend(Email email, String emailID,String emailKey) throws JsonProcessingException {
+    public String constructCipherOfEmailSendInSafety(Email email, String emailID,String emailKey) throws JsonProcessingException {
         ObjectNode rootNode = jsonNodeFactory.objectNode();
         setEmailNode(rootNode,email,emailID,emailKey);
         return DESUtil.getEncryptString(new ObjectMapper().writeValueAsString(rootNode),cipherKey);
     }
 
+    public String constructCipherOfEmailSend(Email email) throws JsonProcessingException {
+        ObjectNode rootNode = jsonNodeFactory.objectNode();
+        rootNode.put("Email",getPackageEmailToGson(email));
+         //setEmailNode(rootNode,email);
+        return DESUtil.getEncryptString(new ObjectMapper().writeValueAsString(rootNode),cipherKey);
+    }
+
+
+//    public String constructCipherOfEmailList(EmailList emailList) throws JsonProcessingException {
+//        ObjectNode rootNode = jsonNodeFactory.objectNode();
+//        rootNode.put(emailList.getClass().getSimpleName(),getPackageEmailListToGson(emailList));
+//
+////        ObjectMapper mapper = new ObjectMapper();
+////        ArrayNode array = mapper.createArrayNode();
+////        ObjectNode rootNode = jsonNodeFactory.objectNode();
+////        for(int i=0;i<emailList.getListNumber();i++){
+////            array.add(getPackageEmailToGson(emailList.getEmailAtIndex(i)) );
+////        }
+//        return DESUtil.getEncryptString(new ObjectMapper().writeValueAsString(rootNode),cipherKey);
+//    }
 
     public String constructCipherOfEmailList(EmailList emailList) throws JsonProcessingException {
         ObjectNode rootNode = jsonNodeFactory.objectNode();
-        rootNode.put(emailList.getClass().getSimpleName(),getPackageEmailListToGson(emailList));
+        //rootNode.put(emailList.getClass().getSimpleName(),getPackageEmailListToGson(emailList));
+
+        ObjectMapper mapper = new ObjectMapper();
+        ArrayNode array = mapper.createArrayNode();
+        //ObjectNode rootNode = jsonNodeFactory.objectNode();
+        for(int i=0;i<emailList.getListNumber();i++){
+            array.add(getEmailNode(emailList.getEmailAtIndex(i)) );
+        }
+        rootNode.set(emailList.getClass().getSimpleName(),array);
         return DESUtil.getEncryptString(new ObjectMapper().writeValueAsString(rootNode),cipherKey);
     }
 
@@ -287,8 +331,8 @@ public class CipherConstructor {
         ObjectNode rootNode = jsonNodeFactory.objectNode();
 
 
-        //rootNode.put(send.getClass().getSimpleName(),getPackageEmailListToGson(send));
-        //rootNode.put(receive.getClass().getSimpleName(),getPackageEmailListToGson(receive));
+        rootNode.put(sendList.getClass().getSimpleName(),getPackageEmailListToGson(sendList));
+        rootNode.put(receiveList.getClass().getSimpleName(),getPackageEmailListToGson(receiveList));
         return DESUtil.getEncryptString(new ObjectMapper().writeValueAsString(rootNode),cipherKey);
     }
 
