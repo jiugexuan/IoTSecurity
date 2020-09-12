@@ -618,7 +618,7 @@ public class PackageConstructor {
                                        Source source, Destination destination,
                                        String code,
                                        String ticketV,String ticketID,
-                                       Authenticator authenticator,String authenticatorKey, String authenticatorID, String publickeyId) throws JsonProcessingException {
+                                       Authenticator authenticator,String authenticatorKey, String authenticatorID, String publickey) throws JsonProcessingException {
         ObjectNode rootNode = this.jsonNodeFactory.objectNode();
         ObjectNode infoNode = this.jsonNodeFactory.objectNode();
         ObjectNode signNode = this.jsonNodeFactory.objectNode();
@@ -640,13 +640,15 @@ public class PackageConstructor {
             signNode.put("Context", signContext);
         }
 
-        signNode.put("PublicKey", publickeyId);
+        signNode.put("PublicKey", publickey);
         rootNode.set("Sign", signNode);
         //printJason(rootNode);
         return (new ObjectMapper()).writeValueAsString(rootNode);
     }
 
-    public String getPackageVtoCVerify(String process, String operation, Source source, Destination destination, String code, String ipID, Authenticator authenticator, String authenticatorKey, String ticketkey, Ticket ticket, String authenticatorID, String publickeyId) throws JsonProcessingException {
+    public String getPackageVtoCVerify(String process, String operation, Source source, Destination destination, String code,
+                                       String ipID, Authenticator authenticator,
+                                       int TS,String publickey) throws JsonProcessingException {
         ObjectNode rootNode = this.jsonNodeFactory.objectNode();
         ObjectNode infoNode = this.jsonNodeFactory.objectNode();
         ObjectNode signNode = this.jsonNodeFactory.objectNode();
@@ -672,6 +674,7 @@ public class PackageConstructor {
         //printJason(rootNode);
         return (new ObjectMapper()).writeValueAsString(rootNode);
     }
+
 
 
     /***
