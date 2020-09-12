@@ -28,7 +28,7 @@ public class ServerThread implements Runnable {
     public String TGSIP = "127.0.0.1";
     public String SERIP = "127.0.0.1";
     public String Kctgs = "";
-    public String Kcv = "9517538246";
+    public String Kcv = "";
     public String KeyV = "852456789";
     public String KeyTGS = "741852963";
 
@@ -112,7 +112,7 @@ public class ServerThread implements Runnable {
 
 
         try {
-            authenticator = packageParser.getAuthenticator(info,Kctgs,"authenticator C");
+            authenticator = packageParser.getAuthenticator(info,Kcv,"authenticator C");
         } catch (IOException | IllegalBlockSizeException | InvalidKeyException | BadPaddingException | NoSuchAlgorithmException | NoSuchPaddingException e) {
             e.printStackTrace();
         }
@@ -130,6 +130,7 @@ public class ServerThread implements Runnable {
         Ticket ticketV = null;
         ticketV = new Ticket(ioTKey,new Source("TGS",TGSIP),new Destination("user",UserIP),new TS(4),new Lifetime("4","54000"));
         try {
+            System.out.print("Kcv"+Kcv);
             SERtoC = packageConstructor.getPackageVtoCVerify("Verify","Response",new Source("SERVER",SERIP) ,new Destination("user",UserIP),"0100",Kcv,new TS(6),"");
         } catch (JsonProcessingException e) {
             e.printStackTrace();

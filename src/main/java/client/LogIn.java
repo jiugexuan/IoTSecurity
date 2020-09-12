@@ -175,14 +175,7 @@ public class LogIn extends JFrame {
                             JOptionPane.showMessageDialog(null, "登入错误，请重试");
                             return;
                         }
-                        try {
-                            Kcv = packageParser.getKey(cipText);
-                            System.out.print("\n Kcv密码："+Kcv);
-                        } catch (JsonProcessingException jsonProcessingException) {
-                            jsonProcessingException.printStackTrace();
-                            JOptionPane.showMessageDialog(null, "登入错误，请重试");
-                            return;
-                        }
+
 
                         String CtoTGS = null;
                             try {
@@ -219,6 +212,14 @@ public class LogIn extends JFrame {
                             DecryptCipher = DESUtil.getDecryptString(ciphercontent,Kctgs);
 
                             System.out.print("\n解密后"+DecryptCipher);
+                                try {
+                                    Kcv = packageParserTGS.getKey(DecryptCipher);
+                                    System.out.print("\n Kcv密码："+Kcv);
+                                } catch (JsonProcessingException jsonProcessingException) {
+                                    jsonProcessingException.printStackTrace();
+                                    JOptionPane.showMessageDialog(null, "登入错误，请重试");
+                                    return;
+                                }
 
 
                         } catch (IOException | IllegalBlockSizeException | InvalidKeyException | BadPaddingException | NoSuchAlgorithmException | NoSuchPaddingException ee) {
@@ -236,11 +237,12 @@ public class LogIn extends JFrame {
                             ioException.printStackTrace();
                         }
 
+
                         String CtoSer = null;
                         System.out.print("\n Kcv密码："+Kcv);
 
                       try {
-                            CtoSer = packageConstructor.getPackageCtoVVerify("Verify","Request",source,new Destination("Server",SERIP),"0000",ticketCtoV,"ticketV",new Authenticator(destination,source,new TS(5)),Kcv, "1234578","" );
+                            CtoSer = packageConstructor.getPackageCtoVVerify("Verify","Request",source,new Destination("Server",SERIP),"0000",ticketCtoV,"ticketV",new Authenticator(new Destination("Server",SERIP),source,new TS(5)),Kcv,"authenticator C","" );
                         } catch (JsonProcessingException jsonProcessingException) {
                             jsonProcessingException.printStackTrace();
                           JOptionPane.showMessageDialog(null, "登入错误，请重试");
@@ -268,7 +270,7 @@ public class LogIn extends JFrame {
                             System.out.println("\n加密的cipher："+ciphercontentSer);
                             Ciphertext ciphertextSer = packageParserSer.getCiphertext();
                             ciphertextSer.printCiphertext();
-                            String DecryptCipherSer = DESUtil.getDecryptString(ciphercontent,Kcv);
+                            String DecryptCipherSer = DESUtil.getDecryptString(ciphercontentSer,Kcv);
                             String time5 = packageParser.getTS(DecryptCipherSer);
                             System.out.print("\n解密后"+DecryptCipher);
                             System.out.print("\n解密后time5+1:"+time5);
