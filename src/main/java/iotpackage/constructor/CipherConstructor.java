@@ -293,8 +293,25 @@ public class CipherConstructor {
 
     public String constructCipherOfEmailSend(Email email) throws JsonProcessingException {
         ObjectNode rootNode = jsonNodeFactory.objectNode();
-        rootNode.put("Email",getPackageEmailToGson(email));
+
+
+
+//        ObjectNode parentNode = jsonNodeFactory.objectNode();
+//        parentNode.put("Id",email.getId());
+//        setUser(parentNode,email.getSender());
+//        setUser(parentNode,email.getReceiver());
+//        parentNode.put("Title",email.getTitle());
+//        parentNode.put("Time",email.getTime());
+//        parentNode.put("Type",email.getType());
+//        parentNode.put("Context",email.getContext());
+
+        rootNode.set(Email.class.getSimpleName(),getEmailNode(email));
         //setEmailNode(rootNode,email);
+
+        //rootNode.put("Email",getPackageEmailToGson(email));
+        //rootNode.set("Email",parentNode);
+        //rootNode.set("Email",setEmailNode();)
+       // setEmailNode(rootNode,email);
         return DESUtil.getEncryptString(new ObjectMapper().writeValueAsString(rootNode),cipherKey);
     }
 

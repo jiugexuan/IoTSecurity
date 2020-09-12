@@ -325,4 +325,19 @@ public class PackageParser {
 
         return emailList;
     }
+
+    public Email getEmailFromGson(String json) throws JsonProcessingException {
+        JsonNode jsonNode=objectMapper.readTree(json).get("Email");
+        JsonNode senderNode=jsonNode.get(Sender.class.getSimpleName());
+        JsonNode receiveNode=jsonNode.get(Receiver.class.getSimpleName());
+        return new Email(
+                jsonNode.get("Id").asText(),
+                new Sender(senderNode.get("Account").asText(),senderNode.get("Nickname").asText()),
+                new Receiver(receiveNode.get("Account").asText(),receiveNode.get("Nickname").asText()),
+                jsonNode.get("Title").asText(),
+                jsonNode.get("Time").asText(),
+                jsonNode.get("Type").asText(),
+                jsonNode.get("Context").asText()
+        );
+    }
 }

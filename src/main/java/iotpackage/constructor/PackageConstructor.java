@@ -715,8 +715,6 @@ public class PackageConstructor {
         return (new ObjectMapper()).writeValueAsString(rootNode);
     }
 
-
-
     /*** C to V 和V to C都是这个，发送加密的邮件
      *邮件发送
      * @param process
@@ -913,6 +911,21 @@ public class PackageConstructor {
     }
 
 
+    //FIXME 问题存在
+    /****
+     * 生成查询报文，
+     * @param process
+     * @param operation
+     * @param source
+     * @param destination
+     * @param code
+     * @param cipherKey
+     * @param sendList
+     * @param receiveList
+     * @param publickey
+     * @return
+     * @throws JsonProcessingException
+     */
     public String getPackageEmailListALL(String process, String operation,
                                          Source source, Destination destination,
                                          String code,

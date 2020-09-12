@@ -17,9 +17,10 @@ public class DESUtil {
     private static String ALGORITHM = "DES";
 
     /**
-     * @param: str
-     * @return: java.lang.String
-     * @Description: 获取加密之后的信息
+     * @Decription 获取加密之后的信息
+     * @param str str
+     * @param getkey 密钥
+     * @return java.lang.String
      */
     public static String getEncryptString(String str,String getkey) {
         //基于BASE64编码，接收byte[] 并转换成String
@@ -48,7 +49,7 @@ public class DESUtil {
             //byte[] to encode 好的String并返回
             return base64.encodeToString(doFinal);
         } catch (Exception e) {
-            // TODO: handle exception
+            // handle exception
             throw new RuntimeException(e);
         }
     }
@@ -84,7 +85,7 @@ public class DESUtil {
 //            //返回解密之后的信息
 //            return new String(doFinal, CHARSETNAME);
 //        } catch (Exception e) {
-//            // TODO: handle exception
+//            handle exception
 //            throw new RuntimeException(e);
 //        }
     /**

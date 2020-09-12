@@ -101,7 +101,8 @@ public class EmailTest {
         String ciphertextPlaint=  packageParser.getCipherPlaintext("123456789", "");
         Tools.jsonFormat(ciphertextPlaint);
         // System.out.println(ciphertextPlaint);
-        //packageParser.getEmailThroughDecryt(ciphertextPlaint,"12345678", "").printEmail();;
+        String emailJson="{\"Email\":{\"Id\":\"1\",\"Sender \":{\"Account \":\"testUser1 \",\"Nickname\":\"NickName\"},\"Receiver \":{\"Account \":\"testUser2 \",\"Nickname \":\"NickName2\"},\"Title \":\"the test email \",\"Time \":\"2020 - 09 - 12 21: 16: 21 \",\"Type \":\"text \",\"Context \":\"aniuehaghakjhhfiahf \"}}";
+        packageParser.getEmailFromGson(ciphertextPlaint).printEmail();;
     }
 
 
@@ -247,5 +248,10 @@ public class EmailTest {
         }
 
 
+    }
+
+    @Test
+    public void testSet(){
+        String json="{\"Sender\":{\"Account\":\"testUser1\",\"Nickname\":\"NickName\"},\"Receiver\":{\"Account\":\"testUser2\",\"Nickname\":\"NickName2\"},\"Title\":\"the test email\",\"Time\":\"2020-09-12 20:58:00\",\"Type\":\"text\",\"Context\":\"aniuehaghakjhhfiahf\"}";
     }
 }
