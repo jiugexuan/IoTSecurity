@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import iotpackage.IoTKey;
+import iotpackage.Tools;
 import iotpackage.data.TS;
 import iotpackage.data.autheticator.Authenticator;
 import iotpackage.data.ciphertext.Ciphertext;
@@ -11,6 +12,7 @@ import iotpackage.data.ciphertext.Lifetime;
 import iotpackage.data.fuction.Email;
 import iotpackage.data.fuction.User.Receiver;
 import iotpackage.data.fuction.User.Sender;
+import iotpackage.data.fuction.emailList.EmailList;
 import iotpackage.data.ticket.Ticket;
 import iotpackage.destination.Destination;
 import iotpackage.source.Source;
@@ -265,15 +267,28 @@ public class PackageParser {
         //JsonNode tsNode=jsonNode.get("TS");
 
         return new Email(
+                jsonNode.get("Id").asText(),
                 new Sender(senderNode.get("Account").asText(),senderNode.get("Nickname").asText()),
                 new Receiver(receiveNode.get("Account").asText(),receiveNode.get("Nickname").asText()),
                 jsonNode.get("Title").asText(),
                 jsonNode.get("Time").asText(),
                 jsonNode.get("Type").asText(),
                 jsonNode.get("Context").asText()
-
         );
 
 
+    }
+
+    public EmailList getEmailList(String json,EmailList emailList) throws JsonProcessingException {
+        JsonNode jsonNode = objectMapper.readTree(json);
+        //JsonNode ticketNode = jsonNode.get();
+        JsonNode arrNode = new ObjectMapper().readTree(json).get(emailList.getClass().getSimpleName());
+
+        for (JsonNode emailNode : arrNode) {
+            Tools.jsonFormat(new ObjectMapper().writeValueAsString(emailNode));
+            //System.out.println(emailNode);
+
+        }
+        return emailList;
     }
 }
