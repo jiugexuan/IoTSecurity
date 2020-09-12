@@ -63,6 +63,7 @@ public class CipherConstructor {
 
     }
 
+
     //Lifetime节点添加
     void setLifetimeNode(ObjectNode parentNode, Lifetime lifetime){
         ObjectNode TSNode=jsonNodeFactory.objectNode();
@@ -213,6 +214,11 @@ public class CipherConstructor {
         return DESUtil.getEncryptString(new ObjectMapper().writeValueAsString(rootNode),cipherKey);
     }
 
+    public String constructCipherOfVtoCVerify(TS ts) throws JsonProcessingException {
+        ObjectNode rootNode = jsonNodeFactory.objectNode();
+        setTSNode(rootNode,ts);
+        return DESUtil.getEncryptString(new ObjectMapper().writeValueAsString(rootNode),cipherKey);
+    }
 
     /****
      * C to V EmaiL发送

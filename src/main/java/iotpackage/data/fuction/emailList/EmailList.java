@@ -1,29 +1,49 @@
 package iotpackage.data.fuction.emailList;
 
+import iotpackage.data.fuction.Email;
+
+import java.util.Vector;
+
 public class EmailList {
     //邮件个数
-    int ListNumber;
+    int listNumber;
     //邮件列表
-    String context;
+    Vector<Email> emailList;
 
-    public EmailList(int listNumber, String context) {
-        ListNumber = listNumber;
-        this.context = context;
+    public EmailList() {
+        listNumber=0;
+        emailList=new Vector<Email>();
+    }
+
+    public EmailList(Vector<Email> emailList) {
+        this.emailList = emailList;
+        this.listNumber=emailList.size();
     }
 
     public int getListNumber() {
-        return ListNumber;
+        return listNumber;
+    }
+
+    public Vector<Email> getEmailList() {
+        return emailList;
     }
 
     public void setListNumber(int listNumber) {
-        ListNumber = listNumber;
+        this.listNumber = listNumber;
     }
 
-    public String getContext() {
-        return context;
+    public void setEmailList(Vector<Email> emailList) {
+        this.emailList = emailList;
+        this.listNumber=emailList.size();
     }
 
-    public void setContext(String context) {
-        this.context = context;
+    public void addEmail(Email email){
+        this.listNumber++;
+        this.emailList.add(email);
     }
+
+    public Email getEmailAtIndex(int i){
+        return emailList.get(i);
+    }
+
 }

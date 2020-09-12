@@ -11,6 +11,7 @@ import iotpackage.data.autheticator.Authenticator;
 import iotpackage.data.ciphertext.Ciphertext;
 import iotpackage.data.ciphertext.Lifetime;
 import iotpackage.data.fuction.Email;
+import iotpackage.data.fuction.User.User;
 import iotpackage.data.ticket.Ticket;
 import iotpackage.destination.Destination;
 import iotpackage.source.Source;
@@ -131,6 +132,26 @@ public class PackageConstructor {
         //ObjectMapper objectMapper = new ObjectMapper();
 
         //String signContext= objectMapper.writeValueAsString(rootNode);
+        return new ObjectMapper().writeValueAsString(rootNode);
+    };
+
+    //邮件
+    public void setUser(ObjectNode parentNode, User user){
+        ObjectNode userNode=jsonNodeFactory.objectNode();
+        userNode.put("Account",user.getAccount());
+        userNode.put("Nickname",user.getNickname());
+        parentNode.set(user.getClass().getSimpleName(),userNode);
+    };
+    public String getPackageEmailToGson(Email email) throws JsonProcessingException {
+        ObjectNode rootNode = jsonNodeFactory.objectNode();
+        setUser(rootNode,email.getSender());
+        setUser(rootNode,email.getReceiver());
+        rootNode.put("Title",email.getTitle());
+        rootNode.put("Time",email.getTime());
+        rootNode.put("Type",email.getType());
+        rootNode.put("Context",email.getContext());
+
+        //setTSNode(rootNode,authenticator.getTs());*/
         return new ObjectMapper().writeValueAsString(rootNode);
     };
 
@@ -646,9 +667,21 @@ public class PackageConstructor {
         return (new ObjectMapper()).writeValueAsString(rootNode);
     }
 
+    /***
+     * V to C Verify
+     * @param process
+     * @param operation
+     * @param source
+     * @param destination
+     * @param code
+     * @param cipherKey
+     * @param publickey
+     * @return
+     * @throws JsonProcessingException
+     */
     public String getPackageVtoCVerify(String process, String operation, Source source, Destination destination, String code,
-                                       String ipID, Authenticator authenticator,
-                                       int TS,String publickey) throws JsonProcessingException {
+                                       String cipherKey,
+                                       TS ts,String publickey) throws JsonProcessingException {
         ObjectNode rootNode = this.jsonNodeFactory.objectNode();
         ObjectNode infoNode = this.jsonNodeFactory.objectNode();
         ObjectNode signNode = this.jsonNodeFactory.objectNode();
@@ -658,8 +691,10 @@ public class PackageConstructor {
         this.setDestionationNode(infoNode, destination);
         ObjectNode dataNode = this.jsonNodeFactory.objectNode();
         dataNode.put("Code", code);
-     //  // this.setTicketNode(dataNode, DESUtil.getEncryptString((new CipherConstructor()).getPackageTikectToGson(ticket), ticketkey), ipID);
-       // this.setAuthenticatorNode(dataNode, DESUtil.getEncryptString((new CipherConstructor()).getPackageAuthenticatorToGson(authenticator), authenticatorKey), authenticatorID);
+
+        CipherConstructor cipherConstructor=new CipherConstructor(cipherKey);
+        setCipherNode(dataNode,new Ciphertext(cipherConstructor.constructCipherOfVtoCVerify(ts),"VtoCVerify"));
+
         infoNode.set("Data", dataNode);
         rootNode.set("Info", infoNode);
         if (publickey.length() == 0) {
@@ -677,8 +712,8 @@ public class PackageConstructor {
 
 
 
-    /***
-     *
+    /*** C to V 和V to C都是这个，发送指定的邮件
+     *邮件发送
      * @param process
      * @param operation
      * @param source
@@ -692,7 +727,7 @@ public class PackageConstructor {
      * @return
      * @throws JsonProcessingException
      */
-    public String  getPackageCtoVEmailSend(String process, String operation,
+    public String  getPackageEmailSend(String process, String operation,
                                     Source source, Destination destination,
                                     String code,
                                     String cipherKey,
@@ -721,6 +756,62 @@ public class PackageConstructor {
 
         CipherConstructor cipherConstructor=new CipherConstructor(cipherKey);
         setCipherNode(dataNode,new Ciphertext(cipherConstructor.constructCipherOfEmailSend(email,emailID,emailKey),"TGStoC EmailSend"));
+
+        infoNode.set("Data",dataNode);
+        rootNode.set("Info",infoNode);
+
+
+        //sign签名
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        //签名算法
+        if(publickey.length()==0){
+            signNode.put("Context","");
+
+        }else{
+            //签名是加密
+            String signContext= RSAUtil.privateEncrypt(MD5Util.md5(new ObjectMapper().writeValueAsString(infoNode)) ,publickey);
+            signNode.put("Context",signContext);
+        }
+        signNode.put("PublicKey",publickey);
+
+        rootNode.set("Sign",signNode);
+
+        return objectMapper.writeValueAsString(rootNode);
+    }
+
+
+    //public String
+
+
+    public String getPackageEmailCheck(String process, String operation,
+                                      Source source, Destination destination,
+                                      String code,
+                                      String account,
+                                      String publickey) throws JsonProcessingException {
+
+        ObjectNode rootNode = jsonNodeFactory.objectNode();
+        ObjectNode infoNode = jsonNodeFactory.objectNode();
+
+        ObjectNode signNode = jsonNodeFactory.objectNode();
+
+        infoNode.put("Process",process);
+        infoNode.put("Operation",operation);
+
+        //source节点添加
+        setSourceNode(infoNode,source);
+
+        //destination节点添加
+        setDestionationNode(infoNode,destination);
+
+        //Data字段
+        ObjectNode dataNode = jsonNodeFactory.objectNode();
+        dataNode.put("Code",code);
+        //时间戳节点添加
+
+        dataNode.put("Account",account);
+        //CipherConstructor cipherConstructor=new CipherConstructor(cipherKey);
+        //setCipherNode(dataNode,new Ciphertext(cipherConstructor.constructCipherOfEmailSend(email,emailID,emailKey),"TGStoC EmailSend"));
 
         infoNode.set("Data",dataNode);
         rootNode.set("Info",infoNode);
