@@ -1,9 +1,12 @@
 package iotpackage.constructor;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import iotpackage.IoTKey;
+import iotpackage.Tools;
 import iotpackage.data.TS;
 import iotpackage.data.autheticator.Authenticator;
 import iotpackage.data.ciphertext.Ciphertext;
@@ -11,9 +14,11 @@ import iotpackage.data.ciphertext.Lifetime;
 import iotpackage.data.fuction.Email;
 import iotpackage.data.fuction.User.Receiver;
 import iotpackage.data.fuction.User.Sender;
+import iotpackage.data.fuction.emailList.EmailList;
 import iotpackage.data.ticket.Ticket;
 import iotpackage.destination.Destination;
 import iotpackage.source.Source;
+import org.apache.commons.text.StringEscapeUtils;
 import securityalgorithm.DESUtil;
 
 import javax.crypto.BadPaddingException;
@@ -22,6 +27,7 @@ import javax.crypto.NoSuchPaddingException;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Vector;
 
 public class PackageParser {
     ObjectMapper objectMapper;
@@ -35,7 +41,7 @@ public class PackageParser {
     //= objectMapper.readTree(jsonString);
 
     public PackageParser() {
-         this.objectMapper = new ObjectMapper();
+        this.objectMapper = new ObjectMapper();
     }
 
     public PackageParser(String json) throws IOException {
@@ -47,7 +53,6 @@ public class PackageParser {
         this.sourceNode=infoNode.get("Source");
         this.destinationNode=infoNode.get("Destination");
         this.dataNode=infoNode.get("Data");
-
     }
 
 
@@ -65,10 +70,10 @@ public class PackageParser {
         if(this.json==null){
             return null ;
         }
-       // JsonNode parentNode=rootNode.get("Info");
+        // JsonNode parentNode=rootNode.get("Info");
         return infoNode.get("Process").asText();
 
-       // return ;
+        // return ;
     }
 
     public String getOperation(){
@@ -168,6 +173,7 @@ public class PackageParser {
         return tsNode.get("Context").asText();
     }
 
+
     public String getIdC(){
         return dataNode.get("IdC").asText();
     }
@@ -175,7 +181,7 @@ public class PackageParser {
     @Deprecated
     public Ticket getTicket(String json,String ticketKey) throws IOException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
         JsonNode jsonNode=objectMapper.readTree(json);
-      //  String plaintext=jsonNode.get("Ticket").asText();
+        //  String plaintext=jsonNode.get("Ticket").asText();
         String plaintext= DESUtil.getDecryptString(jsonNode.get("Ticket").asText(),ticketKey) ;
 
         System.out.println(plaintext);
@@ -192,10 +198,10 @@ public class PackageParser {
                 new Destination(destinationNode.get("Id").asText(),destinationNode.get("IP").asText()),
                 new TS(Integer.parseInt(tsNode.get("Id").asText()),tsNode.get("Context").asText()),
                 new Lifetime(lifetimeNode.get("Id").asText(),lifetimeNode.get("Context").asText())
-                );
+        );
 
-                //,
-     //return "";
+        //,
+        //return "";
         //return new Ciphertext(dataNode.get("Ciphertext").get("Context").asText(),dataNode.get("Ciphertext").get("Id").asText());
     }
 
@@ -265,12 +271,12 @@ public class PackageParser {
     }
 
 
-    public Email getEmail(String json, String emailKey, String emailID) throws IOException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
+    public Email getEmailThroughDecryt(String json, String emailKey, String emailID) throws IOException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
         JsonNode jsonNode=objectMapper.readTree(json);
         JsonNode ticketNode=jsonNode.get("Email");
         String plaintext = null;
         plaintext = DESUtil.getDecryptString(ticketNode.get("Context").asText(),emailKey);
-       // authenticat=ticketNode.get("Id").asText();
+        // authenticat=ticketNode.get("Id").asText();
         System.out.println(plaintext);
         jsonNode=objectMapper.readTree(plaintext);
         JsonNode senderNode=jsonNode.get("Sender");
@@ -278,17 +284,45 @@ public class PackageParser {
         //JsonNode tsNode=jsonNode.get("TS");
 
         return new Email(
+                jsonNode.get("Id").asText(),
                 new Sender(senderNode.get("Account").asText(),senderNode.get("Nickname").asText()),
                 new Receiver(receiveNode.get("Account").asText(),receiveNode.get("Nickname").asText()),
                 jsonNode.get("Title").asText(),
                 jsonNode.get("Time").asText(),
                 jsonNode.get("Type").asText(),
                 jsonNode.get("Context").asText()
-
         );
 
 
     }
 
+    //TODO 解析出错
+    public EmailList getEmailList(String json,EmailList emailList) throws JsonProcessingException {
+        //JsonNode jsonNode = objectMapper.readTree(json);
+        //JsonNode ticketNode = jsonNode.get();
 
+        // String str1 = "{\"resourceId\":\"dfead70e4ec5c11e43514000ced0cdcaf\",\"properties\":{\"process_id\":\"process4\",\"name\":\"\",\"documentation\":\"\",\"processformtemplate\":\"\"}}";
+
+        // ；      unescapeJavaScript(json);
+        JsonNode arrNode =  new ObjectMapper().readTree(json).get(emailList.getClass().getSimpleName());
+
+        String tmp = StringEscapeUtils.unescapeJava(objectMapper.writeValueAsString(arrNode));
+        String tmp2 = StringEscapeUtils.unescapeJava(objectMapper.writeValueAsString(tmp));
+        JsonNode jsonNode=new ObjectMapper().readTree(tmp2);
+        Tools.jsonFormat(jsonNode.asText());
+        // String tmp = StringEscapeUtils.unescapeJava(objectMapper.writeValueAsString(arrNode));
+        // ObjectMapper objectMapper = new ObjectMapper();
+        // ObjectMapper mapper = new ObjectMapper();
+        //Vector<Email> lendReco = mapper.readValue(objectMapper.writeValueAsString(arrNode),new TypeReference<Vector<Email>>() { });
+        //  EmailList list = objectMapper.readValue(json,EmailList.class);
+        //    JsonNode jsonNode=arrNode.get(0);
+//System.out.println(tmp);
+        for(int i=0;i<10;i++){
+            //jsonNode=arrNode.get(i);
+            System.out.println();
+            System.out.println(1);
+        }
+
+        return emailList;
+    }
 }

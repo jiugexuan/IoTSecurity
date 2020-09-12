@@ -1,11 +1,13 @@
 package iotpackage.data.fuction.emailList;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import iotpackage.data.fuction.Email;
 
 import java.util.Vector;
 
 public class EmailList {
     //邮件个数
+    @JsonIgnore
     int listNumber;
     //邮件列表
     Vector<Email> emailList;
