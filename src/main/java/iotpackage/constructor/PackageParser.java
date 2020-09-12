@@ -17,6 +17,7 @@ import iotpackage.data.fuction.User.Sender;
 import iotpackage.data.fuction.emailList.EmailList;
 import iotpackage.data.ticket.Ticket;
 import iotpackage.destination.Destination;
+import iotpackage.sign.Sign;
 import iotpackage.source.Source;
 import org.apache.commons.text.StringEscapeUtils;
 import securityalgorithm.DESUtil;
@@ -103,42 +104,47 @@ public class PackageParser {
 
     public String getCode(){
         return dataNode.get("Code").asText();
-    };
+    }
 
     public String getSignPublicKey(){
         return signNode.get("PublicKey").asText();
-    };
+    }
 
     public String getSignContext(){
         return signNode.get("Context").asText();
-    };
+    }
 
-
+    public Sign getSign(){
+        return new Sign(signNode.get("Context").asText(),signNode.get("PublicKey").asText());
+    }
     /******注册**********/
 
     public String getAccount(){
         return dataNode.get("Account").asText();
-    };
+    }
 
     public String getPassword(){
         return dataNode.get("Password").asText();
-    };
+    }
 
     public String getNickName(){
         return dataNode.get("Nickname").asText();
-    };
+    }
 
     public String getSecurityQuestion(){
         return dataNode.get("SecurityQuestion").asText();
-    };
+    }
 
     public String getSecurityAnswer(){
         return dataNode.get("SecurityAnswer").asText();
-    };
+    }
 
-    /******登入*******/
-    /*****C to AS*****/
-    /*****AS to C*****/
+    //登入
+    // C to AS
+    /*****AS to C
+     *
+     * @return 返回密文类
+     */
     public Ciphertext getCiphertext(){
         return new Ciphertext(dataNode.get("Ciphertext").get("Context").asText(),dataNode.get("Ciphertext").get("Id").asText());
     }
@@ -217,8 +223,8 @@ public class PackageParser {
     public Ticket getTicket(String json,String ticketKey,String ticketID) throws IOException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
         JsonNode jsonNode=objectMapper.readTree(json);
         JsonNode ticketNode=jsonNode.get("Ticket");
-        String plaintext = null;;
-        plaintext = DESUtil.getDecryptString(ticketNode.get("Context").asText(),ticketKey);
+        //String plaintext = null;
+        String plaintext = DESUtil.getDecryptString(ticketNode.get("Context").asText(),ticketKey);
         ticketID=ticketNode.get("Id").asText();
         System.out.println(plaintext);
         jsonNode=objectMapper.readTree(plaintext);
