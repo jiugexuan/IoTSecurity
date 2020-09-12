@@ -21,4 +21,5 @@ public class Destination extends IPInfo {
         System.out.println(">>IP:"+getIp());
         System.out.println(">--------------");
     }
+
 }
