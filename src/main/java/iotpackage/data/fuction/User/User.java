@@ -1,12 +1,12 @@
-package iotpackage.data.fuction;
+package iotpackage.data.fuction.User;
 
-public class Sender {
+public class User {
     /**用户账户**/
     String account;
     /**用户昵称**/
     String nickname;
 
-    public Sender(String account, String nickname) {
+    public User(String account, String nickname) {
         this.account = account;
         this.nickname = nickname;
     }
@@ -25,5 +25,14 @@ public class Sender {
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    public void printUser(){
+        System.out.println(">--------------");
+        System.out.println("the User:");
+        System.out.println(">>Account:"+getAccount());
+        System.out.println(">>Nickname:"+getNickname());
+        System.out.println(">--------------");
+
     }
 }
