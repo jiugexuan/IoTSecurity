@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import iotpackage.IPInfo;
 import iotpackage.IoTKey;
 import iotpackage.Tools;
 import iotpackage.data.Contain;
@@ -85,6 +86,7 @@ public class PackageParser {
         // return ;
     }
 
+    @Deprecated
     public void getSource(Source source){
         if(this.json==null){
             return;
@@ -93,6 +95,14 @@ public class PackageParser {
         source.setIp(sourceNode.get("IP").asText());
     }
 
+    public IPInfo getSource(){
+        if(this.json==null){
+            return null;
+        }
+        return new IPInfo(sourceNode.get("Id").asText(),sourceNode.get("IP").asText());
+    }
+
+    @Deprecated
     public void getDestination(Destination destination){
         if(this.json==null){
             return;
@@ -101,6 +111,12 @@ public class PackageParser {
         destination.setIp(destinationNode.get("IP").asText());
     }
 
+    public IPInfo getDestination(){
+        if(this.json==null){
+            return null;
+        }
+        return new IPInfo(destinationNode.get("Id").asText(),destinationNode.get("IP").asText());
+    }
     public String getCode(){
         return dataNode.get("Code").asText();
     }
