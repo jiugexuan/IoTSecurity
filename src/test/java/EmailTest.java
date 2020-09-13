@@ -56,7 +56,7 @@ public class EmailTest {
         String emailSendJson=new PackageConstructor().getPackageEmailSendInSafety("Verify","Request",
                 new Source("accoutTO","192.168.1.7"),new Destination("coueg","123547890"),
                 "0005","123456789",email,"5",
-                "12345678","");
+                "12345678","","");
         //System.oemailSendJson);
         PackageParser packageParser=new PackageParser(emailSendJson);
         Ciphertext  ciphertext=packageParser.getCiphertext();
@@ -92,7 +92,7 @@ public class EmailTest {
         System.out.println(cipherConstructor.getCipherOfEmail(email,cipherConstructor.getCipherKey()));
         String emailSendJson=new PackageConstructor().getPackageEmailSend("Verify","Request",
                 new Source("accoutTO","192.168.1.7"),new Destination("coueg","123547890"),
-                "0005","123456789",email,"");
+                "0005","123456789",email,"","");
         //System.oemailSendJson);
         PackageParser packageParser=new PackageParser(emailSendJson);
         Ciphertext  ciphertext=packageParser.getCiphertext();
@@ -147,7 +147,7 @@ public class EmailTest {
     public void EmailCheck() throws JsonProcessingException {
         String emailSendJson=new PackageConstructor().getPackageEmailCheck("Verify","Request",
                 new Source("accoutTO","192.168.1.7"),new Destination("coueg","123547890"),
-                "0005","123456789","");
+                "0005","123456789","","");
         Tools.jsonFormat(emailSendJson);
     }
 
@@ -228,14 +228,18 @@ public class EmailTest {
         //造包
         String emailSendJson=new PackageConstructor().getPackageEmailListALL("Verify","Request",
                 new Source("accoutTO","192.168.1.7"),new Destination("coueg","123547890"),
-                "0005","123456789",sendList,receiveList,"");
+                "0005","123456789",sendList,receiveList,"","");
         // Tools.jsonFormat(emailSendJson);
-        String List=new PackageParser(emailSendJson).getCipherPlaintext("123456789",new String());
+        String List=new PackageParser(emailSendJson).getCipherPlaintext("123456789","");
 
         System.out.println(List);
         ReceiveList receiveList1=new ReceiveList();
+        SendList sendList1=new SendList();
        new PackageParser(emailSendJson).getEmailList(List,receiveList1);
+       new PackageParser(emailSendJson).getEmailList(List,sendList1,receiveList);
          receiveList1.printEmailList();
+         sendList1.printEmailList();
+        // Sen
     }
 
     @Test

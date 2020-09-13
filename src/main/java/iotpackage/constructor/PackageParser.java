@@ -151,9 +151,9 @@ public class PackageParser {
 
     /***
      * 获得密文结果
-     * @param cipherKey
-     * @param cipherID
-     * @return
+     * @param cipherKey 加密报文的密钥
+     * @param cipherID　密钥的ID
+     * @return 解密结果
      * @throws NoSuchPaddingException
      * @throws NoSuchAlgorithmException
      * @throws IOException
@@ -347,8 +347,12 @@ public class PackageParser {
           // email.printEmail();
             emailList.addEmail(email);
         }
-
         return emailList;
+    }
+
+    public void getEmailList(String json,EmailList emailList1,EmailList emailList2) throws JsonProcessingException {
+        getEmailList(json,emailList1);
+        getEmailList(json,emailList2);
     }
 
     public Email getEmailFromGson(String json) throws JsonProcessingException {
