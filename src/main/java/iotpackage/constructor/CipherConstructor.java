@@ -29,7 +29,7 @@ public class CipherConstructor {
     //JsonNodeFactory 实例，可全局共享
     private JsonNodeFactory jsonNodeFactory = JsonNodeFactory.instance;
     //JsonFactory 实例，线程安全
-    private JsonFactory jsonFactory = new JsonFactory();
+   // private JsonFactory jsonFactory = new JsonFactory();
 
     /**工具函数*/
     //source节点添加
@@ -108,9 +108,7 @@ public class CipherConstructor {
      */
     void setEmailNode(ObjectNode parentNode, Email email) throws JsonProcessingException {
         ObjectNode EmailNode=jsonNodeFactory.objectNode();
-        // TSNode.put("Id",emailID);
         EmailNode.put("Email",getPackageEmailToGson(email));
-        //TSNode.put("Context",getCipherOfEmail(email,emailKey));
         parentNode.set(email.getClass().getSimpleName(),EmailNode);
 
     }

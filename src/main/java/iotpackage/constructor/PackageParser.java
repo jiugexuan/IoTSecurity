@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import iotpackage.IoTKey;
 import iotpackage.Tools;
+import iotpackage.data.Contain;
 import iotpackage.data.TS;
 import iotpackage.data.autheticator.Authenticator;
 import iotpackage.data.ciphertext.Ciphertext;
@@ -26,6 +27,7 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import java.io.IOException;
+import java.lang.constant.Constable;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Vector;
@@ -71,10 +73,7 @@ public class PackageParser {
         if(this.json==null){
             return null ;
         }
-        // JsonNode parentNode=rootNode.get("Info");
         return infoNode.get("Process").asText();
-
-        // return ;
     }
 
     public String getOperation(){
@@ -149,23 +148,7 @@ public class PackageParser {
         return new Ciphertext(dataNode.get("Ciphertext").get("Context").asText(),dataNode.get("Ciphertext").get("Id").asText());
     }
 
-    /***
-     * 获得密文结果
-     * @param cipherKey 加密报文的密钥
-     * @param cipherID　密钥的ID
-     * @return 解密结果
-     * @throws NoSuchPaddingException
-     * @throws NoSuchAlgorithmException
-     * @throws IOException
-     * @throws BadPaddingException
-     * @throws IllegalBlockSizeException
-     * @throws InvalidKeyException
-     */
-    public String getCipherPlaintext(String cipherKey,String cipherID) throws NoSuchPaddingException, NoSuchAlgorithmException, IOException, BadPaddingException, IllegalBlockSizeException, InvalidKeyException {
-        Ciphertext ciphertext=getCiphertext();
-        cipherID=ciphertext.getId();
-        return DESUtil.getDecryptString(ciphertext.getContext(),cipherKey);
-    }
+
 
     public String getKey(String json) throws JsonProcessingException {
         JsonNode jsonNode=objectMapper.readTree(json);
@@ -185,7 +168,7 @@ public class PackageParser {
     }
     /***注意json串**/
     @Deprecated
-    public Ticket getTicket(String json,String ticketKey) throws IOException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
+    public Ticket getTicket1(String json,String ticketKey) throws IOException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
         JsonNode jsonNode=objectMapper.readTree(json);
         //  String plaintext=jsonNode.get("Ticket").asText();
         String plaintext= DESUtil.getDecryptString(jsonNode.get("Ticket").asText(),ticketKey) ;
@@ -211,6 +194,43 @@ public class PackageParser {
         //return new Ciphertext(dataNode.get("Ciphertext").get("Context").asText(),dataNode.get("Ciphertext").get("Id").asText());
     }
 
+    @Deprecated
+    /***
+     * 获得密文结果
+     * @param cipherKey 加密报文的密钥
+     * @param cipherID　密钥的ID
+     * @return 解密结果
+     * @throws NoSuchPaddingException 密文长度出错
+     * @throws NoSuchAlgorithmException 解密算法出错
+     * @throws IOException 输出错误
+     * @throws BadPaddingException 密钥出错
+     * @throws IllegalBlockSizeException unknown
+     * @throws InvalidKeyException unknown
+     */
+    public String getCipherPlaintext(String cipherKey,String cipherID) throws NoSuchPaddingException, NoSuchAlgorithmException, IOException, BadPaddingException, IllegalBlockSizeException, InvalidKeyException {
+        Ciphertext ciphertext=getCiphertext();
+        cipherID=ciphertext.getId();
+        return DESUtil.getDecryptString(ciphertext.getContext(),cipherKey);
+    }
+
+    /***
+     * 获得密文结果
+     * @param cipherKey 加密报文的密钥
+     * @return 解密结果
+     * @throws NoSuchPaddingException 密文长度出错
+     * @throws NoSuchAlgorithmException 解密算法出错
+     * @throws IOException 输出错误
+     * @throws BadPaddingException 密钥出错
+     * @throws IllegalBlockSizeException unknown
+     * @throws InvalidKeyException unknown
+     */
+    public Contain getCipherPlaintext(String cipherKey) throws NoSuchPaddingException, NoSuchAlgorithmException, IOException, BadPaddingException, IllegalBlockSizeException, InvalidKeyException {
+        Ciphertext ciphertext=getCiphertext();
+        //cipherID=ciphertext.getId();
+        return new Contain(ciphertext.getId(),DESUtil.getDecryptString(ciphertext.getContext(),cipherKey));
+    }
+
+    @Deprecated
     //ticket获取
     public String getTicketInSafety(String json,String ticketID) throws IOException {
         JsonNode jsonNode=objectMapper.readTree(json);
@@ -220,6 +240,18 @@ public class PackageParser {
         return ticketNode.get("Context").asText();
     }
 
+    //ticket获取
+    public Contain getTicketInSafety(String json) throws IOException {
+        JsonNode jsonNode=objectMapper.readTree(json);
+        //  String plaintext=jsonNode.get("Ticket").asText();
+        JsonNode ticketNode=jsonNode.get("Ticket");
+        //ticketID=ticketNode.get("Id").asText();
+        return new Contain(ticketNode.get("Id").asText(),ticketNode.get("Context").asText());
+        //return new Contain(ticketID.getId(),DESUtil.getDecryptString(ciphertext.getContext(),cipherKey));
+        //return ticketNode.get("Context").asText();
+    }
+
+    @Deprecated
     public Ticket getTicket(String json,String ticketKey,String ticketID) throws IOException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
         JsonNode jsonNode=objectMapper.readTree(json);
         JsonNode ticketNode=jsonNode.get("Ticket");
@@ -241,12 +273,32 @@ public class PackageParser {
                 new TS(Integer.parseInt(tsNode.get("Id").asText()),tsNode.get("Context").asText()),
                 new Lifetime(lifetimeNode.get("Id").asText(),lifetimeNode.get("Context").asText())
         );
-
-        //,
-        //return "";
-        //return new Ciphertext(dataNode.get("Ciphertext").get("Context").asText(),dataNode.get("Ciphertext").get("Id").asText());
     }
 
+
+    public Contain getTicket(String json,String ticketKey) throws IOException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
+        JsonNode jsonNode=objectMapper.readTree(json);
+        JsonNode ticketNode=jsonNode.get("Ticket");
+        //String plaintext = null;
+        String plaintext = DESUtil.getDecryptString(ticketNode.get("Context").asText(),ticketKey);
+        System.out.println(plaintext);
+        jsonNode=objectMapper.readTree(plaintext);
+        JsonNode keyNode=jsonNode.get("Key");
+        JsonNode sourceNode=jsonNode.get("Source");
+        JsonNode destinationNode=jsonNode.get("Destination");
+        JsonNode tsNode=jsonNode.get("TS");
+        JsonNode lifetimeNode=jsonNode.get("Lifetime");
+
+        return new Contain(ticketNode.get("Id").asText(),new Ticket(
+                new IoTKey(keyNode.get("Id").asText(),keyNode.get("Context").asText()),
+                new Source(sourceNode.get("Id").asText(),sourceNode.get("IP").asText()),
+                new Destination(destinationNode.get("Id").asText(),destinationNode.get("IP").asText()),
+                new TS(Integer.parseInt(tsNode.get("Id").asText()),tsNode.get("Context").asText()),
+                new Lifetime(lifetimeNode.get("Id").asText(),lifetimeNode.get("Context").asText())
+        ));
+    }
+
+    @Deprecated
     //Authenticator获取
     public String getAuthenticatorInSafety(String json,String authenticatorID) throws IOException {
         JsonNode jsonNode=objectMapper.readTree(json);
@@ -255,11 +307,22 @@ public class PackageParser {
         authenticatorID=authenticatorNode.get("Id").asText();
         return authenticatorNode.get("Context").asText();
     }
+
+
+
+    //Authenticator获取
+    public Contain getAuthenticatorInSafety(String json) throws IOException {
+        JsonNode jsonNode=objectMapper.readTree(json);
+        JsonNode authenticatorNode=jsonNode.get("Authenticator");
+        return new Contain(authenticatorNode.get("Id").asText(),authenticatorNode.get("Context").asText());
+    }
+
+    @Deprecated
     public Authenticator getAuthenticator(String json,String authenticatorKey,String authenticatorID) throws IOException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
         JsonNode jsonNode=objectMapper.readTree(json);
         JsonNode ticketNode=jsonNode.get("Authenticator");
-        String plaintext = null;
-        plaintext = DESUtil.getDecryptString(ticketNode.get("Context").asText(),authenticatorKey);
+        //String plaintext = null;
+        String plaintext = DESUtil.getDecryptString(ticketNode.get("Context").asText(),authenticatorKey);
         authenticatorID=ticketNode.get("Id").asText();
         System.out.println(plaintext);
         jsonNode=objectMapper.readTree(plaintext);
@@ -273,15 +336,33 @@ public class PackageParser {
                 new Source(sourceNode.get("Id").asText(),sourceNode.get("IP").asText()),
                 new TS(Integer.parseInt(tsNode.get("Id").asText()),tsNode.get("Context").asText())
         );
-
     }
 
 
+    public Contain getAuthenticator(String json,String authenticatorKey) throws IOException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
+        JsonNode jsonNode=objectMapper.readTree(json);
+        JsonNode ticketNode=jsonNode.get("Authenticator");
+
+        String plaintext = DESUtil.getDecryptString(ticketNode.get("Context").asText(),authenticatorKey);
+        //authenticatorID=;
+        System.out.println(plaintext);
+        jsonNode=objectMapper.readTree(plaintext);
+        JsonNode destinationNode=jsonNode.get("Destination");
+        JsonNode sourceNode=jsonNode.get("Source");
+        JsonNode tsNode=jsonNode.get("TS");
+        return new Contain( ticketNode.get("Id").asText(),new Authenticator(
+                new Destination(destinationNode.get("Id").asText(),destinationNode.get("IP").asText()),
+                new Source(sourceNode.get("Id").asText(),sourceNode.get("IP").asText()),
+                new TS(Integer.parseInt(tsNode.get("Id").asText()),tsNode.get("Context").asText())
+        ));
+    }
+
+    @Deprecated
     public Email getEmailThroughDecryt(String json, String emailKey, String emailID) throws IOException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
         JsonNode jsonNode=objectMapper.readTree(json);
         JsonNode ticketNode=jsonNode.get("Email");
-        String plaintext = null;
-        plaintext = DESUtil.getDecryptString(ticketNode.get("Context").asText(),emailKey);
+        //String plaintext = null;
+        String plaintext = DESUtil.getDecryptString(ticketNode.get("Context").asText(),emailKey);
         // authenticat=ticketNode.get("Id").asText();
         System.out.println(plaintext);
         jsonNode=objectMapper.readTree(plaintext);
@@ -298,11 +379,38 @@ public class PackageParser {
                 jsonNode.get("Type").asText(),
                 jsonNode.get("Context").asText()
         );
-
-
     }
 
-    //TODO 解析出错
+    public Contain getEmailThroughDecryt(String json, String emailKey) throws IOException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
+        JsonNode jsonNode=objectMapper.readTree(json);
+        JsonNode emailNode=jsonNode.get("Email");
+        //String plaintext = null;
+        String plaintext = DESUtil.getDecryptString(emailNode.get("Context").asText(),emailKey);
+        // authenticat=ticketNode.get("Id").asText();
+        System.out.println(plaintext);
+        jsonNode=objectMapper.readTree(plaintext);
+        JsonNode senderNode=jsonNode.get("Sender");
+        JsonNode receiveNode=jsonNode.get("Receiver");
+        //JsonNode tsNode=jsonNode.get("TS");
+
+        return new Contain(emailNode.get("Id").asText(),
+                new Email(jsonNode.get("Id").asText(),
+                new Sender(senderNode.get("Account").asText(),senderNode.get("Nickname").asText()),
+                new Receiver(receiveNode.get("Account").asText(),receiveNode.get("Nickname").asText()),
+                jsonNode.get("Title").asText(),
+                jsonNode.get("Time").asText(),
+                jsonNode.get("Type").asText(),
+                jsonNode.get("Context").asText()
+        ));
+    }
+
+    /***
+     * 解析收到的json包，得到EmialList
+     * @param json 收到的json
+     * @param emailList 存储的emailList
+     * @return  返回EMailList
+     * @throws JsonProcessingException json解析出错
+     */
     public EmailList getEmailList(String json,EmailList emailList) throws JsonProcessingException {
         JsonNode arrNode =  new ObjectMapper().readTree(json).get(emailList.getClass().getSimpleName());
 

@@ -23,5 +23,9 @@ public class Tools {
         return md5Info.equals(signature);
     }
 
+    public static void setString(String string){
+        string=new String("123456789");
+    }
+
 
 }
