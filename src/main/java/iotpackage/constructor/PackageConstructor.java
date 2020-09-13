@@ -162,6 +162,54 @@ public class PackageConstructor {
     }
 
 /////////////////////////////////
+    /***
+     * AS to C
+     * 登入响应，并带上nickname
+     * @param process 进程代号
+     * @param operation 操作代号
+     * @param source 发送方
+     * @param destination 接受方
+     * @param code 操作码
+     * @param publicKey 验证公钥
+     * */
+    public String getPackageServiceResponse(String process, String operation, Source source, Destination destination, String code,String nickname,String privateKey,String publicKey) throws JsonProcessingException {
+        ObjectNode rootNode = jsonNodeFactory.objectNode();
+        ObjectNode infoNode = jsonNodeFactory.objectNode();
+        ObjectNode signNode = jsonNodeFactory.objectNode();
+        infoNode.put("Process",process);
+        infoNode.put("Operation",operation);
+
+        //source节点添加
+        setSourceNode(infoNode,source);
+
+        //destination节点添加
+        setDestionationNode(infoNode,destination);
+
+        //Data字段
+        ObjectNode dataNode = jsonNodeFactory.objectNode();
+        dataNode.put("Code",code);
+        dataNode.put("Nickname",nickname);
+
+
+        infoNode.set("Data",dataNode);
+        rootNode.set("Info",infoNode);
+
+
+        if(publicKey.length()==0){
+            signNode.put("Context","");
+
+        }else{
+            //签名是加密
+            String signContext= RSAUtil.privateEncrypt(MD5Util.md5(new ObjectMapper().writeValueAsString(infoNode)) ,privateKey);
+            signNode.put("Context",signContext);
+        }
+
+        signNode.put("PublicKey",publicKey);
+        rootNode.set("Sign",signNode);
+        // ObjectMapper objectMapper = new ObjectMapper();
+        return new ObjectMapper().writeValueAsString(rootNode);
+    }
+
     @Deprecated
     /***
      * 服务器响应代码
@@ -845,7 +893,6 @@ public class PackageConstructor {
      * @param idV 用户的访问的V的IP
      * @param tgsContext tgs的票据
      * @param tgsticketID ticket ID号
-     * @param authenticator 有效证明
      * @param authenticatorID 有效证明id
      * @param authenticator  用户授权
      * @param privateKey 加密私钥
