@@ -6,7 +6,7 @@ import java.awt.event.ActionListener;
 
 public class UI extends JFrame {
 
-    private void initGUI(String user) {
+    private void initGUI(String user,String Kcv) {
         setLayout(null);
         setBounds(350, 100, 430, 280);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -22,7 +22,8 @@ public class UI extends JFrame {
         jButton1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Writer tempp = new Writer();
+                System.out.println("UI 传送 的 Kcv"+Kcv);
+                Writer tempp = new Writer(user,Kcv);
             }
         });
 
@@ -84,10 +85,10 @@ public class UI extends JFrame {
 
     }
 
-    public UI(String user)
+    public UI(String user,String Kcv)
     {
         super();
-        initGUI(user);
+        initGUI(user,Kcv);
     }
 
 	/*

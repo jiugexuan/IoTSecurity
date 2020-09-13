@@ -1,9 +1,27 @@
 package client.UI;
 
+import Server.Server;
+import client.ConnManger;
+import client.SocketConn;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import iotpackage.constructor.PackageConstructor;
+import iotpackage.constructor.PackageParser;
+import iotpackage.data.TS;
+import iotpackage.data.fuction.Email;
+import iotpackage.data.fuction.User.Receiver;
+import iotpackage.data.fuction.User.Sender;
+import iotpackage.destination.Destination;
+import iotpackage.source.Source;
+
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
 
 public class Writer extends JFrame {
-    private void initGUI() {
+    public String SERIP = "127.0.0.1";
+
+    private void initGUI(String user,String Kcv) {
         setLayout(null);
         setBounds(350, 100, 400, 490);
         //setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -47,16 +65,51 @@ public class Writer extends JFrame {
         jButton1.setText("确认发送");
         jButton1.setBounds(30,390,310,40);
         add(jButton1);
+        jButton1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                PackageConstructor packageConstructor = new PackageConstructor();
+                ConnManger cm = new ConnManger("SERVER");
+                SocketConn conn = cm.getConn();
+                TS ts = new TS(1);
+                Email email = new Email(ts.getContext(),new Sender(user,"飞翔的企鹅"),new Receiver(jTextField1.getText(),""),jTextField2.getText(),ts.getContext(),"text",jTextField3.getText());
+                String content = null;
+                try {
+                    content = packageConstructor.getPackageEmailSend("Service","Send",new Source(user,"127.0.0.1"),new Destination("SERVER",SERIP),"0000",Kcv,email,"","");
+                } catch (JsonProcessingException jsonProcessingException) {
+                    jsonProcessingException.printStackTrace();
+                }
+                conn.send(content.getBytes());
+                System.out.println("邮件发送："+content);
+
+                byte[] reciveBuffer = new byte[2024];
+                conn.receive(reciveBuffer);
+                PackageParser packageParser = null;
+                try {
+                    packageParser = new PackageParser(new String(reciveBuffer));
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
+                String code = packageParser.getCode();
+                System.out.println(code);
+                if (code.contains("0104")){
+                    JOptionPane.showMessageDialog(null, "发送错误，接收方不存在或网络故障，请重试");
+                }else if (code.contains("0100")){
+                    JOptionPane.showMessageDialog(null, "发送成功");
+                    setVisible(false);
+                }
+            }
+        });
 
 
 
 
     }
 
-    public Writer()
+    public Writer(String user,String Kcv)
     {
         super();
-        initGUI();
+        initGUI(user,Kcv);
     }
 
 	/*

@@ -1376,7 +1376,7 @@ public class PackageConstructor {
         //时间戳节点添加
 
         CipherConstructor cipherConstructor=new CipherConstructor(cipherKey);
-        setCipherNode(dataNode,new Ciphertext(cipherConstructor.constructCipherOfEmailSend(email),"TGS to C EmailSend"));
+        setCipherNode(dataNode,new Ciphertext(cipherConstructor.constructCipherOfEmailSend(email),"C to V EmailSend"));
 
         infoNode.set("Data",dataNode);
         rootNode.set("Info",infoNode);
@@ -1423,7 +1423,6 @@ public class PackageConstructor {
                                        String privateKey,String publicKey) throws JsonProcessingException {
         ObjectNode rootNode = jsonNodeFactory.objectNode();
         ObjectNode infoNode = jsonNodeFactory.objectNode();
-
         ObjectNode signNode = jsonNodeFactory.objectNode();
 
         infoNode.put("Process",process);

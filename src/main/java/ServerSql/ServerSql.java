@@ -21,7 +21,6 @@ public class ServerSql  {
     static final String PASS = "123456";
     static String DB_URL = "jdbc:mysql://127.0.0.1:3306/mailsystem";
 
-
 /**
 * 创建用户发送邮件表
 * 若成功返回0100
@@ -29,25 +28,25 @@ public class ServerSql  {
 * */
 public  static String creatSendTable(String sendname){
     String tablename=sendname+"send";
-    String creatsql = "create table "+tablename+"(id int(11),rev varchar(255)," +
+    String creatsql = "create table If Not Exists "+tablename+"(id int(11),rev varchar(255)," +
             "title varchar(255),content varchar(255),ctime varchar(255))charset=utf8;";
     try {
         Class.forName(JDBC_DRIVER);
         conn = DriverManager.getConnection(DB_URL,USER,PASS);
-        System.out.println("\n dataconn 数据库连接成功");
+        System.out.println("dataconn 数据库连接成功");
         stmt = conn.createStatement();
         if(0 == stmt.executeUpdate(creatsql))
         {
-            System.out.println("成功创建表！");;
+            System.out.println("发送表正常！");;
         }
         else
         {
-            System.out.println("创建表失败！");
+            System.out.println("发送表异常！");
             return "0103";
         }
         stmt.close();
         conn.close();
-        System.out.println("//关闭资源");
+
     } catch (Exception e) {
         e.printStackTrace();
     }
@@ -60,25 +59,25 @@ public  static String creatSendTable(String sendname){
      * */
     public  static String creatRevTable(String Revname){
         String tablename=Revname+"rev";
-        String creatsql = "create table "+tablename+"(id int(11),send varchar(255)," +
+        String creatsql = "create table If Not Exists "+tablename+"(id int(11),send varchar(255)," +
                 "title varchar(255),content varchar(255),ctime varchar(255))charset=utf8;";
         try {
             Class.forName(JDBC_DRIVER);
             conn = DriverManager.getConnection(DB_URL,USER,PASS);
-            System.out.println("\n dataconn 数据库连接成功");
+            System.out.println(" dataconn 数据库连接成功");
             stmt = conn.createStatement();
             if(0 == stmt.executeUpdate(creatsql))
             {
-                System.out.println("成功创建表！");;
+                System.out.println("接收表正常！");;
             }
             else
             {
-                System.out.println("创建表失败！");
+                System.out.println("接收表异常！");
                 return "0103";
             }
             stmt.close();
             conn.close();
-            System.out.println("//关闭资源");
+
         } catch (Exception e) {
             e.printStackTrace();
         }

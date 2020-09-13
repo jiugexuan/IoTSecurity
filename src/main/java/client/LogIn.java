@@ -75,10 +75,10 @@ public class LogIn extends JFrame {
         jButton1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String usr = jTextField1.getText().toString();    //获取文本框内容
+                String usr = "18671752026";//jTextField1.getText().toString();    //获取文本框内容
                 userAccount = usr;
                 char[] password= jTextField2.getPassword();
-                String userKey = String.valueOf(password);    //获取密码框内容
+                String userKey = "18671752026";//String.valueOf(password);    //获取密码框内容
                 if (usr.equals("") || userKey.equals("")) {
                     JOptionPane.showMessageDialog(null, "登入信息不能为空!");
                 } else {
@@ -104,6 +104,7 @@ public class LogIn extends JFrame {
                     //AS->C 接收
                     byte[] receiveBuffer = new byte[2048];
                     conn.receive(receiveBuffer);
+
                     try {
                         conn.close();
                     } catch (IOException ioException) {
@@ -275,7 +276,11 @@ public class LogIn extends JFrame {
                             System.out.print("\n解密后"+DecryptCipher);
                             System.out.print("\n解密后time5+1:"+time5);
                             if(time5 != null){
-                                new UI(userAccount);
+                                new UI(userAccount,Kcv);
+                                setVisible(false);
+                            }else {
+                                JOptionPane.showMessageDialog(null, "登入错误，请重试");
+                                return;
                             }
 
                         } catch (IOException | IllegalBlockSizeException | InvalidKeyException | BadPaddingException | NoSuchAlgorithmException | NoSuchPaddingException e2) {
