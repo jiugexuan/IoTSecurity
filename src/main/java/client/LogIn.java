@@ -75,10 +75,10 @@ public class LogIn extends JFrame {
         jButton1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String usr = "18671752026";//jTextField1.getText().toString();    //获取文本框内容
+                String usr =jTextField1.getText().toString();    //获取文本框内容
                 userAccount = usr;
                 char[] password= jTextField2.getPassword();
-                String userKey = "18671752026";//String.valueOf(password);    //获取密码框内容
+                String userKey = String.valueOf(password);    //获取密码框内容
                 if (usr.equals("") || userKey.equals("")) {
                     JOptionPane.showMessageDialog(null, "登入信息不能为空!");
                 } else {
