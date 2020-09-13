@@ -84,12 +84,12 @@ public class LogIn extends JFrame {
                 } else {
                     //登入 发报文到AS C->AS
                     PackageConstructor packageConstructor=new PackageConstructor();
-                    Source source=new Source(usr,UserIP);
+                    Source source=new Source(userAccount,UserIP);
                     Destination destination=new Destination("AS",ASIP);
                     TS ts = new TS(1);
                     String content = null;
                     try {
-                        content = packageConstructor.getPackageCtoASLogin("Verify","Request",source,destination,"0000", usr, TGSIP,ts,"");
+                        content = packageConstructor.getPackageCtoASLogin("Verify","Request",source,destination,"0000", usr, TGSIP,ts,"","");
                     } catch (JsonProcessingException jsonProcessingException) {
                         jsonProcessingException.printStackTrace();
                         JOptionPane.showMessageDialog(null, "登入错误，请重试");

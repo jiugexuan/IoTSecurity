@@ -73,9 +73,14 @@ public class AS implements Runnable {
         String content= new String(bytes);
         PackageParser packageParser= null;
 
+        Source sourceOfReceiverPackage=null;
+        Destination destinationOfReceiverPackage=null;
+
+
         try {
 
             packageParser = new PackageParser(content);
+            sourceOfReceiverPackage=packageParser.getSource();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -86,6 +91,8 @@ public class AS implements Runnable {
             System.out.println("\n注册 AS收到密码"+packageParser.getPassword());
             System.out.println("\n注册 AS收到昵称"+packageParser.getNickName());
             UserAccount = packageParser.getAccount();
+
+            //TODO
 
 
             try {
@@ -107,17 +114,18 @@ public class AS implements Runnable {
                     send(code.getBytes());
                 }else {
                     Source source=new Source("AS",ASIP);
-                    Destination destination=new Destination(UserAccount,UserIP);
+                    //FIXME
+                  //  Destination destination=new Destination(UserAccount,UserIP);
                     TS ts = new TS(2);
                     Lifetime lifetime = new Lifetime("2","54000");
                     IoTKey ioTKey = new IoTKey("KeyC TGS",Kctgs);
-                    Ticket ticketTgs = new Ticket(ioTKey,source,destination,ts,lifetime);
+                    Ticket ticketTgs = new Ticket(ioTKey,source,sourceOfReceiverPackage.changeToDestination(),ts,lifetime);
                     String AStoC = null;
                     PackageConstructor packageConstructor = new PackageConstructor();
                     try {
                         //ticketkey keyTGS
                         //cipherkey K c 就是用户md5
-                        AStoC = packageConstructor.getPackageAStoCLogin("Verify","Response",source,destination,"0100",UserIP,code, ioTKey,TGSIP,ts,lifetime,ticketTgs,"2",KeyTGS,"");
+                        AStoC = packageConstructor.getPackageAStoCLogin("Verify","Response",source,sourceOfReceiverPackage.changeToDestination(),"0100",UserIP,code, ioTKey,TGSIP,ts,lifetime,ticketTgs,"2",KeyTGS,"","");
                     } catch (JsonProcessingException e) {
                         e.printStackTrace();
                     }
@@ -130,8 +138,6 @@ public class AS implements Runnable {
             }
 
         }
-
-
 
     }
 }
