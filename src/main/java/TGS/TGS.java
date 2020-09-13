@@ -36,6 +36,7 @@ public class TGS implements Runnable {
     public String KeyV = "852456789";
     public String KeyTGS = "741852963";
 
+
     final static int MAX_SIZE = 4096;
     private Socket socket;
     public TGS(Socket socket){
@@ -80,10 +81,12 @@ public class TGS implements Runnable {
         Ticket ticketText = null;
         Authenticator authenticator =null;
         String info = null;
+         Source sourceOfPackage=null;
 
         try {
             packageParser = new PackageParser(content);
             info = packageParser.getDataJson();
+            sourceOfPackage=packageParser.getSource();
             System.out.println(info);
             ticketText = packageParser.getTicket(info,KeyTGS,"tickettgs");
 
@@ -149,9 +152,9 @@ public class TGS implements Runnable {
             PackageConstructor packageConstructor = new PackageConstructor();
             IoTKey ioTKey =new IoTKey("key C V",Kcv);
             Ticket ticketV = null;
-            ticketV = new Ticket(ioTKey,new Source("TGS",TGSIP),new Destination("user",UserIP),new TS(4),new Lifetime("4","54000"));
+            ticketV = new Ticket(ioTKey,new Source("TGS",TGSIP), sourceOfPackage.changeToDestination(), new TS(4),new Lifetime("4","54000"));
             try {
-                TGStoC = packageConstructor.getPackageTGStoC("Verify","Response",new Source("TGS",TGSIP) ,new Destination("user",UserIP),"0100",Kctgs,ioTKey,SERIP,new TS(4),ticketV,"V",KeyV,"");
+                TGStoC = packageConstructor.getPackageTGStoC("Verify","Response",new Source("TGS",TGSIP) ,sourceOfPackage.changeToDestination(),"0100",Kctgs,ioTKey,SERIP,new TS(4),ticketV,"V",KeyV,"","");
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
