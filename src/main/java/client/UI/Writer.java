@@ -1,6 +1,7 @@
 package client.UI;
 
 import Server.Server;
+import access.IPInTheItem;
 import client.ConnManger;
 import client.SocketConn;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -12,14 +13,24 @@ import iotpackage.data.fuction.User.Receiver;
 import iotpackage.data.fuction.User.Sender;
 import iotpackage.destination.Destination;
 import iotpackage.source.Source;
+import securityalgorithm.RSAUtil;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.Map;
 
 public class Writer extends JFrame {
-    public String SERIP = "127.0.0.1";
+    IPInTheItem ipInTheItem=new IPInTheItem();
+//    Map<String,String> keyMap= RSAUtil.createKeys(1024,ipInTheItem.getUserIP());
+//    String publicKey=keyMap.get("privateKey");
+//    String privateKey=keyMap.get("publicKey");
+    //publicKey,privateKey
+    public String UserIP = ipInTheItem.getUserIP();
+    public String ASIP = ipInTheItem.getASIP();
+    public String TGSIP = ipInTheItem.getTGSIP();
+    public String SERIP = ipInTheItem.getSERIP();
 
     private void initGUI(String user,String Kcv) {
         setLayout(null);
@@ -69,7 +80,7 @@ public class Writer extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 PackageConstructor packageConstructor = new PackageConstructor();
-                ConnManger cm = new ConnManger("SERVER");
+                ConnManger cm = new ConnManger("SERVER",SERIP);
                 SocketConn conn = cm.getConn();
                 TS ts = new TS(1);
                 Email email = new Email(ts.getContext(),new Sender(user,"飞翔的企鹅"),new Receiver(jTextField1.getText(),""),jTextField3.getText(),ts.getContext(),"text",jTextField2.getText());
