@@ -1,10 +1,38 @@
 package client.UI;
 
 
+import access.IPInTheItem;
+import client.ConnManger;
+import client.SocketConn;
+import iotpackage.constructor.PackageConstructor;
+import iotpackage.constructor.PackageParser;
+import iotpackage.data.ciphertext.Ciphertext;
+import iotpackage.destination.Destination;
+import iotpackage.source.Source;
+import securityalgorithm.DESUtil;
+import securityalgorithm.RSAUtil;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.swing.*;
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.Map;
 import java.util.Random;
 
 public class changepwd  extends JFrame {
+    IPInTheItem ipInTheItem=new IPInTheItem();
+
+    //publicKey,privateKey
+    public String UserIP = ipInTheItem.getUserIP();
+    public String ASIP = ipInTheItem.getASIP();
+    public String TGSIP = ipInTheItem.getTGSIP();
+    public String SERIP = ipInTheItem.getSERIP();
+    Map<String,String> keyMap= RSAUtil.createKeys(1024,ipInTheItem.getUserIP());
+    String publicKey=keyMap.get("publicKey");
+    String privateKey=keyMap.get("privateKey");
     private void initGUI() {
         //创建Random类对象
         Random random = new Random();
@@ -17,7 +45,6 @@ public class changepwd  extends JFrame {
         setResizable(false);
         setLocationRelativeTo(null);
         setVisible(true);
-
 
         JLabel jLabel1 = new JLabel();
 
@@ -57,14 +84,21 @@ public class changepwd  extends JFrame {
         jButton1.setText("修改密码");
         jButton1.setBounds(30,220,310,30);
         add(jButton1);
-
-
-
-
     }
 
-    public changepwd()
-    {
+    public void reciveChange(String User ,String Kcv) throws IOException {
+        PackageConstructor packageConstructor = new PackageConstructor();
+        Source source = new Source("SERVER", SERIP);
+        Destination destination = new Destination(User, UserIP);
+        String change = packageConstructor.getPackagePWDChange("Service", "ChangePWD", source, destination, "0000", User, privateKey, publicKey);
+        ConnManger cm = new ConnManger("SERVER", SERIP);
+        SocketConn conn = cm.getConn();
+        conn.send(change.getBytes());
+        byte[] reciveBuffer = new byte[8024];
+        conn.receive(reciveBuffer);
+    }
+
+    public changepwd() throws NoSuchAlgorithmException {
         super();
         initGUI();
     }

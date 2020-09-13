@@ -1682,6 +1682,60 @@ public class PackageConstructor {
      * @return 生成的json
      * @throws JsonProcessingException 生成json失败
      */
+
+    public String getPackagePWDChange(String process, String operation,
+                                       Source source, Destination destination,
+                                       String code,
+                                       String account,
+                                       String privateKey,String publicKey) throws JsonProcessingException {
+
+        ObjectNode rootNode = jsonNodeFactory.objectNode();
+        ObjectNode infoNode = jsonNodeFactory.objectNode();
+
+        ObjectNode signNode = jsonNodeFactory.objectNode();
+
+        infoNode.put("Process",process);
+        infoNode.put("Operation",operation);
+
+        //source节点添加
+        setSourceNode(infoNode,source);
+
+        //destination节点添加
+        setDestionationNode(infoNode,destination);
+
+        //Data字段
+        ObjectNode dataNode = jsonNodeFactory.objectNode();
+        dataNode.put("Code",code);
+        //时间戳节点添加
+
+        dataNode.put("Account",account);
+        //CipherConstructor cipherConstructor=new CipherConstructor(cipherKey);
+        //setCipherNode(dataNode,new Ciphertext(cipherConstructor.constructCipherOfEmailSend(email,emailID,emailKey),"TGStoC EmailSend"));
+
+        infoNode.set("Data",dataNode);
+        rootNode.set("Info",infoNode);
+
+
+        //sign签名
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        //签名算法
+        if(publicKey.length()==0){
+            signNode.put("Context","");
+
+        }else{
+            //签名是加密
+            String signContext= RSAUtil.privateEncrypt(MD5Util.md5(new ObjectMapper().writeValueAsString(infoNode)) ,privateKey);
+            signNode.put("Context",signContext);
+        }
+        signNode.put("PublicKey",publicKey);
+
+        rootNode.set("Sign",signNode);
+
+        return objectMapper.writeValueAsString(rootNode);
+    }
+
+
     public String getPackageEmailCheck(String process, String operation,
                                        Source source, Destination destination,
                                        String code,

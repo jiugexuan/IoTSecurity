@@ -37,14 +37,16 @@ import java.util.Map;
 public class ServerThread implements Runnable {
 
     IPInTheItem ipInTheItem=new IPInTheItem();
-   // Map<String,String> keyMap= RSAUtil.createKeys(1024,ipInTheItem.getUserIP());
-   // String publicKey=keyMap.get("privateKey");
-   // String privateKey=keyMap.get("publicKey");
-    //publicKey,privateKey
+
     public String UserIP = ipInTheItem.getUserIP();
     public String ASIP = ipInTheItem.getASIP();
     public String TGSIP = ipInTheItem.getTGSIP();
     public String SERIP = ipInTheItem.getSERIP();
+
+
+    Map<String,String> keyMap= RSAUtil.createKeys(1024,ipInTheItem.getUserIP());
+    String publicKey=keyMap.get("publicKey");
+    String privateKey=keyMap.get("privateKey");
 
     public static String Kcv = "";
     public String KeyV = "852456789";
@@ -52,7 +54,7 @@ public class ServerThread implements Runnable {
 
     public static final String CHARCODE = "utf-8";
     private Socket socket;
-    public ServerThread(Socket socket) {
+    public ServerThread(Socket socket) throws NoSuchAlgorithmException {
         this.socket = socket;
     }
 
@@ -61,11 +63,12 @@ public class ServerThread implements Runnable {
             OutputStream socketOut = socket.getOutputStream();
             socketOut.write(content);
             socketOut.flush();
+            socketOut.close();
             // log.info("Messeag has been sent!");
         } catch (IOException e) {
             // TODO Auto-generated catch block
             //log.warning("Fail to send Messeag due to IOException!");
-            e.printStackTrace();
+           // e.printStackTrace();
         }
     }
 
@@ -78,7 +81,7 @@ public class ServerThread implements Runnable {
         } catch (IOException e) {
             // TODO Auto-generated catch block
             // log.warning("Fail to receive Messeag due to IOException!");
-            e.printStackTrace();
+            //e.printStackTrace();
         }
         return len;
     }
@@ -146,7 +149,7 @@ public class ServerThread implements Runnable {
         ticketV = new Ticket(ioTKey,new Source("SER",SERIP),new Destination("user",UserIP),new TS(4),new Lifetime("4","54000"));
         try {
             System.out.print("Kcv"+Kcv);
-            SERtoC = packageConstructor.getPackageVtoCVerify("Verify","Response",new Source("SERVER",SERIP) ,new Destination(User,UserIP),"0100",Kcv,new TS(6),"");
+            SERtoC = packageConstructor.getPackageVtoCVerify("Verify","Response",new Source("SERVER",SERIP) ,new Destination(User,UserIP),"0100",Kcv,new TS(6),privateKey,publicKey);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             return;
@@ -180,11 +183,11 @@ public class ServerThread implements Runnable {
         PackageConstructor packageConstructor = new PackageConstructor();
         while (result != null){
             if (result.contains("0104")){
-                VtoC = packageConstructor.getPackageServiceResponse("Service","Send",new Source("SERVER",SERIP),new Destination(User,UserIP),"0104","","");
+                VtoC = packageConstructor.getPackageServiceResponse("Service","Send",new Source("SERVER",SERIP),new Destination(User,UserIP),"0104",privateKey,publicKey);
                 send(VtoC.getBytes());
 
             } else if (result.contains("1000")){
-                VtoC = packageConstructor.getPackageServiceResponse("Service","Send",new Source("SERVER",SERIP),new Destination(User,UserIP),"1000","","");
+                VtoC = packageConstructor.getPackageServiceResponse("Service","Send",new Source("SERVER",SERIP),new Destination(User,UserIP),"1000",privateKey,publicKey);
                 send(VtoC.getBytes());
             }
         }
@@ -199,7 +202,7 @@ public class ServerThread implements Runnable {
         ServerSql.findRevAll(receiveList,user);
         ServerSql.findSendAll(sendList,new Sender(User,""));
         PackageConstructor packageConstructor = new PackageConstructor();
-        String maillist = packageConstructor.getPackageEmailListALL("Service","ListRequest",new Source("SERVER",SERIP),new Destination(User,UserIP),"0000",Kcv,sendList,receiveList,"","");
+        String maillist = packageConstructor.getPackageEmailListALL("Service","ListRequest",new Source("SERVER",SERIP),new Destination(User,UserIP),"0000",Kcv,sendList,receiveList,privateKey,publicKey);
         send(maillist.getBytes());
         System.out.println("SERVER发送："+maillist);
     }

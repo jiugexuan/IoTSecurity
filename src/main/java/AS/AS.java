@@ -13,10 +13,13 @@ import iotpackage.data.ciphertext.Lifetime;
 import iotpackage.data.ticket.Ticket;
 import iotpackage.destination.Destination;
 import iotpackage.source.Source;
+import securityalgorithm.RSAUtil;
 
 import java.io.*;
 import java.net.Socket;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
+import java.util.Map;
 
 
 public class AS implements Runnable {
@@ -29,10 +32,13 @@ public class AS implements Runnable {
     public String Kctgs = "963852741";
     public String KeyTGS = "741852963";
     public String UserAccount = null;
+    Map<String,String> keyMap= RSAUtil.createKeys(1024,ipInTheItem.getUserIP());
+    String publicKey=keyMap.get("publicKey");
+    String privateKey=keyMap.get("privateKey");
 
     final static int MAX_SIZE = 4096;
     private Socket socket;
-    public AS(Socket socket){
+    public AS(Socket socket) throws NoSuchAlgorithmException {
         this.socket=socket;
     }
 
@@ -127,7 +133,7 @@ public class AS implements Runnable {
                     try {
                         //ticketkey keyTGS
                         //cipherkey K c 就是用户md5
-                        AStoC = packageConstructor.getPackageAStoCLogin("Verify","Response",source,sourceOfReceiverPackage.changeToDestination(),"0100",UserIP,code, ioTKey,TGSIP,ts,lifetime,ticketTgs,"2",KeyTGS,"","");
+                        AStoC = packageConstructor.getPackageAStoCLogin("Verify","Response",source,sourceOfReceiverPackage.changeToDestination(),"0100",UserIP,code, ioTKey,TGSIP,ts,lifetime,ticketTgs,"2",KeyTGS,privateKey,publicKey);
                     } catch (JsonProcessingException e) {
                         e.printStackTrace();
                     }

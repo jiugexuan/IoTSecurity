@@ -35,8 +35,8 @@ public class LogIn extends JFrame {
 //    public String SERIP = "127.0.0.1";
     IPInTheItem ipInTheItem=new IPInTheItem();
     Map<String,String> keyMap= RSAUtil.createKeys(1024,ipInTheItem.getUserIP());
-    String publicKey=keyMap.get("privateKey");
-    String privateKey=keyMap.get("publicKey");
+    String publicKey=keyMap.get("publicKey");
+    String privateKey=keyMap.get("privateKey");
     //publicKey,privateKey
     public String UserIP = ipInTheItem.getUserIP();
     public String ASIP = ipInTheItem.getASIP();
@@ -103,7 +103,7 @@ public class LogIn extends JFrame {
                     TS ts = new TS(1);
                     String content = null;
                     try {
-                        content = packageConstructor.getPackageCtoASLogin("Verify","Request",source,destination,"0000", usr, TGSIP,ts,"","");
+                        content = packageConstructor.getPackageCtoASLogin("Verify","Request",source,destination,"0000", usr, TGSIP,ts,privateKey,publicKey);
                     } catch (JsonProcessingException jsonProcessingException) {
                         jsonProcessingException.printStackTrace();
                         JOptionPane.showMessageDialog(null, "登入错误，请重试");
@@ -182,7 +182,6 @@ public class LogIn extends JFrame {
 
                         try {
 
-
                             //解密AS发送报文，获得加密的ticket，发送给TGS，ticket用AS，TGS约定好的密码加密
                             tgsContent = packageParser.getTicketInSafety(cipText,new String());
                         } catch (IOException ioException) {
@@ -196,7 +195,7 @@ public class LogIn extends JFrame {
                             try {
 
                                // CtoTGS = packageConstructor.getPackageCtoTGS("Verify","Request",source,new Destination("TGS",TGSIP),"0000",SERIP,tgsContent,"TGS", new Authenticator(new Destination("TGS",TGSIP), new Source(usr,UserIP),new TS(3)), Kctgs,"C to TGS","" );
-                                 CtoTGS = packageConstructor.getPackageCtoTGS("Verify","Request",source,new Destination("TGS",TGSIP),"0000",SERIP,tgsContent,"TGS", new Authenticator(new Destination("TGS",TGSIP), new Source(usr,UserIP),new TS(3)), Kctgs,"C to TGS",publicKey,privateKey);
+                                 CtoTGS = packageConstructor.getPackageCtoTGS("Verify","Request",source,new Destination("TGS",TGSIP),"0000",SERIP,tgsContent,"TGS", new Authenticator(new Destination("TGS",TGSIP), new Source(usr,UserIP),new TS(3)), Kctgs,"C to TGS",privateKey,publicKey);
 
 
                             } catch (JsonProcessingException jsonProcessingException) {
@@ -260,7 +259,7 @@ public class LogIn extends JFrame {
                         System.out.print("\n Kcv密码："+Kcv);
 
                       try {
-                            CtoSer = packageConstructor.getPackageCtoVVerify("Verify","Request",source,new Destination("Server",SERIP),"0000",ticketCtoV,"ticketV",new Authenticator(new Destination("Server",SERIP),source,new TS(5)),Kcv,"authenticator C",publicKey,privateKey );
+                            CtoSer = packageConstructor.getPackageCtoVVerify("Verify","Request",source,new Destination("Server",SERIP),"0000",ticketCtoV,"ticketV",new Authenticator(new Destination("Server",SERIP),source,new TS(5)),Kcv,"authenticator C",privateKey,publicKey);
                         } catch (JsonProcessingException jsonProcessingException) {
                             jsonProcessingException.printStackTrace();
                           JOptionPane.showMessageDialog(null, "登入错误，请重试");

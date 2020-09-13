@@ -13,6 +13,7 @@ import iotpackage.data.ciphertext.Lifetime;
 import iotpackage.data.ticket.Ticket;
 import iotpackage.destination.Destination;
 import iotpackage.source.Source;
+import securityalgorithm.RSAUtil;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -25,6 +26,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Map;
 
 
 public class TGS implements Runnable {
@@ -37,11 +39,14 @@ public class TGS implements Runnable {
     public String Kcv = "9517538246";
     public String KeyV = "852456789";
     public String KeyTGS = "741852963";
+    Map<String,String> keyMap= RSAUtil.createKeys(1024,ipInTheItem.getUserIP());
+    String publicKey=keyMap.get("publicKey");
+    String privateKey=keyMap.get("privateKey");
 
 
     final static int MAX_SIZE = 4096;
     private Socket socket;
-    public TGS(Socket socket){
+    public TGS(Socket socket) throws NoSuchAlgorithmException {
         this.socket=socket;
     }
 
@@ -156,7 +161,7 @@ public class TGS implements Runnable {
             Ticket ticketV = null;
             ticketV = new Ticket(ioTKey,new Source("TGS",TGSIP), sourceOfPackage.changeToDestination(), new TS(4),new Lifetime("4","54000"));
             try {
-                TGStoC = packageConstructor.getPackageTGStoC("Verify","Response",new Source("TGS",TGSIP) ,sourceOfPackage.changeToDestination(),"0100",Kctgs,ioTKey,SERIP,new TS(4),ticketV,"V",KeyV,"","");
+                TGStoC = packageConstructor.getPackageTGStoC("Verify","Response",new Source("TGS",TGSIP) ,sourceOfPackage.changeToDestination(),"0100",Kctgs,ioTKey,SERIP,new TS(4),ticketV,"V",KeyV,privateKey,publicKey);
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }

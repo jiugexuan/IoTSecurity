@@ -9,6 +9,7 @@ import java.io.*;
 public class ServerForMultiClient {
     private int port=7777;
 
+
     private ServerSocket serverSocket;
     private ExecutorService executorService;//线程池
     private final int POOL_SIZE=10;//单个CPU线程池大小

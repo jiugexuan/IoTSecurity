@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 
 public class UI extends JFrame {
 
@@ -83,15 +84,16 @@ public class UI extends JFrame {
         jButton4.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                changepwd hhhh = new changepwd();
+                try {
+                    changepwd hhhh = new changepwd();
+                } catch (NoSuchAlgorithmException noSuchAlgorithmException) {
+                    noSuchAlgorithmException.printStackTrace();
+                }
             }
         });
 
 
-        JButton jButton5 = new JButton();
-        jButton5.setText("开发面板");
-        jButton5.setBounds(260,200,100,25);
-        add(jButton5);
+
 
 
 

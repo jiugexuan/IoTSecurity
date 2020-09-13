@@ -29,7 +29,7 @@ public class ServerSql  {
 public  static String creatSendTable(String sendname){
     String tablename=sendname+"send";
     String creatsql = "create table If Not Exists "+tablename+"(id varchar(255),rev varchar(255)," +
-            "title varchar(255),content text,ctime varchar(255))charset=utf8;";
+            "title varchar(255),content text,ctime varchar(255)) charset=utf8 ;";
     try {
         Class.forName(JDBC_DRIVER);
         conn = DriverManager.getConnection(DB_URL,USER,PASS);
@@ -60,7 +60,7 @@ public  static String creatSendTable(String sendname){
     public  static String creatRevTable(String Revname){
         String tablename=Revname+"rev";
         String creatsql = "create table If Not Exists "+tablename+"(id varchar(255),send varchar(255)," +
-                "title varchar(255),content text,ctime varchar(255))charset=utf8;";
+                "title varchar(255),content text,ctime varchar(255)) charset=utf8 ;";
         try {
             Class.forName(JDBC_DRIVER);
             conn = DriverManager.getConnection(DB_URL,USER,PASS);
