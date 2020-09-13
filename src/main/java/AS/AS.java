@@ -1,6 +1,7 @@
 package AS;
 import AS.mysql.DBExcute;
 import AS.mysql.DataConn;
+import access.IPInTheItem;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import iotpackage.IoTKey;
 import iotpackage.constructor.CipherConstructor;
@@ -20,10 +21,11 @@ import java.sql.SQLException;
 
 public class AS implements Runnable {
 
-    public String UserIP = "127.0.0.1";
-    public String ASIP = "127.0.0.1";
-    public String TGSIP = "127.0.0.1";
-    public String SERIP = "127.0.0.1";
+    IPInTheItem ipInTheItem=new IPInTheItem();
+    public String UserIP = ipInTheItem.getUserIP();
+    public String ASIP = ipInTheItem.getASIP();
+    public String TGSIP = ipInTheItem.getTGSIP();
+    public String SERIP = ipInTheItem.getSERIP();
     public String Kctgs = "963852741";
     public String KeyTGS = "741852963";
     public String UserAccount = null;

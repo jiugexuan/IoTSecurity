@@ -6,14 +6,14 @@ import java.util.concurrent.Executors;
 import java.io.*;
 
 //这是一个可供多用户登陆的server
-public class ServerForMultiClient {
+public class TGSForMultiClient {
     private int port=6766;
 
     private ServerSocket serverSocket;
     private ExecutorService executorService;//线程池
     private final int POOL_SIZE=10;//单个CPU线程池大小
 
-    public ServerForMultiClient() throws IOException{
+    public TGSForMultiClient() throws IOException{
         serverSocket=new ServerSocket(port);
         //Runtime的availableProcessor()方法返回当前系统的CPU数目.
         executorService=Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()*POOL_SIZE);
@@ -36,6 +36,6 @@ public class ServerForMultiClient {
 
     public static void main(String[] args) throws IOException {
         System.out.println("服务器已启动");
-        new ServerForMultiClient().service();
+        new TGSForMultiClient().service();
     }
 }

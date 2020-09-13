@@ -1,5 +1,6 @@
 package TGS;
 
+import access.IPInTheItem;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import iotpackage.IoTKey;
 import iotpackage.constructor.CipherConstructor;
@@ -27,10 +28,11 @@ import java.util.Calendar;
 
 
 public class TGS implements Runnable {
-    public String UserIP = "127.0.0.1";
-    public String ASIP = "127.0.0.1";
-    public String TGSIP = "127.0.0.1";
-    public String SERIP = "127.0.0.1";
+    IPInTheItem ipInTheItem=new IPInTheItem();
+    public String UserIP = ipInTheItem.getUserIP();
+    public String ASIP = ipInTheItem.getASIP();
+    public String TGSIP = ipInTheItem.getTGSIP();
+    public String SERIP = ipInTheItem.getSERIP();
     public String Kctgs = "";
     public String Kcv = "9517538246";
     public String KeyV = "852456789";

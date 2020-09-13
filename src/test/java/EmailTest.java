@@ -32,6 +32,42 @@ import java.text.SimpleDateFormat;
 
 public class EmailTest {
     @Test
+    public void constr() throws IOException {
+        String senderAccount="testUser1";
+        String senderNickname="NickName";
+        String receiverAccount="testUser2";
+        String receiverNickname="NickName2";
+        String title="the test email";
+        String type="text";
+        String context="我的大中华啊，好大一个家";
+        Sender sender=new Sender(senderAccount,senderNickname);
+        Receiver receiver=new Receiver(receiverAccount,receiverNickname);
+        //用例
+        Email email=new Email("1",sender,receiver,title,
+                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(System.currentTimeMillis()),
+                type,context);
+        email.printEmail();
+
+
+        CipherConstructor cipherConstructor=new CipherConstructor("123456789");
+        String cipherEmail=cipherConstructor.getPackageEmailToGson(email);
+        System.out.println(cipherEmail);
+        System.out.println(cipherConstructor.getCipherOfEmail(email,cipherConstructor.getCipherKey()));
+        String emailSendJson=new PackageConstructor().getPackageEmailSend("Verify","Request",
+                new Source("accoutTO","192.168.1.7"),new Destination("coueg","123547890"),
+                "0005","123456789",email,
+               "","");
+        //System.oemailSendJson);
+        PackageParser packageParser=new PackageParser(emailSendJson);
+         Ciphertext  ciphertext=packageParser.getCiphertext();
+        //packageParser.getEmailThroughDecryt(ciphertextPlaint,"12345678", "").printEmail();;
+
+
+        //ciphertext.printCiphertext();
+    }
+
+
+    @Test
     public void constructEmailInSafety() throws IOException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
         String senderAccount="testUser1";
         String senderNickname="NickName";
@@ -60,13 +96,11 @@ public class EmailTest {
         //System.oemailSendJson);
         PackageParser packageParser=new PackageParser(emailSendJson);
         Ciphertext  ciphertext=packageParser.getCiphertext();
-        ciphertext.printCiphertext();
 
+
+      //  System.out.println(ciphertextPlaint);
         String ciphertextPlaint=  packageParser.getCipherPlaintext("123456789", "");
-
-        System.out.println(ciphertextPlaint);
-        packageParser.getEmailThroughDecryt(ciphertextPlaint,"12345678", "").printEmail();;
-    }
+        Tools.jsonFormat(ciphertextPlaint);}
 
     @Test
     public void constructEmailSend() throws IOException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
@@ -91,18 +125,18 @@ public class EmailTest {
         System.out.println(cipherEmail);
         System.out.println(cipherConstructor.getCipherOfEmail(email,cipherConstructor.getCipherKey()));
         String emailSendJson=new PackageConstructor().getPackageEmailSend("Verify","Request",
-                new Source("accoutTO","192.168.1.7"),new Destination("coueg","123547890"),
+                new Source("你的韩文","192.168.1.7"),new Destination("coueg","123547890"),
                 "0005","123456789",email,"","");
-        //System.oemailSendJson);
-        PackageParser packageParser=new PackageParser(emailSendJson);
+        Tools.jsonFormat(emailSendJson);
+       PackageParser packageParser=new PackageParser(emailSendJson);
         Ciphertext  ciphertext=packageParser.getCiphertext();
-        ciphertext.printCiphertext();
-
-        String ciphertextPlaint=  packageParser.getCipherPlaintext("123456789", "");
+//        ciphertext.printCiphertext();
+//
+       String ciphertextPlaint=  packageParser.getCipherPlaintext("123456789", "");
         Tools.jsonFormat(ciphertextPlaint);
-        // System.out.println(ciphertextPlaint);
-        String emailJson="{\"Email\":{\"Id\":\"1\",\"Sender \":{\"Account \":\"testUser1 \",\"Nickname\":\"NickName\"},\"Receiver \":{\"Account \":\"testUser2 \",\"Nickname \":\"NickName2\"},\"Title \":\"the test email \",\"Time \":\"2020 - 09 - 12 21: 16: 21 \",\"Type \":\"text \",\"Context \":\"aniuehaghakjhhfiahf \"}}";
-        packageParser.getEmailFromGson(ciphertextPlaint).printEmail();;
+//        // System.out.println(ciphertextPlaint);
+//        String emailJson="{\"Email\":{\"Id\":\"1\",\"Sender \":{\"Account \":\"testUser1 \",\"Nickname\":\"NickName\"},\"Receiver \":{\"Account \":\"testUser2 \",\"Nickname \":\"NickName2\"},\"Title \":\"the test email \",\"Time \":\"2020 - 09 - 12 21: 16: 21 \",\"Type \":\"text \",\"Context \":\"aniuehaghakjhhfiahf \"}}";
+//        packageParser.getEmailFromGson(ciphertextPlaint).printEmail();;
     }
 
 
@@ -140,7 +174,7 @@ public class EmailTest {
         String ciphertextPlaint=  packageParser.getCipherPlaintext("123456789", "");
 
         System.out.println(ciphertextPlaint);
-        packageParser.getEmailThroughDecryt(ciphertextPlaint,"12345678", "").printEmail();;
+        packageParser.getEmailThroughDecryt(ciphertextPlaint,"12345678", "").printEmail();
     }
 
     @Test

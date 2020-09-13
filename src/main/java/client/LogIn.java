@@ -1,5 +1,6 @@
 package client;
 
+import access.IPInTheItem;
 import client.UI.UI;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import iotpackage.constructor.PackageConstructor;
@@ -24,10 +25,15 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
 public class LogIn extends JFrame {
-    public String UserIP = "127.0.0.1";
-    public String ASIP = "127.0.0.1";
-    public String TGSIP = "127.0.0.1";
-    public String SERIP = "127.0.0.1";
+//    public String UserIP = "127.0.0.1";
+//    public String ASIP = "127.0.0.1";
+//    public String TGSIP = "127.0.0.1";
+//    public String SERIP = "127.0.0.1";
+    IPInTheItem ipInTheItem=new IPInTheItem();
+    public String UserIP = ipInTheItem.getUserIP();
+    public String ASIP = ipInTheItem.getASIP();
+    public String TGSIP = ipInTheItem.getTGSIP();
+    public String SERIP = ipInTheItem.getSERIP();
     public String Kctgs = "";
     public String Kcv = "";
     public String userAccount = "";
@@ -97,7 +103,7 @@ public class LogIn extends JFrame {
                     }
                     System.out.print("\n 客户端发送："+content);
 
-                    ConnManger cm = new ConnManger("as");
+                    ConnManger cm = new ConnManger("as",ASIP);
                     SocketConn conn = cm.getConn();
                     conn.send(content.getBytes());
 
@@ -189,7 +195,7 @@ public class LogIn extends JFrame {
                             }
                             System.out.print("\n 客户端发送："+ CtoTGS);
 
-                            ConnManger cmTGS = new ConnManger("TGS");
+                            ConnManger cmTGS = new ConnManger("TGS",TGSIP);
                             SocketConn connTGS = cmTGS.getConn();
                             connTGS.send(CtoTGS.getBytes());
 
@@ -251,7 +257,7 @@ public class LogIn extends JFrame {
                         }
                         System.out.print("\n 客户端发送："+ CtoSer);
 
-                        ConnManger cmSer = new ConnManger("SERVER");
+                        ConnManger cmSer = new ConnManger("SERVER",SERIP);
                         SocketConn connSer = cmSer.getConn();
                         connSer.send(CtoSer.getBytes());
 
@@ -307,11 +313,6 @@ public class LogIn extends JFrame {
                 Reg temp = new Reg();
             }
         });
-
-
-
-
-
 
 
     }
