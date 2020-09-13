@@ -1,6 +1,7 @@
 package Server;
 
 import ServerSql.ServerSql;
+import access.IPInTheItem;
 import client.UI.Send;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import iotpackage.IPInfo;
@@ -21,6 +22,7 @@ import iotpackage.data.ticket.Ticket;
 import iotpackage.destination.Destination;
 import iotpackage.source.Source;
 import securityalgorithm.DESUtil;
+import securityalgorithm.RSAUtil;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -30,10 +32,20 @@ import java.net.Socket;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
+import java.util.Map;
 
 public class ServerThread implements Runnable {
-    public String UserIP = "127.0.0.1";
-    public String SERIP = "127.0.0.1";
+
+    IPInTheItem ipInTheItem=new IPInTheItem();
+   // Map<String,String> keyMap= RSAUtil.createKeys(1024,ipInTheItem.getUserIP());
+   // String publicKey=keyMap.get("privateKey");
+   // String privateKey=keyMap.get("publicKey");
+    //publicKey,privateKey
+    public String UserIP = ipInTheItem.getUserIP();
+    public String ASIP = ipInTheItem.getASIP();
+    public String TGSIP = ipInTheItem.getTGSIP();
+    public String SERIP = ipInTheItem.getSERIP();
+
     public static String Kcv = "";
     public String KeyV = "852456789";
     public static String User = "";
@@ -151,9 +163,9 @@ public class ServerThread implements Runnable {
         //source and destination
         Ciphertext mailcontent = packageParser.getCiphertext();
         String EncryptContent = mailcontent.getContext();
-        System.out.println("SerMailSend的Kcv"+Kcv);
+        System.out.println("SerMailSend的Kcv "+Kcv);
         String Decrypt= DESUtil.getDecryptString(EncryptContent,Kcv);
-        System.out.println("解密获得"+Decrypt);
+        System.out.println("解密获得 "+Decrypt);
         Email email = packageParser.getEmailFromGson(Decrypt);
         email.printEmail();
         String EmailTile = email.getTitle();
@@ -163,7 +175,7 @@ public class ServerThread implements Runnable {
         Sender EmailSenAccount = email.getSender();
         String EmailID = email.getId();
         String result = ServerSql.sendMail(EmailID,EmailSenAccount,EmailRecAccount,EmailTile,EmailConten);
-        System.out.println("result"+result);
+        System.out.println("result "+result);
         String VtoC = null;
         PackageConstructor packageConstructor = new PackageConstructor();
         while (result != null){

@@ -13,6 +13,7 @@ import iotpackage.destination.Destination;
 import iotpackage.source.Source;
 import securityalgorithm.DESUtil;
 import securityalgorithm.MD5Util;
+import securityalgorithm.RSAUtil;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -23,13 +24,20 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Map;
 
 public class LogIn extends JFrame {
+
+
 //    public String UserIP = "127.0.0.1";
 //    public String ASIP = "127.0.0.1";
 //    public String TGSIP = "127.0.0.1";
 //    public String SERIP = "127.0.0.1";
     IPInTheItem ipInTheItem=new IPInTheItem();
+    Map<String,String> keyMap= RSAUtil.createKeys(1024,ipInTheItem.getUserIP());
+    String publicKey=keyMap.get("privateKey");
+    String privateKey=keyMap.get("publicKey");
+    //publicKey,privateKey
     public String UserIP = ipInTheItem.getUserIP();
     public String ASIP = ipInTheItem.getASIP();
     public String TGSIP = ipInTheItem.getTGSIP();
@@ -187,7 +195,10 @@ public class LogIn extends JFrame {
                         String CtoTGS = null;
                             try {
 
-                                CtoTGS = packageConstructor.getPackageCtoTGS("Verify","Request",source,new Destination("TGS",TGSIP),"0000",SERIP,tgsContent,"TGS", new Authenticator(new Destination("TGS",TGSIP), new Source(usr,UserIP),new TS(3)), Kctgs,"C to TGS","" );
+                               // CtoTGS = packageConstructor.getPackageCtoTGS("Verify","Request",source,new Destination("TGS",TGSIP),"0000",SERIP,tgsContent,"TGS", new Authenticator(new Destination("TGS",TGSIP), new Source(usr,UserIP),new TS(3)), Kctgs,"C to TGS","" );
+                                 CtoTGS = packageConstructor.getPackageCtoTGS("Verify","Request",source,new Destination("TGS",TGSIP),"0000",SERIP,tgsContent,"TGS", new Authenticator(new Destination("TGS",TGSIP), new Source(usr,UserIP),new TS(3)), Kctgs,"C to TGS",publicKey,privateKey);
+
+
                             } catch (JsonProcessingException jsonProcessingException) {
                                 jsonProcessingException.printStackTrace();
                                 JOptionPane.showMessageDialog(null, "登入错误，请重试");
@@ -249,7 +260,7 @@ public class LogIn extends JFrame {
                         System.out.print("\n Kcv密码："+Kcv);
 
                       try {
-                            CtoSer = packageConstructor.getPackageCtoVVerify("Verify","Request",source,new Destination("Server",SERIP),"0000",ticketCtoV,"ticketV",new Authenticator(new Destination("Server",SERIP),source,new TS(5)),Kcv,"authenticator C","" );
+                            CtoSer = packageConstructor.getPackageCtoVVerify("Verify","Request",source,new Destination("Server",SERIP),"0000",ticketCtoV,"ticketV",new Authenticator(new Destination("Server",SERIP),source,new TS(5)),Kcv,"authenticator C",publicKey,privateKey );
                         } catch (JsonProcessingException jsonProcessingException) {
                             jsonProcessingException.printStackTrace();
                           JOptionPane.showMessageDialog(null, "登入错误，请重试");
@@ -317,8 +328,7 @@ public class LogIn extends JFrame {
 
     }
 
-    public LogIn()
-    {
+    public LogIn() throws NoSuchAlgorithmException {
         super();
         initGUI();
     }
@@ -327,7 +337,11 @@ public class LogIn extends JFrame {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                LogIn inst = new LogIn();
+                try {
+                    LogIn inst = new LogIn();
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }

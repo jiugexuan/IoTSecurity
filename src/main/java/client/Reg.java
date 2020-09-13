@@ -1,9 +1,11 @@
 package client;
 
+import access.IPInTheItem;
 import client.ConnManger;
 import client.LogIn;
 import client.SocketConn;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import iotpackage.IPInfo;
 import iotpackage.constructor.PackageConstructor;
 import iotpackage.destination.Destination;
 import iotpackage.source.Source;
@@ -11,11 +13,13 @@ import iotpackage.source.Source;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.security.NoSuchAlgorithmException;
 import java.util.Random;
 
 public class Reg extends JFrame {
-    public String UserIP = "127.0.0.1";
-    public String ASIP = "127.0.0.1";
+    IPInTheItem ipInTheItem=new IPInTheItem();
+    public String UserIP = ipInTheItem.getUserIP();
+    public String ASIP = ipInTheItem.getASIP();
 
     private void initGUI() {
         //创建Random类对象
@@ -116,7 +120,7 @@ public class Reg extends JFrame {
                     } catch (JsonProcessingException jsonProcessingException) {
                         jsonProcessingException.printStackTrace();
                     }
-                    ConnManger cm = new ConnManger("as");
+                    ConnManger cm = new ConnManger("as",ASIP);
                     SocketConn conn = cm.getConn();
                     conn.send(content.getBytes());
                     System.out.print(content);
@@ -137,7 +141,11 @@ public class Reg extends JFrame {
                         System.out.print("\n 注册失败");
                     }
                 }
-                LogIn login = new LogIn();
+                try {
+                    LogIn login = new LogIn();
+                } catch (NoSuchAlgorithmException noSuchAlgorithmException) {
+                    noSuchAlgorithmException.printStackTrace();
+                }
             }
         });
         add(jButton1);

@@ -19,6 +19,7 @@ public class Server {
         System.out.println("服务器启动");
     }
     public void service(){
+
         while(true){
             Socket socket=null;
             try {
