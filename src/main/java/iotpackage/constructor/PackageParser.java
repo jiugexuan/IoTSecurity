@@ -95,11 +95,11 @@ public class PackageParser {
         source.setIp(sourceNode.get("IP").asText());
     }
 
-    public IPInfo getSource(){
+    public Source getSource(){
         if(this.json==null){
             return null;
         }
-        return new IPInfo(sourceNode.get("Id").asText(),sourceNode.get("IP").asText());
+        return new Source(sourceNode.get("Id").asText(),sourceNode.get("IP").asText());
     }
 
     @Deprecated
@@ -111,11 +111,11 @@ public class PackageParser {
         destination.setIp(destinationNode.get("IP").asText());
     }
 
-    public IPInfo getDestination(){
+    public Destination getDestination(){
         if(this.json==null){
             return null;
         }
-        return new IPInfo(destinationNode.get("Id").asText(),destinationNode.get("IP").asText());
+        return new Destination(destinationNode.get("Id").asText(),destinationNode.get("IP").asText());
     }
     public String getCode(){
         return dataNode.get("Code").asText();

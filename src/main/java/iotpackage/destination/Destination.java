@@ -2,6 +2,7 @@ package iotpackage.destination;
 
 
 import iotpackage.IPInfo;
+import iotpackage.source.Source;
 
 public class Destination extends IPInfo {
 
@@ -12,6 +13,10 @@ public class Destination extends IPInfo {
 
     public Destination(){
         super();
+    }
+
+    public Source changeToSource(){
+        return new Source(getId(),getIp());
     }
 
     public void printDestination(){

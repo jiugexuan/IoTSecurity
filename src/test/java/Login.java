@@ -1,4 +1,5 @@
 import com.fasterxml.jackson.core.JsonProcessingException;
+import iotpackage.IPInfo;
 import iotpackage.IoTKey;
 import iotpackage.Tools;
 import iotpackage.constructor.PackageConstructor;
@@ -16,8 +17,8 @@ public class Login {
     @Test
     public void loginTest() throws IOException {
         String test=new PackageConstructor().getPackageServiceResponse(
-                "Verify","Responce",
-                new Source("accoutTO","192.168.1.7"),new Destination("coueg","123547890"),
+                "Verify","Response",
+                new Source("source","192.168.1.7"),new Destination("destination","123547890"),
                 "0005",
                 "hello",
                 "",
@@ -26,5 +27,17 @@ public class Login {
 
         Tools.jsonFormat(test);
         System.out.println(new PackageParser(test).getNickName());
+        Source jk= new PackageParser(test).getSource();
+        Destination jk2=new PackageParser(test).getDestination();
+        String test2=new PackageConstructor().getPackageServiceResponse(
+                "Verify","Response",
+                jk2.changeToSource(),
+                jk.changeToDestination(),
+                "0005",
+                "hello",
+                "",
+                ""
+        );
+        Tools.jsonFormat(test2);
     }
 }
