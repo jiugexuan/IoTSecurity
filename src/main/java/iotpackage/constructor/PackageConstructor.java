@@ -107,9 +107,9 @@ public class PackageConstructor {
         authenticatorNode.put("Context", authenticatorContext);
 
         parentNode.set("Authenticator", authenticatorNode);
-    };
+    }
     //Email邮件添加
-    public void setEmailNode(ObjectNode parentNode,Email email) throws JsonProcessingException {
+    public void setEmailNode(ObjectNode parentNode,Email email) {
         //ObjectNode rootNode = jsonNodeFactory.objectNode();
         setUser(parentNode,email.getSender());
         setUser(parentNode,email.getReceiver());
@@ -120,7 +120,7 @@ public class PackageConstructor {
 
         //setTSNode(rootNode,authenticator.getTs());*/
         //  return new ObjectMapper().writeValueAsString(rootNode);
-    };
+    }
 
     //Ticket json格式生成
     /**
@@ -138,7 +138,7 @@ public class PackageConstructor {
 
         //String signContext= objectMapper.writeValueAsString(rootNode);
         return new ObjectMapper().writeValueAsString(rootNode);
-    };
+    }
 
     //邮件
     public void setUser(ObjectNode parentNode, User user){
@@ -146,7 +146,8 @@ public class PackageConstructor {
         userNode.put("Account",user.getAccount());
         userNode.put("Nickname",user.getNickname());
         parentNode.set(user.getClass().getSimpleName(),userNode);
-    };
+    }
+
     public String getPackageEmailToGson(Email email) throws JsonProcessingException {
         ObjectNode rootNode = jsonNodeFactory.objectNode();
         setUser(rootNode,email.getSender());
@@ -158,12 +159,13 @@ public class PackageConstructor {
 
         //setTSNode(rootNode,authenticator.getTs());*/
         return new ObjectMapper().writeValueAsString(rootNode);
-    };
+    }
 
 /////////////////////////////////
     @Deprecated
-    /***服务器响应代码****/
-    /***service to C
+    /***
+     * 服务器响应代码
+     * service to C
      * @param process 进程代号
      * @param operation 操作代号
      * @param source 发送方
@@ -260,8 +262,8 @@ public class PackageConstructor {
     }
 
     @Deprecated
-    /***用户注册****/
-    /***C to AS
+    /**用户注册
+     * C to AS
      * @param process 进程代号
      * @param operation 操作代号
      * @param source 发送方
@@ -318,7 +320,7 @@ public class PackageConstructor {
         rootNode.set("Sign",signNode);
         // ObjectMapper objectMapper = new ObjectMapper();
         return new ObjectMapper().writeValueAsString(rootNode);
-    };
+    }
 
 
     /***
@@ -382,11 +384,12 @@ public class PackageConstructor {
         rootNode.set("Sign",signNode);
         // ObjectMapper objectMapper = new ObjectMapper();
         return new ObjectMapper().writeValueAsString(rootNode);
-    };
+    }
 
     /***服务认证阶段***/
     @Deprecated
-    /***C to AS
+    /***
+     * C to AS
      * @param process 进程代号
      * @param operation 操作代号
      * @param source 发送方
@@ -518,8 +521,8 @@ public class PackageConstructor {
     }
 
     @Deprecated
-    /***AS to C
-     *
+    /**
+      AS to C
      * @param process 进程代号
      * @param operation 操作代号
      * @param source 发送方
@@ -908,7 +911,8 @@ public class PackageConstructor {
     }
 
     @Deprecated
-    /***AS to C
+    /***
+     * AS to C
      *
      * @param process 进程代号
      * @param operation 操作代号
@@ -1227,7 +1231,8 @@ public class PackageConstructor {
     }
 
     @Deprecated
-    /*** C to V 和V to C都是这个，发送加密的邮件
+    /**
+     *  C to V 和V to C都是这个，发送加密的邮件
      *邮件发送
      * @param process
      * @param operation
@@ -1331,7 +1336,7 @@ public class PackageConstructor {
         //时间戳节点添加
 
         CipherConstructor cipherConstructor=new CipherConstructor(cipherKey);
-        setCipherNode(dataNode,new Ciphertext(cipherConstructor.constructCipherOfEmailSend(email),"TGS to C EmailSend"));
+        setCipherNode(dataNode,new Ciphertext(cipherConstructor.constructCipherOfEmailSend(email),source.getId()+" to "+destination.getId()+" EmailSend"));
 
         infoNode.set("Data",dataNode);
         rootNode.set("Info",infoNode);
@@ -1357,7 +1362,8 @@ public class PackageConstructor {
     }
 
     @Deprecated
-    /*** C to V 和V to C都是这个，发送指定的邮件
+    /***
+     * C to V 和V to C都是这个，发送指定的邮件
      *邮件发送
      * @param process
      * @param operation
@@ -1626,7 +1632,7 @@ public class PackageConstructor {
 
 
     @Deprecated
-    /****
+    /**
      * 生成查询报文，
      * @param process
      * @param operation
