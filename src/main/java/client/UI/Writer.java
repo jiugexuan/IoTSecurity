@@ -86,7 +86,7 @@ public class Writer extends JFrame {
                 Email email = new Email(ts.getContext(),new Sender(user,"飞翔的企鹅"),new Receiver(jTextField1.getText(),""),jTextField3.getText(),ts.getContext(),"text",jTextField2.getText());
                 String content = null;
                 try {
-                    content = packageConstructor.getPackageEmailSend("Service","Send",new Source(user,"127.0.0.1"),new Destination("SERVER",SERIP),"0000",Kcv,email,"","");
+                    content = packageConstructor.getPackageEmailSend("Service","Send",new Source(user,UserIP),new Destination("SERVER",SERIP),"0000",Kcv,email,"","");
                 } catch (JsonProcessingException jsonProcessingException) {
                     jsonProcessingException.printStackTrace();
                 }

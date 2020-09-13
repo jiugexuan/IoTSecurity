@@ -1,5 +1,6 @@
 package client.UI;
 
+import access.IPInTheItem;
 import client.ConnManger;
 import client.SocketConn;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -30,9 +31,13 @@ import java.util.Vector;
  * @author 19710
  */
 public class Rev extends JFrame {
+    IPInTheItem ipInTheItem=new IPInTheItem();
 
-    public String SERIP = "127.0.0.1";
-    public String UserIP = "127.0.0.1";
+    //publicKey,privateKey
+    public String UserIP = ipInTheItem.getUserIP();
+    public String ASIP = ipInTheItem.getASIP();
+    public String TGSIP = ipInTheItem.getTGSIP();
+    public String SERIP = ipInTheItem.getSERIP();
     public Object[][] datat = {{"","","","",""}};
     JTable jTable ;
     Vector<Vector<String>> data=new Vector<>();
@@ -127,7 +132,7 @@ public class Rev extends JFrame {
         Source source = new Source("SERVER",SERIP);
         Destination destination = new Destination(User,"127.0.0.1");
         String checkMail = packageConstructor.getPackageEmailCheck("Service","CheckRequest",source,destination,"0000",User,"","");
-        ConnManger cm = new ConnManger("SERVER");
+        ConnManger cm = new ConnManger("SERVER",SERIP);
         SocketConn conn = cm.getConn();
         conn.send(checkMail.getBytes());
 

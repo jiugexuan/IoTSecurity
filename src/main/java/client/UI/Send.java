@@ -1,5 +1,6 @@
 package client.UI;
 
+import access.IPInTheItem;
 import client.ConnManger;
 import client.SocketConn;
 import iotpackage.constructor.PackageConstructor;
@@ -10,6 +11,7 @@ import iotpackage.data.fuction.emailList.SendList;
 import iotpackage.destination.Destination;
 import iotpackage.source.Source;
 import securityalgorithm.DESUtil;
+import securityalgorithm.RSAUtil;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -23,11 +25,22 @@ import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Map;
 import java.util.Vector;
 
 public class Send extends JFrame {
-    public String SERIP = "127.0.0.1";
-    public String UserIP = "127.0.0.1";
+
+    IPInTheItem ipInTheItem=new IPInTheItem();
+
+    //publicKey,privateKey
+    public String UserIP = ipInTheItem.getUserIP();
+    public String ASIP = ipInTheItem.getASIP();
+    public String TGSIP = ipInTheItem.getTGSIP();
+    public String SERIP = ipInTheItem.getSERIP();
+//    Map<String,String> keyMap= RSAUtil.createKeys(1024,ipInTheItem.getUserIP());
+//    String publicKey=keyMap.get("privateKey");
+//    String privateKey=keyMap.get("publicKey");
+
     Vector<Vector<String>> data=new Vector<>();
     JTable jTable=new JTable();
     public static Object[][] data1={};
@@ -132,7 +145,7 @@ public class Send extends JFrame {
         Source source = new Source("SERVER",SERIP);
         Destination destination = new Destination(User,UserIP);
         String checkMail = packageConstructor.getPackageEmailCheck("Service","CheckRequest",source,destination,"0000",User,"","");
-        ConnManger cm = new ConnManger("SERVER");
+        ConnManger cm = new ConnManger("SERVER",SERIP);
         SocketConn conn = cm.getConn();
         conn.send(checkMail.getBytes());
 

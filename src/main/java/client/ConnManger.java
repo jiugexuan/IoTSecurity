@@ -44,9 +44,9 @@ public class ConnManger {
 
     public ConnManger(String server){
         switch(ServerType.getValue(server)){
-            case AS: conn = new ASConn(ip,port); break;
-            case TGS: conn = new TGSConn(ip,port); break;
-            case SERVER : conn = new SERConn(ip,port);break;
+            case AS: conn = new ASConn(); break;
+            case TGS: conn = new TGSConn(); break;
+            case SERVER : conn = new SERConn();break;
             //case TGS: conn = new TGSConn(ip,port); break;
            // case SERVER : conn = new SERConn(ip,port);break;
         }
