@@ -9,7 +9,7 @@ public class DataConn {
     static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
     static final String USER = "root";
     static final String PASS = "123456";
-    static String DB_URL = "jdbc:mysql://127.0.0.1:3306/mailsystem";
+    static String DB_URL = "jdbc:mysql://47.115.12.18:3306/mailsystem";
 
     static void OpenConn() {
         stmt = null;

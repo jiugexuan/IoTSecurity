@@ -19,7 +19,7 @@ public class ServerSql  {
     static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
     static final String USER = "root";
     static final String PASS = "123456";
-    static String DB_URL = "jdbc:mysql://127.0.0.1:3306/mailsystem";
+    static String DB_URL = "jdbc:mysql://47.115.12.18:3306/mailsystem";
 
 /**
 * 创建用户发送邮件表
@@ -28,8 +28,8 @@ public class ServerSql  {
 * */
 public  static String creatSendTable(String sendname){
     String tablename=sendname+"send";
-    String creatsql = "create table If Not Exists "+tablename+"(id int(11),rev varchar(255)," +
-            "title varchar(255),content varchar(255),ctime varchar(255))charset=utf8;";
+    String creatsql = "create table If Not Exists "+tablename+"(id varchar(255),rev varchar(255)," +
+            "title varchar(255),content text,ctime varchar(255))charset=utf8;";
     try {
         Class.forName(JDBC_DRIVER);
         conn = DriverManager.getConnection(DB_URL,USER,PASS);
@@ -37,7 +37,7 @@ public  static String creatSendTable(String sendname){
         stmt = conn.createStatement();
         if(0 == stmt.executeUpdate(creatsql))
         {
-            System.out.println("发送表正常！");;
+            System.out.println("发送表正常！");
         }
         else
         {
@@ -59,8 +59,8 @@ public  static String creatSendTable(String sendname){
      * */
     public  static String creatRevTable(String Revname){
         String tablename=Revname+"rev";
-        String creatsql = "create table If Not Exists "+tablename+"(id int(11),send varchar(255)," +
-                "title varchar(255),content varchar(255),ctime varchar(255))charset=utf8;";
+        String creatsql = "create table If Not Exists "+tablename+"(id varchar(255),send varchar(255)," +
+                "title varchar(255),content text,ctime varchar(255))charset=utf8;";
         try {
             Class.forName(JDBC_DRIVER);
             conn = DriverManager.getConnection(DB_URL,USER,PASS);
