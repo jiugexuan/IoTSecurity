@@ -39,5 +39,16 @@ public class Login {
                 ""
         );
         Tools.jsonFormat(test2);
+
+        String test3=new PackageConstructor().getPackageServiceResponse(
+                "Verify","Response",
+                jk2.changeToSource(),
+                jk.changeToDestination(),
+                "0005",
+                "hello",
+                "",
+                ""
+        );
+        Tools.jsonFormat(test3);
     }
 }

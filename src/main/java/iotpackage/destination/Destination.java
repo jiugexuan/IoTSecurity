@@ -11,6 +11,10 @@ public class Destination extends IPInfo {
         super(id, ip);
     }
 
+    public Destination(IPInfo ipInfo){
+        super(ipInfo.getId(),ipInfo.getIp());
+    }
+
     public Destination(){
         super();
     }

@@ -19,6 +19,10 @@ public class Source  extends IPInfo {
         return new Destination(getId(),getIp());
     }
 
+    public Source(IPInfo ipInfo){
+        super(ipInfo.getId(),ipInfo.getIp());
+    }
+
     public void printSource(){
         System.out.println(">--------------");
         System.out.println("the Source:");
