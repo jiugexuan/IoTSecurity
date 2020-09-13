@@ -72,7 +72,7 @@ public class Writer extends JFrame {
                 ConnManger cm = new ConnManger("SERVER");
                 SocketConn conn = cm.getConn();
                 TS ts = new TS(1);
-                Email email = new Email(ts.getContext(),new Sender(user,"飞翔的企鹅"),new Receiver(jTextField1.getText(),""),jTextField2.getText(),ts.getContext(),"text",jTextField3.getText());
+                Email email = new Email(ts.getContext(),new Sender(user,"飞翔的企鹅"),new Receiver(jTextField1.getText(),""),jTextField3.getText(),ts.getContext(),"text",jTextField2.getText());
                 String content = null;
                 try {
                     content = packageConstructor.getPackageEmailSend("Service","Send",new Source(user,"127.0.0.1"),new Destination("SERVER",SERIP),"0000",Kcv,email,"","");
@@ -91,10 +91,10 @@ public class Writer extends JFrame {
                     ioException.printStackTrace();
                 }
                 String code = packageParser.getCode();
-                System.out.println(code);
+                System.out.println("\ncode"+code);
                 if (code.contains("0104")){
                     JOptionPane.showMessageDialog(null, "发送错误，接收方不存在或网络故障，请重试");
-                }else if (code.contains("0100")){
+                }else if (code.contains("1000")){
                     JOptionPane.showMessageDialog(null, "发送成功");
                     setVisible(false);
                 }

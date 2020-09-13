@@ -1,8 +1,12 @@
 package client.UI;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import iotpackage.data.fuction.User.User;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 public class UI extends JFrame {
 
@@ -34,7 +38,11 @@ public class UI extends JFrame {
         jButton2.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Send tempp = new Send();
+                try {
+                    Send tempp = new Send(user,Kcv);
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
             }
         });
 
@@ -45,7 +53,11 @@ public class UI extends JFrame {
         jButton3.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Rev hhh = new Rev();
+                try {
+                    Rev hhh = new Rev(user ,Kcv);
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
             }
         });
 

@@ -14,6 +14,9 @@ import iotpackage.data.ciphertext.Lifetime;
 import iotpackage.data.fuction.Email;
 import iotpackage.data.fuction.User.Receiver;
 import iotpackage.data.fuction.User.Sender;
+import iotpackage.data.fuction.emailList.EmailList;
+import iotpackage.data.fuction.emailList.ReceiveList;
+import iotpackage.data.fuction.emailList.SendList;
 import iotpackage.data.ticket.Ticket;
 import iotpackage.destination.Destination;
 import iotpackage.source.Source;
@@ -26,6 +29,7 @@ import java.io.*;
 import java.net.Socket;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.sql.SQLException;
 
 public class ServerThread implements Runnable {
     public String UserIP = "127.0.0.1";
@@ -166,19 +170,29 @@ public class ServerThread implements Runnable {
             if (result.contains("0104")){
                 VtoC = packageConstructor.getPackageServiceResponse("Service","Send",new Source("SERVER",SERIP),new Destination(User,UserIP),"0104","","");
                 send(VtoC.getBytes());
-                System.out.println("123");
+
             } else if (result.contains("1000")){
-                VtoC = packageConstructor.getPackageServiceResponse("Service","Send",new Source("SERVER",SERIP),new Destination(User,UserIP),"0100","","");
+                VtoC = packageConstructor.getPackageServiceResponse("Service","Send",new Source("SERVER",SERIP),new Destination(User,UserIP),"1000","","");
                 send(VtoC.getBytes());
             }
         }
     }
 
-    public void ServerMailList(String content){
+    public void ServerMailList(String content) throws IOException, SQLException, ClassNotFoundException {
         System.out.println("邮件列表部分："+content);
+        PackageParser packageParser = new PackageParser(content);
+        String user = packageParser.getAccount();
+        ReceiveList receiveList = new ReceiveList();
+        SendList sendList = new SendList();
+        ServerSql.findRevAll(receiveList,user);
+        ServerSql.findSendAll(sendList,new Sender(User,""));
+        PackageConstructor packageConstructor = new PackageConstructor();
+        String maillist = packageConstructor.getPackageEmailListALL("Service","ListRequest",new Source("SERVER",SERIP),new Destination(User,UserIP),"0000",Kcv,sendList,receiveList,"","");
+        send(maillist.getBytes());
+        System.out.println("SERVER发送："+maillist);
     }
 
-    public String ServerRec() throws IllegalBlockSizeException, NoSuchAlgorithmException, IOException, BadPaddingException, NoSuchPaddingException, InvalidKeyException {
+    public String ServerRec() throws IllegalBlockSizeException, NoSuchAlgorithmException, IOException, BadPaddingException, NoSuchPaddingException, InvalidKeyException, SQLException, ClassNotFoundException {
         byte[] bytes = new byte[8000];
         receive(bytes);
         String content= new String(bytes);
@@ -193,14 +207,11 @@ public class ServerThread implements Runnable {
             return "0105 client发送到Server的报文异常";
         }
         System.out.println("操作码："+operation);
-        if (operation.contains("Request")){
+        if (operation.equals("Request")){
             ServerClientVerify(content);
-
         }else if (operation.contains("Send")){
-
             ServerMailSend(content);
-
-        }else if (operation.contains("ListRequest")){
+        }else if (operation.contains("CheckRequest")){
             ServerMailList(content);
         }else {
             return "0105 client发送到Server的报文operation获取异常";
@@ -212,7 +223,7 @@ public class ServerThread implements Runnable {
     public void run() {
         try {
             ServerRec();
-        } catch (IllegalBlockSizeException | InvalidKeyException | NoSuchPaddingException | BadPaddingException | IOException | NoSuchAlgorithmException e) {
+        } catch (IllegalBlockSizeException | InvalidKeyException | NoSuchPaddingException | BadPaddingException | IOException | NoSuchAlgorithmException | SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }

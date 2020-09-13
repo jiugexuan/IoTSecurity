@@ -101,10 +101,15 @@ public  static String creatSendTable(String sendname){
            String tablename=send.getAccount()+"send";
            String sql3 = "insert into "+tablename+"(id,rev,title,content,ctime) values ('"+emailId+"','" + rev.getAccount() + "','" + title + "','"+content+"','"+ctime+"')";
             int re =  SqlOperation.executeUpdate(sql3);
-            while(re == 0) {
+
+            String rectablename =rev.getAccount()+"rev";
+            String sql4 = "insert into "+rectablename+"(id,send,title,content,ctime) values ('"+emailId+"','" + send.getAccount() + "','" + title + "','"+content+"','"+ctime+"')";
+            int rec =  SqlOperation.executeUpdate(sql4);
+            while(rec == 0 || re == 0 ) {
                 System.err.println("\n 发送失败，请重试！");
                 return "0104";
             }
+
         }
         return "1000";
     }
@@ -114,6 +119,7 @@ public  static String creatSendTable(String sendname){
      * 若失败返回0104
      * 成功返回1000
      * */
+
     public static String revMail(String emailId,Receiver rev,Sender send,String title,String content){
         String ctime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(System.currentTimeMillis());
         String sql2 = "select username from user where username='" +send.getAccount()+ "'";
@@ -139,8 +145,8 @@ public  static String creatSendTable(String sendname){
      * @param emailList 存放收件箱所有邮件
      * */
 
-    public static String findRevAll(ReceiveList emailList,Receiver rev) throws SQLException, ClassNotFoundException {
-        String tablename=rev.getAccount()+"rev";
+    public static String findRevAll(ReceiveList emailList,String account) throws SQLException, ClassNotFoundException {
+        String tablename=account+"rev";
         Class.forName(JDBC_DRIVER);
         conn = DriverManager.getConnection(DB_URL,USER,PASS);
         String sql = "select * from "+tablename;
@@ -148,6 +154,7 @@ public  static String creatSendTable(String sendname){
         ResultSet resultSet=stmt.executeQuery(sql);
         String sendname,title,content,ctime,id;
         Email email=null; Sender tmpsend=new Sender("","");
+        Receiver receiver = new Receiver(account,"");
         while (resultSet.next()) {
             id =resultSet.getString("Id");
             sendname = resultSet.getString("send");
@@ -155,9 +162,9 @@ public  static String creatSendTable(String sendname){
             content= resultSet.getString("content");
             ctime=resultSet.getString("ctime");
             tmpsend.setAccount(sendname);
-            email=new Email(id,tmpsend,rev,title,ctime,"txt",content);
+            email=new Email(id,tmpsend,receiver,title,ctime,"txt",content);
             emailList.addEmail(email);
-            System.out.println(sendname+'\t'+title+'\t'+content+'\t'+ctime);
+            //System.out.println(sendname+'\t'+title+'\t'+content+'\t'+ctime);
         }
         return "1002";
     }
@@ -186,7 +193,7 @@ public  static String creatSendTable(String sendname){
             tmprev.setAccount(revname);
             email=new Email(id,sender,tmprev,title,ctime,"txt",content);
             emailList.addEmail(email);
-            System.out.println(revname+'\t'+title+'\t'+content+'\t'+ctime);
+           // System.out.println(revname+'\t'+title+'\t'+content+'\t'+ctime);
         }
         return "1002";
     }
