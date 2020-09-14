@@ -55,7 +55,7 @@ public class TGS implements Runnable {
             OutputStream socketOut = socket.getOutputStream();
             socketOut.write(content);
             socketOut.flush();
-            socketOut.close();
+
             // log.info("Messeag has been sent!");
         } catch (IOException e) {
             // TODO Auto-generated catch block
@@ -70,7 +70,7 @@ public class TGS implements Runnable {
             InputStream socketIn = socket.getInputStream();
             len = socketIn.read(result, 0, MAX_SIZE);
             // log.info("Messeag has been received!");
-            socketIn.close();
+
         } catch (IOException e) {
             // TODO Auto-generated catch block
             // log.warning("Fail to receive Messeag due to IOException!");

@@ -49,7 +49,7 @@ public class AS implements Runnable {
             socketOut.flush();
             // log.info("Messeag has been sent!");
             //FIXME
-            socketOut.close();
+
         } catch (IOException e) {
             // TODO Auto-generated catch block
             //log.warning("Fail to send Messeag due to IOException!");
@@ -64,7 +64,8 @@ public class AS implements Runnable {
             len = socketIn.read(result, 0, MAX_SIZE);
             // log.info("Messeag has been received!");
             //FIXME
-            socketIn.close();
+
+
         } catch (IOException e) {
             // TODO Auto-generated catch block
             // log.warning("Fail to receive Messeag due to IOException!");
@@ -74,6 +75,11 @@ public class AS implements Runnable {
     }
     @Override
     public void run() {
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         //  System.out.print("hhh\n");
         byte[] bytes = new byte[4096];
         //接收到的报文
@@ -141,8 +147,8 @@ public class AS implements Runnable {
                     } catch (JsonProcessingException e) {
                         e.printStackTrace();
                     }
-                    System.out.print("\n AS 发送报文到客户端："+AStoC);
                     send(AStoC.getBytes());
+                    System.out.print("\n AS 发送报文到客户端："+AStoC);
                 }
 
             } catch (SQLException throwables) {

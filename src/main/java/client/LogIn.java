@@ -134,7 +134,6 @@ public class LogIn extends JFrame {
                     //AS->C 接收
                     byte[] receiveBuffer = new byte[2048];
                     conn.receive(receiveBuffer);
-
                     try {
                         conn.close();
                     } catch (IOException ioException) {
@@ -232,6 +231,11 @@ public class LogIn extends JFrame {
                             //TGS -> C
                             byte[] receiveTGStoC= new byte[2048];
                             connTGS.receive(receiveTGStoC);
+                        try {
+                            conn.close();
+                        } catch (IOException ioException) {
+                            ioException.printStackTrace();
+                        }
                             String recTGS = new String(receiveTGStoC);
                             System.out.print("\n从TGS收到报文："+recTGS);
                             jTextField3.append("\n从TGS收到报文："+recTGS);
@@ -294,9 +298,13 @@ public class LogIn extends JFrame {
                         ConnManger cmSer = new ConnManger("SERVER",SERIP);
                         SocketConn connSer = cmSer.getConn();
                         connSer.send(CtoSer.getBytes());
-
                         byte[] receiveSertoC= new byte[2048];
                         connSer.receive(receiveSertoC);
+                        try {
+                            conn.close();
+                        } catch (IOException ioException) {
+                            ioException.printStackTrace();
+                        }
                         String recSer = new String(receiveSertoC);
                         System.out.print("\n从Server收到报文："+recSer);
                         jTextField3.append("\n从Server收到报文："+recSer);

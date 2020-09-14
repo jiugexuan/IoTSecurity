@@ -27,6 +27,7 @@ public class SocketConn {
             socketOut.write(content);
             socketOut.flush();
             System.out.print("\n socket 信息发送");
+
             //UI.jTextField3.append("\n socket 信息发送");
             //UI.jTextField3.append(new String(content));
         } catch (IOException e) {
