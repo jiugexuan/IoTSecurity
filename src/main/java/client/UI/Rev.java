@@ -41,6 +41,7 @@ public class Rev extends JFrame {
     public Object[][] datat = {{"","","","",""}};
     JTable jTable ;
     Vector<Vector<String>> data=new Vector<>();
+
     private void initGUI() {
         setLayout(null);
         setBounds(350, 100, 600, 450);

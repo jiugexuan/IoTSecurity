@@ -14,10 +14,11 @@ import java.util.Vector;
 
 public class ServerSql  {
 
-    static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
+
     static final String USER = "root";
     static final String PASS = "123456";
-    static String DB_URL = "jdbc:mysql://47.115.12.18:3306/mailsystem";
+    static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
+    static final String DB_URL = "jdbc:mysql://47.115.12.18:3306/mailsystem";
 
 /**
 * 创建用户发送邮件表
@@ -25,9 +26,9 @@ public class ServerSql  {
 * 若失败返回0103
 * */
 public  static String creatSendTable(String sendname){
-    Statement stmt = null;
-    ResultSet rs = null;
     Connection conn = null;
+    Statement stmt = null;
+
     String tablename=sendname+"send";
     String creatsql = "create table If Not Exists "+tablename+"(id varchar(255),rev varchar(255)," +
             "title varchar(255),content text,ctime varchar(255)) charset=utf8 ;";
@@ -36,6 +37,7 @@ public  static String creatSendTable(String sendname){
         conn = DriverManager.getConnection(DB_URL,USER,PASS);
         System.out.println("dataconn 数据库连接成功");
         stmt = conn.createStatement();
+
         if(0 == stmt.executeUpdate(creatsql))
         {
             System.out.println("发送表正常！");
@@ -56,11 +58,16 @@ public  static String creatSendTable(String sendname){
     /**
      * 修改密码
      */
-    public static String changePWD (String user , String passWord) throws SQLException {
+    public static String changePWD (String user , String passWord) throws SQLException, ClassNotFoundException {
+        Connection conn = null;
+        Statement stmt = null;
         String sql = "update user set userkey = '"+ passWord +"' where username = '"+user+"'";
-        SqlOperation.OpenConn();
-        int rs =  SqlOperation.executeUpdate(sql);
-        if (rs == 1){
+        Class.forName(JDBC_DRIVER);
+        conn = DriverManager.getConnection(DB_URL,USER,PASS);
+        System.out.println("dataconn 数据库连接成功");
+        stmt = conn.createStatement();
+        int result = stmt.executeUpdate(sql);
+        if (result == 1){
            System.out.println("修改成功");
         }else {
             System.out.println("修改失败！");
@@ -78,8 +85,8 @@ public  static String creatSendTable(String sendname){
      * */
     public  static String creatRevTable(String Revname){
         Statement stmt = null;
-        ResultSet rs = null;
         Connection conn = null;
+
         String tablename=Revname+"rev";
         String creatsql = "create table If Not Exists "+tablename+"(id varchar(255),send varchar(255)," +
                 "title varchar(255),content text,ctime varchar(255)) charset=utf8 ;";
@@ -111,29 +118,37 @@ public  static String creatSendTable(String sendname){
      * 若失败返回0104
      * 成功返回1000
      * */
-        public static String sendMail(String emailId, Sender send, Receiver rev, String title, String content) throws SQLException {
+        public static String sendMail(String emailId, Sender send, Receiver rev, String title, String content) throws SQLException, ClassNotFoundException {
             Statement stmt = null;
             ResultSet rs = null;
             Connection conn = null;
         String ctime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(System.currentTimeMillis());
         String sql2 = "select username from user where username='" +rev.getAccount()+ "'";
-        SqlOperation.OpenConn();
-        rs =  SqlOperation.executeQuery(sql2);
-        if (rs == null) {
-            System.err.println("\n 接收方不存在！");
-            return "0104";
-        }else{
-           String tablename=send.getAccount()+"send";
-           String sql3 = "insert into "+tablename+"(id,rev,title,content,ctime) values ('"+emailId+"','" + rev.getAccount() + "','" + title + "','"+content+"','"+ctime+"')";
-            int re =  SqlOperation.executeUpdate(sql3);
+            Class.forName(JDBC_DRIVER);
+            conn = DriverManager.getConnection(DB_URL,USER,PASS);
+            System.out.println(" dataconn 数据库连接成功");
+            stmt = conn.createStatement();
+            boolean result = stmt.execute(sql2);
+            rs = stmt.getResultSet();
+
+        if ( rs.next() ) {
+            String tablename=send.getAccount()+"send";
+            String sql3 = "insert into "+tablename+"(id,rev,title,content,ctime) values ('"+emailId+"','" + rev.getAccount() + "','" + title + "','"+content+"','"+ctime+"')";
+            int re =  stmt.executeUpdate(sql3);
 
             String rectablename =rev.getAccount()+"rev";
             String sql4 = "insert into "+rectablename+"(id,send,title,content,ctime) values ('"+emailId+"','" + send.getAccount() + "','" + title + "','"+content+"','"+ctime+"')";
-            int rec =  SqlOperation.executeUpdate(sql4);
+            int rec =  stmt.executeUpdate(sql4);
             while(rec == 0 || re == 0 ) {
                 System.err.println("\n 发送失败，请重试！");
                 return "0104";
             }
+            stmt.close();
+            conn.close();
+            rs.close();
+        }else{
+            System.err.println("\n 接收方不存在！");
+            return "0104";
 
         }
         return "1000";
@@ -145,28 +160,28 @@ public  static String creatSendTable(String sendname){
      * 成功返回1000
      * */
 
-    public static String revMail(String emailId,Receiver rev,Sender send,String title,String content) throws SQLException {
-        Statement stmt = null;
-        ResultSet rs = null;
-        Connection conn = null;
-        String ctime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(System.currentTimeMillis());
-        String sql2 = "select username from user where username='" +send.getAccount()+ "'";
-        SqlOperation.OpenConn();
-        rs =  SqlOperation.executeQuery(sql2);
-        if (rs == null) {
-            System.err.println("\n 接收方不存在！");
-            return "0104";
-        }else{
-            String tablename=rev.getAccount()+"rev";
-            String sql3 = "insert into "+tablename+"(id,send,title,content,ctime) values ('"+emailId+"','" + send.getAccount() + "','" + title + "','"+content+"','"+ctime+"')";
-            int re =  SqlOperation.executeUpdate(sql3);
-            while(re == 0) {
-                System.err.println("\n 接收失败，请重试！");
-                return "0104";
-            }
-        }
-        return "1000";
-    }
+//    public static String revMail(String emailId,Receiver rev,Sender send,String title,String content) throws SQLException {
+//        Statement stmt = null;
+//        ResultSet rs = null;
+//        Connection conn = null;
+//        String ctime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(System.currentTimeMillis());
+//        String sql2 = "select username from user where username='" +send.getAccount()+ "'";
+//        SqlOperation.OpenConn();
+//        rs =  SqlOperation.executeQuery(sql2);
+//        if (rs == null) {
+//            System.err.println("\n 接收方不存在！");
+//            return "0104";
+//        }else{
+//            String tablename=rev.getAccount()+"rev";
+//            String sql3 = "insert into "+tablename+"(id,send,title,content,ctime) values ('"+emailId+"','" + send.getAccount() + "','" + title + "','"+content+"','"+ctime+"')";
+//            int re =  SqlOperation.executeUpdate(sql3);
+//            while(re == 0) {
+//                System.err.println("\n 接收失败，请重试！");
+//                return "0104";
+//            }
+//        }
+//        return "1000";
+//    }
     /**
      * 查看收件箱
      * @param
@@ -181,12 +196,13 @@ public  static String creatSendTable(String sendname){
         Class.forName(JDBC_DRIVER);
         conn = DriverManager.getConnection(DB_URL,USER,PASS);
         String sql = "select * from "+tablename;
-         stmt=(Statement) conn.createStatement();
-        ResultSet resultSet=stmt.executeQuery(sql);
-        stmt.close();
+         stmt = conn.createStatement();
+        ResultSet resultSet = null;
+        stmt.execute(sql);
+        resultSet = stmt.getResultSet();
         String sendname,title,content,ctime,id;
         Email email=null; Sender tmpsend=new Sender("","");
-        Receiver receiver = new Receiver(account,"");
+        Receiver receiver = new Receiver("","");
         while (resultSet.next()) {
             id =resultSet.getString("Id");
             sendname = resultSet.getString("send");
@@ -194,7 +210,7 @@ public  static String creatSendTable(String sendname){
             content= resultSet.getString("content");
             ctime=resultSet.getString("ctime");
             tmpsend.setAccount(sendname);
-            email=new Email(id,tmpsend,receiver,title,ctime,"txt",content);
+            email=new Email(id,tmpsend,new Receiver(sendname,""),title,ctime,"txt",content);
             emailList.addEmail(email);
             //System.out.println(sendname+'\t'+title+'\t'+content+'\t'+ctime);
         }
@@ -215,10 +231,14 @@ public  static String creatSendTable(String sendname){
         Class.forName(JDBC_DRIVER);
         conn = DriverManager.getConnection(DB_URL,USER,PASS);
         String sql = "select * from "+tablename;
-        stmt=(Statement) conn.createStatement();
-        ResultSet resultSet=stmt.executeQuery(sql);
+        stmt = conn.createStatement();
+        ResultSet resultSet = null;
+        stmt.execute(sql);
+        resultSet = stmt.getResultSet();
         String revname,title,content,ctime,id;
-        Email email=null; Receiver tmprev=new Receiver("","");
+        Email email=null;
+        Receiver tmprev=new Receiver("","");
+
         while (resultSet.next()) {
             id =resultSet.getString("Id");
             revname = resultSet.getString("rev");
@@ -226,7 +246,8 @@ public  static String creatSendTable(String sendname){
             content= resultSet.getString("content");
             ctime=resultSet.getString("ctime");
             tmprev.setAccount(revname);
-            email=new Email(id,sender,tmprev,title,ctime,"txt",content);
+
+            email=new Email(id,new Sender(revname,""),tmprev,title,ctime,"txt",content);
             emailList.addEmail(email);
            // System.out.println(revname+'\t'+title+'\t'+content+'\t'+ctime);
         }
@@ -265,53 +286,30 @@ public  static String creatSendTable(String sendname){
      * @param receiver 接受方
      * @param id 邮件id
      * */
-    public static  Email findRevById (String id,Receiver receiver) throws ClassNotFoundException, SQLException {
-        Statement stmt = null;
-        ResultSet rs = null;
-        Connection conn = null;
-                String tablename=receiver.getAccount()+"rev";
-        Class.forName(JDBC_DRIVER);
-        conn = DriverManager.getConnection(DB_URL,USER,PASS);
-        //String sql = "select * from "+tablename;
-        String sql ="select * from "+tablename+" where id='" +id+ "'";
-        stmt=(Statement) conn.createStatement();
-        Email email=null; ResultSet resultSet=stmt.executeQuery(sql);
-        while (resultSet.next()) {
-            String revname, title, content, ctime;
-            Sender tmpsend = new Sender("", "");
-            revname = resultSet.getString("send");
-            title = resultSet.getString("title");
-            content = resultSet.getString("content");
-            ctime = resultSet.getString("ctime");
-            tmpsend.setAccount(revname);
-            email = new Email(id,tmpsend,receiver, title, ctime, "txt", content);
-            System.out.println(revname + '\t' + title + '\t' + content + '\t' + ctime);
-        }
-        return email;
+//    public static  Email findRevById (String id,Receiver receiver) throws ClassNotFoundException, SQLException {
+//        Statement stmt = null;
+//        ResultSet rs = null;
+//        Connection conn = null;
+//                String tablename=receiver.getAccount()+"rev";
+//        Class.forName(JDBC_DRIVER);
+//        conn = DriverManager.getConnection(DB_URL,USER,PASS);
+//        //String sql = "select * from "+tablename;
+//        String sql ="select * from "+tablename+" where id='" +id+ "'";
+//        stmt=(Statement) conn.createStatement();
+//        Email email=null; ResultSet resultSet=stmt.executeQuery(sql);
+//        while (resultSet.next()) {
+//            String revname, title, content, ctime;
+//            Sender tmpsend = new Sender("", "");
+//            revname = resultSet.getString("send");
+//            title = resultSet.getString("title");
+//            content = resultSet.getString("content");
+//            ctime = resultSet.getString("ctime");
+//            tmpsend.setAccount(revname);
+//            email = new Email(id,tmpsend,receiver, title, ctime, "txt", content);
+//            System.out.println(revname + '\t' + title + '\t' + content + '\t' + ctime);
+//        }
+//        return email;
+//
+//    }
 
-    }
-
-
-    public static void main(String []args) throws SQLException, ClassNotFoundException {
-   // creatRevTable("18671752026");
-    //revMail("18671752026","18671752028","hello","nice to meet you");
-
-        ReceiveList emailList =new ReceiveList();
-        Receiver receiver=new Receiver("18671752026","");
-        Sender send=new Sender("18671752026","");
-/*
-        findRevAll(emailList,receiver);
-        Vector<Email> a=emailList.getEmailList();
-        Iterator<Email> it = a.iterator();
-        while(it.hasNext()){
-           // System.out.println(a.);
-            Email tt= it.next();
-            tt.printEmail();
-        }
-*/
-       Email email2= findRevById("1",receiver);
-       email2.printEmail();
-       // sendMail("1",send,receiver,"hi","fine thanks");
-
-    }
 }

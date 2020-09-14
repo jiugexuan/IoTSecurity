@@ -163,7 +163,7 @@ public class ServerThread implements Runnable {
         ServerSql.creatSendTable(User);
     }
 
-    public void ServerMailSend(String content) throws IOException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException, SQLException {
+    public void ServerMailSend(String content) throws IOException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException, SQLException, ClassNotFoundException {
         System.out.println("邮件发送部分："+content);
         PackageParser packageParser = new PackageParser(content);
         //source and destination
@@ -210,7 +210,7 @@ public class ServerThread implements Runnable {
         System.out.println("SERVER发送："+maillist);
     }
 
-    public void ChangePWD(String content) throws IOException, SQLException {
+    public void ChangePWD(String content) throws IOException, SQLException, ClassNotFoundException {
         System.out.println("修改密码部分："+content);
         PackageParser packageParser = new PackageParser(content);
         String password = packageParser.getNewPassword();

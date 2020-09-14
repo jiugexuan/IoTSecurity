@@ -4,16 +4,17 @@ import java.sql.*;
 
 public class SqlOperation {
 
+    static Statement stmt = null;
+    static ResultSet rs = null;
+    static Connection conn = null;
     static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
     static final String USER = "root";
     static final String PASS = "123456";
     static String DB_URL = "jdbc:mysql://47.115.12.18:3306/mailsystem";
 
     static void OpenConn() {
-        Statement stmt = null;
-        ResultSet rs = null;
-        Connection conn = null;
-
+        stmt = null;
+        rs = null;
         try {
             Class.forName(JDBC_DRIVER);
             conn = DriverManager.getConnection(DB_URL,USER,PASS);
@@ -24,9 +25,8 @@ public class SqlOperation {
     }
 
     public static ResultSet executeQuery(String sql) {
-        Statement stmt = null;
-        ResultSet rs = null;
-        Connection conn = null;
+        stmt = null;
+        rs = null;
         try {
             stmt = conn.createStatement();
             rs = stmt.executeQuery(sql);
@@ -36,10 +36,9 @@ public class SqlOperation {
         return rs;
     }
 
-    public static int executeUpdate(String sql) throws SQLException {
-        Statement stmt = null;
-        ResultSet rs = null;
-        Connection conn = null;
+    public static int executeUpdate(String sql) {
+        stmt = null;
+        rs = null;
         try {
             stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
                     ResultSet.CONCUR_READ_ONLY);
@@ -49,8 +48,17 @@ public class SqlOperation {
             System.err.println("\n dataconn 更新数据" + e.getMessage());
             return 0;
         }
-        stmt.close();
         return 1;
+    }
+
+    static void CloseConn() {
+        try {
+            rs.close();
+            stmt.close();
+            conn.close();
+        } catch (SQLException e) {
+            System.err.println("\n dataconn 连接释放");
+        }
     }
 
 
