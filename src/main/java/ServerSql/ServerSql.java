@@ -202,15 +202,15 @@ public  static String creatSendTable(String sendname){
         resultSet = stmt.getResultSet();
         String sendname,title,content,ctime,id;
         Email email=null; Sender tmpsend=new Sender("","");
-        Receiver receiver = new Receiver("","");
+       // Receiver receiver = new Receiver("","");
         while (resultSet.next()) {
             id =resultSet.getString("Id");
             sendname = resultSet.getString("send");
             title = resultSet.getString("title");
             content= resultSet.getString("content");
             ctime=resultSet.getString("ctime");
-            tmpsend.setAccount(sendname);
-            email=new Email(id,tmpsend,new Receiver(sendname,""),title,ctime,"txt",content);
+           // tmpsend.setAccount(sendname);
+            email=new Email(id,new Sender(sendname,""),new Receiver(account,""),title,ctime,"txt",content);
             emailList.addEmail(email);
             //System.out.println(sendname+'\t'+title+'\t'+content+'\t'+ctime);
         }
@@ -239,15 +239,17 @@ public  static String creatSendTable(String sendname){
         Email email=null;
         Receiver tmprev=new Receiver("","");
 
+        //FIXME
         while (resultSet.next()) {
             id =resultSet.getString("Id");
             revname = resultSet.getString("rev");
             title = resultSet.getString("title");
             content= resultSet.getString("content");
             ctime=resultSet.getString("ctime");
-            tmprev.setAccount(revname);
+            //tmprev.setAccount(revname);
 
-            email=new Email(id,new Sender(revname,""),tmprev,title,ctime,"txt",content);
+            email=new Email(id,new Sender(sender.getAccount(),""),new Receiver(revname,""),title,ctime,"txt",content);
+            email.printEmail();
             emailList.addEmail(email);
            // System.out.println(revname+'\t'+title+'\t'+content+'\t'+ctime);
         }
