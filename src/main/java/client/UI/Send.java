@@ -74,7 +74,7 @@ public class Send extends JFrame {
 
         Vector<String> conName=new Vector<>();
         conName.add("邮件ID");
-        conName.add("发件人");
+        conName.add("收件人");
         conName.add("邮件标题");
         conName.add("邮件正文");
         conName.add("发送时间");
@@ -101,10 +101,10 @@ public class Send extends JFrame {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                System.out.println("12346789");
+                //System.out.println("12346789");
                 // 点击几次，这里是双击事件
                 if (e.getClickCount() == 1) {
-                    System.out.println("16789");
+                  //  System.out.println("16789");
                     int row = jTable.getSelectedRow();
                     System.out.println(row);
                     String revuser= jTable.getValueAt(row, 1).toString();//读取你获取行号的某一列的值（也就是字段）

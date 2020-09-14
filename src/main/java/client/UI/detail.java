@@ -56,7 +56,7 @@ public class detail  extends JFrame {
 
 
         JButton jButton1 = new JButton();
-        jButton1.setText("删除邮件");
+        jButton1.setText("确认");
         jButton1.setBounds(30,420,310,40);
         add(jButton1);
 
