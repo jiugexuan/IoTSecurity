@@ -100,11 +100,7 @@ public class LogIn extends JFrame {
         jButton1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException interruptedException) {
-                    interruptedException.printStackTrace();
-                }
+
                 String usr =jTextField1.getText().toString();    //获取文本框内容
                 userAccount = usr;
                 char[] password= jTextField2.getPassword();
@@ -159,13 +155,12 @@ public class LogIn extends JFrame {
                         }
                         System.out.print("\n 提取出加密的ciphertext:"+packageParser.getCiphertext().getContext());
                         jTextField3.append("\n 提取出加密的ciphertext:"+packageParser.getCiphertext().getContext());
-                        System.out.print("\n ciphertext: ");
-                        jTextField3.append("\n ciphertext: ");
                         Ciphertext ciphertext = packageParser.getCiphertext();
                         String cipText = "";
                         try {
                             //是用用户md5密钥解密的ciphertext
                             cipText = DESUtil.getDecryptString(ciphertext.getContext(),MD5Util.md5(userKey) );
+                            System.out.println("解密后的ciphertext："+cipText);
                         } catch (IOException | NoSuchPaddingException | InvalidKeyException | NoSuchAlgorithmException | IllegalBlockSizeException ioException) {
                             ioException.printStackTrace();
                             JOptionPane.showMessageDialog(null, "登入错误，请重试");

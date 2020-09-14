@@ -7,8 +7,7 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 
 public class DBExcute {
-    private static String sql;
-    private static ResultSet rs;
+
 
     /**
      * 用户注册
@@ -16,6 +15,7 @@ public class DBExcute {
 
      */
     public static String register(String userName, String userKey, String nicKname,String question ,String answer) throws SQLException {
+        ResultSet rs;
         String ctime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(System.currentTimeMillis());
         String sql2 = "select username from user where username='" + userName + "'";
         DataConn.OpenConn();
@@ -24,7 +24,7 @@ public class DBExcute {
             System.err.println("\n db 用户存在！");
             return "0103";
         }else{
-            sql = "insert into user(id,username,userkey,nickname,ctime,question,answer) values (null,'" + userName + "','" + userKey + "','"+nicKname+"','"+ctime+"','"+question+"','"+answer+"')";
+            String sql = "insert into user(id,username,userkey,nickname,ctime,question,answer) values (null,'" + userName + "','" + userKey + "','"+nicKname+"','"+ctime+"','"+question+"','"+answer+"')";
             int re = DataConn.executeUpdate(sql);
             while(re == 0) {
                 System.err.println("\n db 注册失败，请重试！");
@@ -32,6 +32,7 @@ public class DBExcute {
             }
         }
         System.out.print("注册成功");
+        DataConn.CloseConn();
         return "0100";
     }
 
@@ -42,18 +43,24 @@ public class DBExcute {
      * 失败返回null
      */
     public static String logIn(String userName) throws SQLException {
-        sql = "select userkey from user where username='" + userName + "'";
+        ResultSet rs;
+        String sql = "select userkey from user where username='" + userName + "'";
+        System.out.println("数据库正在查询用户："+userName);
         DataConn.OpenConn();
         rs = DataConn.executeQuery(sql);
+
         if (rs.next()) {
             String uk;
             uk = rs.getString("userKey");
             System.out.print("\n db 取出的MD5密钥"+uk);
+            DataConn.CloseConn();
             return uk;
         }else {
             System.out.print("\n db 登录 无此用户");
+            DataConn.CloseConn();
             return "0102";
         }
+
 
 
     }

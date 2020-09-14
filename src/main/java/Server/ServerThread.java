@@ -163,7 +163,7 @@ public class ServerThread implements Runnable {
         ServerSql.creatSendTable(User);
     }
 
-    public void ServerMailSend(String content) throws IOException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
+    public void ServerMailSend(String content) throws IOException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException, SQLException {
         System.out.println("邮件发送部分："+content);
         PackageParser packageParser = new PackageParser(content);
         //source and destination
@@ -270,6 +270,11 @@ public class ServerThread implements Runnable {
     @Override
     public void run() {
         try {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             ServerRec();
         } catch (IllegalBlockSizeException | InvalidKeyException | NoSuchPaddingException | BadPaddingException | IOException | NoSuchAlgorithmException | SQLException | ClassNotFoundException e) {
             e.printStackTrace();

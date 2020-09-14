@@ -80,6 +80,11 @@ public class TGS implements Runnable {
     }
     @Override
     public void run() {
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         //接收到的报文
         byte[] bytes = new byte[4096];
         //接收

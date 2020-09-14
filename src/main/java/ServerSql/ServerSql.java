@@ -13,9 +13,7 @@ import java.util.Iterator;
 import java.util.Vector;
 
 public class ServerSql  {
-    static Statement stmt = null;
-    static ResultSet rs = null;
-    static Connection conn = null;
+
     static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
     static final String USER = "root";
     static final String PASS = "123456";
@@ -27,6 +25,9 @@ public class ServerSql  {
 * 若失败返回0103
 * */
 public  static String creatSendTable(String sendname){
+    Statement stmt = null;
+    ResultSet rs = null;
+    Connection conn = null;
     String tablename=sendname+"send";
     String creatsql = "create table If Not Exists "+tablename+"(id varchar(255),rev varchar(255)," +
             "title varchar(255),content text,ctime varchar(255)) charset=utf8 ;";
@@ -76,6 +77,9 @@ public  static String creatSendTable(String sendname){
      * 若失败返回0103
      * */
     public  static String creatRevTable(String Revname){
+        Statement stmt = null;
+        ResultSet rs = null;
+        Connection conn = null;
         String tablename=Revname+"rev";
         String creatsql = "create table If Not Exists "+tablename+"(id varchar(255),send varchar(255)," +
                 "title varchar(255),content text,ctime varchar(255)) charset=utf8 ;";
@@ -107,7 +111,10 @@ public  static String creatSendTable(String sendname){
      * 若失败返回0104
      * 成功返回1000
      * */
-        public static String sendMail(String emailId, Sender send, Receiver rev, String title, String content){
+        public static String sendMail(String emailId, Sender send, Receiver rev, String title, String content) throws SQLException {
+            Statement stmt = null;
+            ResultSet rs = null;
+            Connection conn = null;
         String ctime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(System.currentTimeMillis());
         String sql2 = "select username from user where username='" +rev.getAccount()+ "'";
         SqlOperation.OpenConn();
@@ -138,7 +145,10 @@ public  static String creatSendTable(String sendname){
      * 成功返回1000
      * */
 
-    public static String revMail(String emailId,Receiver rev,Sender send,String title,String content){
+    public static String revMail(String emailId,Receiver rev,Sender send,String title,String content) throws SQLException {
+        Statement stmt = null;
+        ResultSet rs = null;
+        Connection conn = null;
         String ctime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(System.currentTimeMillis());
         String sql2 = "select username from user where username='" +send.getAccount()+ "'";
         SqlOperation.OpenConn();
@@ -164,12 +174,16 @@ public  static String creatSendTable(String sendname){
      * */
 
     public static String findRevAll(ReceiveList emailList,String account) throws SQLException, ClassNotFoundException {
+        Statement stmt = null;
+        ResultSet rs = null;
+        Connection conn = null;
         String tablename=account+"rev";
         Class.forName(JDBC_DRIVER);
         conn = DriverManager.getConnection(DB_URL,USER,PASS);
         String sql = "select * from "+tablename;
          stmt=(Statement) conn.createStatement();
         ResultSet resultSet=stmt.executeQuery(sql);
+        stmt.close();
         String sendname,title,content,ctime,id;
         Email email=null; Sender tmpsend=new Sender("","");
         Receiver receiver = new Receiver(account,"");
@@ -194,6 +208,9 @@ public  static String creatSendTable(String sendname){
      * */
 
     public static String findSendAll(SendList emailList,Sender sender) throws SQLException, ClassNotFoundException {
+        Statement stmt = null;
+        ResultSet rs = null;
+        Connection conn = null;
         String tablename=sender.getAccount()+"send";
         Class.forName(JDBC_DRIVER);
         conn = DriverManager.getConnection(DB_URL,USER,PASS);
@@ -220,28 +237,28 @@ public  static String creatSendTable(String sendname){
      * @param sender 发件方
      * @param id 邮件id
      * */
-  public static  Email findSendById (String id,Sender sender) throws ClassNotFoundException, SQLException {
-      String tablename=sender.getAccount()+"send";
-      Class.forName(JDBC_DRIVER);
-      conn = DriverManager.getConnection(DB_URL,USER,PASS);
-      //String sql = "select * from "+tablename;
-      String sql ="select * from "+tablename+" where id='" +id+ "'";
-      stmt=(Statement) conn.createStatement();
-      Email email=null; ResultSet resultSet=stmt.executeQuery(sql);
-      while (resultSet.next()) {
-          String revname, title, content, ctime;
-          Receiver tmprev = new Receiver("", "");
-          revname = resultSet.getString("rev");
-          title = resultSet.getString("title");
-          content = resultSet.getString("content");
-          ctime = resultSet.getString("ctime");
-          tmprev.setAccount(revname);
-          email = new Email(id,sender, tmprev, title, ctime, "txt", content);
-          System.out.println(revname + '\t' + title + '\t' + content + '\t' + ctime);
-      }
-      return email;
-
-  }
+//  public static  Email findSendById (String id,Sender sender) throws ClassNotFoundException, SQLException {
+//      String tablename=sender.getAccount()+"send";
+//      Class.forName(JDBC_DRIVER);
+//      conn = DriverManager.getConnection(DB_URL,USER,PASS);
+//      //String sql = "select * from "+tablename;
+//      String sql ="select * from "+tablename+" where id='" +id+ "'";
+//      stmt=(Statement) conn.createStatement();
+//      Email email=null; ResultSet resultSet=stmt.executeQuery(sql);
+//      while (resultSet.next()) {
+//          String revname, title, content, ctime;
+//          Receiver tmprev = new Receiver("", "");
+//          revname = resultSet.getString("rev");
+//          title = resultSet.getString("title");
+//          content = resultSet.getString("content");
+//          ctime = resultSet.getString("ctime");
+//          tmprev.setAccount(revname);
+//          email = new Email(id,sender, tmprev, title, ctime, "txt", content);
+//          System.out.println(revname + '\t' + title + '\t' + content + '\t' + ctime);
+//      }
+//      return email;
+//
+//  }
 
     /**
      * 搜索指定id的接受的邮件
@@ -249,6 +266,9 @@ public  static String creatSendTable(String sendname){
      * @param id 邮件id
      * */
     public static  Email findRevById (String id,Receiver receiver) throws ClassNotFoundException, SQLException {
+        Statement stmt = null;
+        ResultSet rs = null;
+        Connection conn = null;
                 String tablename=receiver.getAccount()+"rev";
         Class.forName(JDBC_DRIVER);
         conn = DriverManager.getConnection(DB_URL,USER,PASS);
