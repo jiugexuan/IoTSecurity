@@ -1,5 +1,7 @@
 package client;
 
+import client.UI.UI;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -25,6 +27,8 @@ public class SocketConn {
             socketOut.write(content);
             socketOut.flush();
             System.out.print("\n socket 信息发送");
+            //UI.jTextField3.append("\n socket 信息发送");
+            //UI.jTextField3.append(new String(content));
         } catch (IOException e) {
             // TODO Auto-generated catch block
             log.warning("Fail to send Messeag due to IOException!");
@@ -38,6 +42,8 @@ public class SocketConn {
             InputStream socketIn = socket.getInputStream();
             len = socketIn.read(result);
             System.out.print("\n socket 信息接收");
+            //UI.jTextField3.append("\n socket 信息接收");
+            //UI.jTextField3.append(new String(result));
         } catch (IOException e) {
             // TODO Auto-generated catch block
             log.warning("Fail to receive Messeag due to IOException!");

@@ -4,13 +4,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import iotpackage.data.fuction.User.User;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
 public class UI extends JFrame {
-
+    public  static TextArea jTextField3;
     private void initGUI(String user,String Kcv) {
         setLayout(null);
         setBounds(350, 100, 430, 280);
@@ -95,7 +96,17 @@ public class UI extends JFrame {
                 }
             }
         });
-
+/*
+        jTextField3 = new TextArea ();
+        jTextField3.setBounds(20,240,380,160);
+        add(jTextField3);
+        //jTextField3.setLineWrap(true);
+        //jTextField3.setWrapStyleWord(true);
+        //JScrollPane p_log = new JScrollPane(jTextField3);
+        //add(p_log);
+        jTextField3.append("输出：");
+        jTextField3.append("\r\n");
+*/
 
 
 
