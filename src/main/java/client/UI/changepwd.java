@@ -10,12 +10,15 @@ import iotpackage.data.ciphertext.Ciphertext;
 import iotpackage.destination.Destination;
 import iotpackage.source.Source;
 import securityalgorithm.DESUtil;
+import securityalgorithm.MD5Util;
 import securityalgorithm.RSAUtil;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -33,9 +36,12 @@ public class changepwd  extends JFrame {
     Map<String,String> keyMap= RSAUtil.createKeys(1024,ipInTheItem.getUserIP());
     String publicKey=keyMap.get("publicKey");
     String privateKey=keyMap.get("privateKey");
-    private void initGUI() {
+
+
+    private void initGUI(String user,String Kcv) {
         //创建Random类对象
         Random random = new Random();
+
         //产生随机数
         int codenumber = random.nextInt(9989 - 1234 + 1) + 1234;
         setLayout(null);
@@ -54,6 +60,7 @@ public class changepwd  extends JFrame {
         add(jLabel2);
 
         JPasswordField jTextField2 = new JPasswordField();
+
         jTextField2.setBounds(100,20,240,30);
         add(jTextField2);
 
@@ -84,23 +91,50 @@ public class changepwd  extends JFrame {
         jButton1.setText("修改密码");
         jButton1.setBounds(30,220,310,30);
         add(jButton1);
+        jButton1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    char[] password = jTextField2.getPassword();
+                    String NewPWD = String.valueOf(password);
+                    reciveChange(user,Kcv,NewPWD);
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
+            }
+        });
+
     }
 
-    public void reciveChange(String User ,String Kcv) throws IOException {
+    public void reciveChange(String User ,String Kcv,String pass) throws IOException {
+
         PackageConstructor packageConstructor = new PackageConstructor();
         Source source = new Source("SERVER", SERIP);
         Destination destination = new Destination(User, UserIP);
-        String change = packageConstructor.getPackagePWDChange("Service", "ChangePWD", source, destination, "0000", User, privateKey, publicKey);
+        String passW = MD5Util.md5(pass);
+
+        System.out.println("jaimihou:"+passW+"jaimiqian:"+pass);
+        String change = packageConstructor.getPackagePWDChange("Service", "ChangePWD", source, destination, "0000", User, passW,privateKey, publicKey);
         ConnManger cm = new ConnManger("SERVER", SERIP);
         SocketConn conn = cm.getConn();
         conn.send(change.getBytes());
         byte[] reciveBuffer = new byte[8024];
         conn.receive(reciveBuffer);
+        String rec = new String(reciveBuffer);
+        PackageParser packageParser = new PackageParser(rec);
+        String code = packageParser.getCode();
+        System.out.println("code:"+code);
+        if (code.contains("0104")){
+            JOptionPane.showMessageDialog(null, "修改失败，请重试");
+        }else if (code.contains("1000")){
+            JOptionPane.showMessageDialog(null, "修改完成");
+            setVisible(false);
+        }
     }
 
-    public changepwd() throws NoSuchAlgorithmException {
+    public changepwd(String user,String Kcv) throws NoSuchAlgorithmException, IOException {
         super();
-        initGUI();
+        initGUI(user,Kcv);
     }
 
 	/*

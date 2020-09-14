@@ -207,6 +207,33 @@ public class ServerThread implements Runnable {
         System.out.println("SERVER发送："+maillist);
     }
 
+    public void ChangePWD(String content) throws IOException, SQLException {
+        System.out.println("修改密码部分："+content);
+        PackageParser packageParser = new PackageParser(content);
+        String password = packageParser.getNewPassword();
+        String user = packageParser.getAccount();
+        System.out.println("password:"+password);
+        String code = ServerSql.changePWD(user,password);
+        System.out.println("code ser:"+code);
+        String VtoC;
+        PackageConstructor packageConstructor = new PackageConstructor();
+        while (code != null){
+            if (code.contains("0103")){
+                VtoC = packageConstructor.getPackageServiceResponse("Service","Send",new Source("SERVER",SERIP),new Destination(User,UserIP),"0104",privateKey,publicKey);
+                send(VtoC.getBytes());
+            } else if (code.contains("0100")){
+                VtoC = packageConstructor.getPackageServiceResponse("Service","Send",new Source("SERVER",SERIP),new Destination(User,UserIP),"1000",privateKey,publicKey);
+                send(VtoC.getBytes());
+            }
+        }
+
+
+
+
+
+
+    }
+
     public String ServerRec() throws IllegalBlockSizeException, NoSuchAlgorithmException, IOException, BadPaddingException, NoSuchPaddingException, InvalidKeyException, SQLException, ClassNotFoundException {
         byte[] bytes = new byte[8000];
         receive(bytes);
@@ -228,9 +255,12 @@ public class ServerThread implements Runnable {
             ServerMailSend(content);
         }else if (operation.contains("CheckRequest")){
             ServerMailList(content);
+        }else if(operation.contains("ChangePWD")){
+            ChangePWD(content);
         }else {
             return "0105 client发送到Server的报文operation获取异常";
         }
+
         return "接收报文正常";
     }
 

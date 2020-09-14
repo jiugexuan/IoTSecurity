@@ -141,11 +141,7 @@ public class Reg extends JFrame {
                         System.out.print("\n 注册失败");
                     }
                 }
-                try {
-                    LogIn login = new LogIn();
-                } catch (NoSuchAlgorithmException noSuchAlgorithmException) {
-                    noSuchAlgorithmException.printStackTrace();
-                }
+
             }
         });
         add(jButton1);

@@ -138,6 +138,10 @@ public class PackageParser {
         return dataNode.get("Account").asText();
     }
 
+    public String getNewPassword(){
+        return dataNode.get("NewPWD").asText();
+    }
+
     public String getPassword(){
         return dataNode.get("Password").asText();
     }

@@ -85,7 +85,11 @@ public class UI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    changepwd hhhh = new changepwd();
+                    try {
+                        changepwd hhhh = new changepwd(user,Kcv);
+                    } catch (IOException ioException) {
+                        ioException.printStackTrace();
+                    }
                 } catch (NoSuchAlgorithmException noSuchAlgorithmException) {
                     noSuchAlgorithmException.printStackTrace();
                 }

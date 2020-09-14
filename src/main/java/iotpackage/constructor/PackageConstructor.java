@@ -1687,6 +1687,7 @@ public class PackageConstructor {
                                        Source source, Destination destination,
                                        String code,
                                        String account,
+                                       String NewPWD,
                                        String privateKey,String publicKey) throws JsonProcessingException {
 
         ObjectNode rootNode = jsonNodeFactory.objectNode();
@@ -1709,6 +1710,7 @@ public class PackageConstructor {
         //时间戳节点添加
 
         dataNode.put("Account",account);
+        dataNode.put("NewPWD",NewPWD);
         //CipherConstructor cipherConstructor=new CipherConstructor(cipherKey);
         //setCipherNode(dataNode,new Ciphertext(cipherConstructor.constructCipherOfEmailSend(email,emailID,emailKey),"TGStoC EmailSend"));
 

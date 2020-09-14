@@ -53,6 +53,24 @@ public  static String creatSendTable(String sendname){
     return "0100";
     }
     /**
+     * 修改密码
+     */
+    public static String changePWD (String user , String passWord) throws SQLException {
+        String sql = "update user set userkey = '"+ passWord +"' where username = '"+user+"'";
+        SqlOperation.OpenConn();
+        int rs =  SqlOperation.executeUpdate(sql);
+        if (rs == 1){
+           System.out.println("修改成功");
+        }else {
+            System.out.println("修改失败！");
+            return "0103";
+        }
+        return "0100";
+
+
+    }
+
+    /**
      * 创建用户接受邮件表
      * 若成功返回0100
      * 若失败返回0103
@@ -141,7 +159,7 @@ public  static String creatSendTable(String sendname){
     }
     /**
      * 查看收件箱
-     * @param rev 收件方
+     * @param
      * @param emailList 存放收件箱所有邮件
      * */
 
