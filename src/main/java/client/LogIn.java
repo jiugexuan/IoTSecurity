@@ -100,6 +100,11 @@ public class LogIn extends JFrame {
         jButton1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException interruptedException) {
+                    interruptedException.printStackTrace();
+                }
                 String usr =jTextField1.getText().toString();    //获取文本框内容
                 userAccount = usr;
                 char[] password= jTextField2.getPassword();

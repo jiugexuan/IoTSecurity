@@ -27,7 +27,6 @@ public class ServerForMultiClient {
                 //接收客户连接,只要客户进行了连接,就会触发accept();从而建立连接
                 socket=serverSocket.accept();
                 executorService.execute(new AS(socket));
-
             } catch (Exception e) {
                 e.printStackTrace();
             }

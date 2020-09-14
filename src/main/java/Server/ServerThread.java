@@ -63,6 +63,7 @@ public class ServerThread implements Runnable {
             OutputStream socketOut = socket.getOutputStream();
             socketOut.write(content);
             socketOut.flush();
+            //FIXME
             socketOut.close();
             // log.info("Messeag has been sent!");
         } catch (IOException e) {
@@ -77,6 +78,8 @@ public class ServerThread implements Runnable {
         try {
             InputStream socketIn = socket.getInputStream();
             len = socketIn.read(result, 0, 4048);
+            //FIXME
+            socketIn.close();
             // log.info("Messeag has been received!");
         } catch (IOException e) {
             // TODO Auto-generated catch block

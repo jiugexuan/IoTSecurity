@@ -48,6 +48,8 @@ public class AS implements Runnable {
             socketOut.write(content);
             socketOut.flush();
             // log.info("Messeag has been sent!");
+            //FIXME
+            socketOut.close();
         } catch (IOException e) {
             // TODO Auto-generated catch block
             //log.warning("Fail to send Messeag due to IOException!");
@@ -61,6 +63,8 @@ public class AS implements Runnable {
             InputStream socketIn = socket.getInputStream();
             len = socketIn.read(result, 0, MAX_SIZE);
             // log.info("Messeag has been received!");
+            //FIXME
+            socketIn.close();
         } catch (IOException e) {
             // TODO Auto-generated catch block
             // log.warning("Fail to receive Messeag due to IOException!");
