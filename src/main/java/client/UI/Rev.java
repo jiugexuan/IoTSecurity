@@ -210,7 +210,6 @@ public class Rev extends JFrame {
             dataEmail.add(receiveList.getEmailAtIndex(i).getContext());
             dataEmail.add(receiveList.getEmailAtIndex(i).getTime());
             data.add(dataEmail);
-
           // j table.addRow(item);
            //data[]
         }
