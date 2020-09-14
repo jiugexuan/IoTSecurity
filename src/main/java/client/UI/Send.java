@@ -220,7 +220,7 @@ public class Send extends JFrame {
         for(int i=0;i<num;i++){
             Vector<String> dataEmail=new Vector<>();
             dataEmail.add(sendList.getEmailAtIndex(i).getId());
-            dataEmail.add(sendList.getEmailAtIndex(i).getSender().getAccount());
+            dataEmail.add(sendList.getEmailAtIndex(i).getReceiver().getAccount());
 
             dataEmail.add( sendList.getEmailAtIndex(i).getTitle());
             dataEmail.add( sendList.getEmailAtIndex(i).getContext());
