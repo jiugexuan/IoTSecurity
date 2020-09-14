@@ -188,7 +188,6 @@ public class ServerThread implements Runnable {
             if (result.contains("0104")){
                 VtoC = packageConstructor.getPackageServiceResponse("Service","Send",new Source("SERVER",SERIP),new Destination(User,UserIP),"0104",privateKey,publicKey);
                 send(VtoC.getBytes());
-
             } else if (result.contains("1000")){
                 VtoC = packageConstructor.getPackageServiceResponse("Service","Send",new Source("SERVER",SERIP),new Destination(User,UserIP),"1000",privateKey,publicKey);
                 send(VtoC.getBytes());
@@ -203,7 +202,8 @@ public class ServerThread implements Runnable {
         ReceiveList receiveList = new ReceiveList();
         SendList sendList = new SendList();
         ServerSql.findRevAll(receiveList,user);
-        ServerSql.findSendAll(sendList,new Sender(User,""));
+        //TODO
+        ServerSql.findSendAll(sendList,new Sender(user,""));
         PackageConstructor packageConstructor = new PackageConstructor();
         String maillist = packageConstructor.getPackageEmailListALL("Service","ListRequest",new Source("SERVER",SERIP),new Destination(User,UserIP),"0000",Kcv,sendList,receiveList,privateKey,publicKey);
         send(maillist.getBytes());
