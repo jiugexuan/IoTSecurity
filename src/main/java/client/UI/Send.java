@@ -158,11 +158,16 @@ public class Send extends JFrame {
         String DeMailList = DeText.getContext();
         String mailList = null;
         try {
+
             mailList = DESUtil.getDecryptString(DeMailList,Kcv);
         } catch (IOException | NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | BadPaddingException | IllegalBlockSizeException e) {
             e.printStackTrace();
         }
         System.out.println("mail"+mailList);
+        UI.jTextField3.append("mail解密前 \n");
+        UI.jTextField3.append(DeMailList);
+        UI.jTextField3.append("\n mail解密后 \n");
+        UI.jTextField3.append("mail"+mailList);
         return mailList;
     }
 

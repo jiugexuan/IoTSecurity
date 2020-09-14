@@ -14,7 +14,7 @@ public class UI extends JFrame {
     public  static TextArea jTextField3;
     private void initGUI(String user,String Kcv) {
         setLayout(null);
-        setBounds(350, 100, 430, 280);
+        setBounds(350, 100, 430, 480);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("2020网安邮箱");
         setResizable(false);
@@ -96,7 +96,7 @@ public class UI extends JFrame {
                 }
             }
         });
-/*
+
         jTextField3 = new TextArea ();
         jTextField3.setBounds(20,240,380,160);
         add(jTextField3);
@@ -106,7 +106,7 @@ public class UI extends JFrame {
         //add(p_log);
         jTextField3.append("输出：");
         jTextField3.append("\r\n");
-*/
+
 
 
 

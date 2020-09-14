@@ -150,6 +150,10 @@ public class Rev extends JFrame {
         } catch (IOException | NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | BadPaddingException | IllegalBlockSizeException e) {
             e.printStackTrace();
         }
+        UI.jTextField3.append("mail解密前 \n");
+        UI.jTextField3.append(DeMailList);
+        UI.jTextField3.append("\n mail解密后 \n");
+        UI.jTextField3.append("mail"+mailList);
         System.out.println("mail"+mailList);
         return mailList;
     }
