@@ -1,14 +1,11 @@
 package access;
 
 public class IPInTheItem {
-<<<<<<< HEAD
-    public String UserIP = "192.168.43.88";
-=======
-    public String UserIP = "192.168.43.117";
->>>>>>> 43eb55ce0782bcef52f32bf8ef8641834a286d2f
-    public String ASIP = "192.168.43.117";
-    public String TGSIP = "192.168.43.236";
-    public String SERIP = "192.168.43.52";
+
+    public String UserIP = "127.0.0.1";
+    public String ASIP = "127.0.0.1";
+    public String TGSIP = "127.0.0.1";
+    public String SERIP = "127.0.0.1";
 
     public IPInTheItem() {
     }

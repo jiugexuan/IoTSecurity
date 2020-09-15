@@ -4,6 +4,7 @@ import access.IPInTheItem;
 import client.ConnManger;
 import client.SocketConn;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import iotpackage.constructor.PackageConstructor;
 import iotpackage.constructor.PackageParser;
 import iotpackage.data.ciphertext.Ciphertext;
@@ -152,8 +153,8 @@ public class Rev extends JFrame {
         }
         UI.jTextField3.append("mail解密前 \n");
         UI.jTextField3.append(DeMailList);
-        UI.jTextField3.append("\n mail解密后 \n");
-        UI.jTextField3.append("mail"+mailList);
+        UI.jTextField3.append("\n\n\n mail解密后 \n");
+        UI.jTextField3.append("mail"+jsonFormatString(mailList));
         System.out.println("mail"+mailList);
         return mailList;
     }
@@ -232,7 +233,12 @@ public class Rev extends JFrame {
         initGUI();
     }
 
-
+    public static String jsonFormatString(String json) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        Object obj = mapper.readValue(json, Object.class);
+        return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(obj);
+        //return json;
+    }
 
 
 }

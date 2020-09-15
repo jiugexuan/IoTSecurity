@@ -3,6 +3,8 @@ package client.UI;
 import access.IPInTheItem;
 import client.ConnManger;
 import client.SocketConn;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import iotpackage.constructor.PackageConstructor;
 import iotpackage.constructor.PackageParser;
 import iotpackage.data.ciphertext.Ciphertext;
@@ -166,8 +168,10 @@ public class Send extends JFrame {
         System.out.println("mail"+mailList);
         UI.jTextField3.append("mail解密前 \n");
         UI.jTextField3.append(DeMailList);
-        UI.jTextField3.append("\n mail解密后 \n");
-        UI.jTextField3.append("mail"+mailList);
+        UI.jTextField3.append("\n\n\n mail解密后 \n");
+        UI.jTextField3.append("mail"+jsonFormatString(mailList));
+        //JOptionPane.showMessageDialog(null, "mail解密前 \n"+DeMailList);
+        //JOptionPane.showMessageDialog(null, "mail解密后 \n"+mailList);
         return mailList;
     }
 
@@ -256,7 +260,12 @@ public class Send extends JFrame {
 		  });
 		 }
 		 */
-
+    public static String jsonFormatString(String json) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        Object obj = mapper.readValue(json, Object.class);
+        return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(obj);
+        //return json;
+    }
 
 }
 

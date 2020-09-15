@@ -57,7 +57,7 @@ public class LogIn extends JFrame {
     private void initGUI() {
 
         setLayout(null);
-        setBounds(350, 100, 400, 420);
+        setBounds(350, 100, 400, 620);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("2020网安邮箱-登录");
         setResizable(false);
@@ -83,13 +83,14 @@ public class LogIn extends JFrame {
         jTextField2.setBounds(100,70,240,30);
         add(jTextField2);
 
-        final TextArea jTextField3 = new TextArea ();
+        final JTextArea jTextField3 = new JTextArea();
         jTextField3.setBounds(30,180,340,160);
         add(jTextField3);
-        //jTextField3.setLineWrap(true);
-        //jTextField3.setWrapStyleWord(true);
-        //JScrollPane p_log = new JScrollPane(jTextField3);
-        //add(p_log);
+        jTextField3.setLineWrap(true);
+        jTextField3.setWrapStyleWord(true);
+        JScrollPane p_log = new JScrollPane(jTextField3);
+        p_log.setBounds(30,180,340,360);
+        add(p_log);
         jTextField3.append("输出：");
         jTextField3.append("\r\n");
 
@@ -121,8 +122,8 @@ public class LogIn extends JFrame {
                         JOptionPane.showMessageDialog(null, "登入错误，请重试");
                         return;
                     }
-                    System.out.print("\n 客户端发送："+content);
-                    jTextField3.append("\n 客户端发送到AS：\n"+content);
+                    System.out.print("\n\n 客户端发送："+content);
+                    jTextField3.append("\n\n 客户端发送到AS：\n"+content);
                     ConnManger cm = new ConnManger("as",ASIP);
                     SocketConn conn = cm.getConn();
                     conn.send(content.getBytes());
@@ -136,14 +137,14 @@ public class LogIn extends JFrame {
                         ioException.printStackTrace();
                     }
                     String rec = new String(receiveBuffer);
-                    System.out.println("\n as返回消息："+ rec);
-                    jTextField3.append("\n As返回消息：\n"+ rec);
-                    System.out.print("\n 正在验证返回报文");
+                    System.out.println("\n\n as返回消息："+ rec);
+                    jTextField3.append("\n\n As返回消息：\n"+ rec);
+                    System.out.print("\n\n 正在验证返回报文");
 
                     String errorID = "0102";
                     if (rec.contains(errorID)){
                         JOptionPane.showMessageDialog(null, "无用户ID");
-                        System.out.print("\n 无用户ID，登入失败");
+                        System.out.print("\n\n 无用户ID，登入失败");
                     }else {
                         PackageParser packageParser = null;
                         try {
@@ -153,8 +154,8 @@ public class LogIn extends JFrame {
                             JOptionPane.showMessageDialog(null, "登入错误，请重试");
                             return;
                         }
-                        System.out.print("\n 提取出加密的ciphertext:"+packageParser.getCiphertext().getContext());
-                        jTextField3.append("\n 提取出加密的ciphertext: \n"+packageParser.getCiphertext().getContext());
+                        System.out.print("\n\n 提取出加密的ciphertext:"+packageParser.getCiphertext().getContext());
+                        jTextField3.append("\n\n 提取出加密的ciphertext: \n"+packageParser.getCiphertext().getContext());
                         Ciphertext ciphertext = packageParser.getCiphertext();
                         String cipText = "";
                         try {
@@ -167,7 +168,7 @@ public class LogIn extends JFrame {
                             JOptionPane.showMessageDialog(null, "登入错误，请重试");
                             return;
                         } catch (BadPaddingException badPaddingException) {
-                            System.out.print("\n 密钥错误 \n");
+                            System.out.print("\n\n 密钥错误 \n");
                             //badPaddingException.printStackTrace();
                             JOptionPane.showMessageDialog(null, "密码错误");
                             jTextField2.setText("");
@@ -185,7 +186,7 @@ public class LogIn extends JFrame {
                         //K c tgs
                         try {
                             Kctgs = packageParser.getKey(cipText);
-                            jTextField3.append("\nKctgs：\n"+Kctgs);
+                            jTextField3.append("\n\nKctgs：\n"+Kctgs);
                         } catch (JsonProcessingException jsonProcessingException) {
                             jsonProcessingException.printStackTrace();
                             JOptionPane.showMessageDialog(null, "登入错误，请重试");
@@ -217,8 +218,8 @@ public class LogIn extends JFrame {
                                 JOptionPane.showMessageDialog(null, "登入错误，请重试");
                                 return;
                             }
-                            System.out.print("\n 客户端发送："+ CtoTGS);
-                            jTextField3.append("\n 客户端发送："+ CtoTGS);
+                            System.out.print("\n\n 客户端发送："+ CtoTGS);
+                            jTextField3.append("\n\n 客户端发送："+ CtoTGS);
                             ConnManger cmTGS = new ConnManger("TGS",TGSIP);
                             SocketConn connTGS = cmTGS.getConn();
                             connTGS.send(CtoTGS.getBytes());
@@ -233,7 +234,7 @@ public class LogIn extends JFrame {
                         }
                             String recTGS = new String(receiveTGStoC);
                             System.out.print("\n从TGS收到报文："+recTGS);
-                            jTextField3.append("\n从TGS收到报文：\n"+recTGS);
+                            jTextField3.append("\n\n从TGS收到报文：\n"+recTGS);
                             PackageParser packageParserTGS= null;
                             Ticket ticketText = null;
                             String ciphercontent = null;
@@ -244,17 +245,17 @@ public class LogIn extends JFrame {
                             //cipher 在加密中的内容
                             ciphercontent = packageParserTGS.getCiphertext().getContext();
                             System.out.println("\n加密的cipher："+ciphercontent);
-                            jTextField3.append("\n加密的cipher：\n"+ciphercontent);
+                            jTextField3.append("\n\n加密的cipher：\n"+ciphercontent);
                             Ciphertext ciphertextTGS = packageParserTGS.getCiphertext();
                             ciphertextTGS.printCiphertext();
                             DecryptCipher = DESUtil.getDecryptString(ciphercontent,Kctgs);
 
                             System.out.print("\n解密后"+DecryptCipher);
-                            jTextField3.append("\n加密的cipher：\n"+DecryptCipher);
+                            jTextField3.append("\n\n加密的cipher：\n"+DecryptCipher);
                                 try {
                                     Kcv = packageParserTGS.getKey(DecryptCipher);
                                     System.out.print("\n Kcv密码："+Kcv);
-                                    jTextField3.append("\n Kcv密码：\n"+Kcv);
+                                    jTextField3.append("\n\n Kcv密码：\n"+Kcv);
                                 } catch (JsonProcessingException jsonProcessingException) {
                                     jsonProcessingException.printStackTrace();
                                     JOptionPane.showMessageDialog(null, "登入错误，请重试");
@@ -280,7 +281,7 @@ public class LogIn extends JFrame {
 
                         String CtoSer = null;
                         System.out.print("\n Kcv密码："+Kcv);
-                        jTextField3.append("\n Kcv密码："+Kcv);
+                        jTextField3.append("\n\n Kcv密码："+Kcv);
                       try {
                             CtoSer = packageConstructor.getPackageCtoVVerify("Verify","Request",source,new Destination("Server",SERIP),"0000",ticketCtoV,"ticketV",new Authenticator(new Destination("Server",SERIP),source,new TS(5)),Kcv,"authenticator C",privateKey,publicKey);
                         } catch (JsonProcessingException jsonProcessingException) {
@@ -289,7 +290,7 @@ public class LogIn extends JFrame {
                           return;
                         }
                         System.out.print("\n 客户端发送："+ CtoSer);
-                        jTextField3.append("\n 客户端发送到Server：\n"+ CtoSer);
+                        jTextField3.append("\n\n 客户端发送到Server：\n"+ CtoSer);
                         ConnManger cmSer = new ConnManger("SERVER",SERIP);
                         SocketConn connSer = cmSer.getConn();
                         connSer.send(CtoSer.getBytes());
@@ -302,7 +303,7 @@ public class LogIn extends JFrame {
                         }
                         String recSer = new String(receiveSertoC);
                         System.out.print("\n从Server收到报文："+recSer);
-                        jTextField3.append("\n从Server收到报文：\n"+recSer);
+                        jTextField3.append("\n\n从Server收到报文：\n"+recSer);
                         PackageParser packageParserSer= null;
                         TS ts1 = null;
 
@@ -312,15 +313,15 @@ public class LogIn extends JFrame {
                             //cipher 在加密中的内容
                             String ciphercontentSer = packageParserSer.getCiphertext().getContext();
                             System.out.println("\n加密的cipher："+ciphercontentSer);
-                            jTextField3.append("\n加密的cipher：\n"+ciphercontentSer);
+                            jTextField3.append("\n\n加密的cipher：\n"+ciphercontentSer);
                             Ciphertext ciphertextSer = packageParserSer.getCiphertext();
                             ciphertextSer.printCiphertext();
                             String DecryptCipherSer = DESUtil.getDecryptString(ciphercontentSer,Kcv);
                             String time5 = packageParser.getTS(DecryptCipherSer);
                             System.out.print("\n解密后"+DecryptCipher);
-                            jTextField3.append("\n解密后 \n"+DecryptCipher);
+                            jTextField3.append("\n\n解密后 \n"+DecryptCipher);
                             System.out.print("\n解密后time5+1:"+time5);
-                            jTextField3.append("\n解密后time: \n"+time5);
+                            jTextField3.append("\n\n解密后time: \n"+time5);
                             if(time5 != null){
                                 new UI(userAccount,Kcv);
                                // setVisible(false);
